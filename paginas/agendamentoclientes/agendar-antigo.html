@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Servi&ccedil;o - MustaBarber</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../tema-claro.css" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1f1f1f 0%, #141414 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .cliente-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .cliente-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .cliente-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4a4a4a, #1f1f1f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .cliente-header p {
+            color: #e8e8e8;
+            font-size: 1.1rem;
+        }
+
+        .cliente-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card-section {
+            background: rgba(25, 25, 28, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .card-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #e8e8e8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .calendario-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .dias-disponiveis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .dia-card {
+            background: rgba(45, 45, 50, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+
+        }
+
+        .dia-card:hover {
+            border-color: rgba(212, 165, 116, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .dia-card.selecionado {
+            background: linear-gradient(135deg, #4a4a4a, #1f1f1f);
+            border-color: #e8e8e8;
+            color: #fff;
+        }
+
+        .dia-numero {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .dia-semana {
+            font-size: 0.75rem;
+            color: #a09a91;
+        }
+
+        .dia-card.selecionado .dia-semana {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .horarios-wrapper {
+            margin-top: 1.5rem;
+        }
+
+        .horarios-titulo {
+            font-weight: 600;
+            color: #e8e8e8;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .horarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .horario-btn {
+            padding: 0.75rem;
+            background: rgba(45, 45, 50, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #e8e8e8;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .horario-btn:hover {
+            border-color: rgba(212, 165, 116, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .horario-btn.selecionado {
+            background: linear-gradient(135deg, #4a4a4a, #1f1f1f);
+            border-color: #e8e8e8;
+            color: #fff;
+        }
+
+        .horario-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .servicos-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .servico-item {
+            background: rgba(45, 45, 50, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .servico-item:hover {
+            border-color: rgba(212, 165, 116, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .servico-item.selecionado {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+
+        .checkbox-custom {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+
+        .servico-item.selecionado .checkbox-custom {
+            background: #10b981;
+            border-color: #10b981;
+        }
+
+        .checkbox-custom i {
+            color: #fff;
+            font-size: 0.75rem;
+            display: none;
+        }
+
+        .servico-item.selecionado .checkbox-custom i {
+            display: block;
+        }
+
+        .servico-info {
+            flex: 1;
+        }
+
+        .servico-nome {
+            font-weight: 600;
+            color: #e8e8e8;
+            margin-bottom: 0.25rem;
+        }
+
+        .servico-descricao {
+            font-size: 0.875rem;
+            color: #a09a91;
+        }
+
+        .servico-preco {
+            font-weight: 700;
+            color: #10b981;
+            text-align: right;
+        }
+
+        .resumo-agendamento {
+            background: rgba(25, 25, 28, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 2rem;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .resumo-titulo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #e8e8e8;
+            margin-bottom: 1.5rem;
+        }
+
+        .resumo-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .resumo-item:last-child {
+            border-bottom: none;
+        }
+
+        .resumo-label {
+            color: #ffffff;
+        }
+
+        .resumo-valor {
+            color: #e8e8e8;
+            font-weight: 600;
+        }
+
+        .resumo-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .resumo-total .resumo-label {
+            color: #e8e8e8;
+        }
+
+        .resumo-total .resumo-valor {
+            color: #10b981;
+        }
+
+        .btn-agendar {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-agendar:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-agendar:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+
+        .loading {
+            text-align: center;
+            color: #e8e8e8;
+            padding: 2rem;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .cliente-content {
+                grid-template-columns: 1fr;
+            }
+
+            .cliente-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .resumo-agendamento {
+                position: static;
+            }
+
+            .dias-disponiveis {
+                grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cliente-container">
+        <!-- Header -->
+        <div class="cliente-header">
+            <h1>
+                <i class="fas fa-calendar-check"></i>
+                Agende seu Servi&ccedil;o
+            </h1>
+            <p>Escolha o melhor dia, hora e servi&ccedil;os para voc&ecirc;</p>
+            <button onclick="abrirModalMeusAgendamentos()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: rgba(255, 255, 255, 0.15); color: #e8e8e8; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                <i class="fas fa-list"></i>
+                Meus Agendamentos
+            </button>
+        </div>
+
+        <!-- Conte?do Principal -->
+        <div class="cliente-content">
+            <!-- Coluna Esquerda: Data e Hor?rio -->
+            <div class="card-section">
+                <h2>
+                    <i class="fas fa-calendar"></i>
+                    Data e Hor&aacute;rio
+                </h2>
+                <div class="calendario-wrapper">
+                    <div class="dias-disponiveis" id="diasDisponiveis">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Carregando dias dispon&iacute;veis...</p>
+                        </div>
+                    </div>
+
+                    <div class="horarios-wrapper" id="horariosWrapper" style="display: none;">
+                        <div class="horarios-titulo">Hor&aacute;rios dispon&iacute;veis em <span id="dataSelecionada">-</span></div>
+                        <div class="horarios-grid" id="horariosDisponiveis"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna Direita: Servi?os e Resumo -->
+            <div>
+                <div class="card-section">
+                    <h2>
+                        <i class="fas fa-scissors"></i>
+                        Servi&ccedil;os
+                    </h2>
+                    <div class="servicos-lista" id="servicosList">
+                        <div class="loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Carregando servi?os...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumo do Agendamento -->
+                <div class="resumo-agendamento">
+                    <div class="resumo-titulo">
+                        <i class="fas fa-receipt"></i>
+                        Resumo
+                    </div>
+                    <div class="resumo-item">
+                        <span class="resumo-label">Data:</span>
+                        <span class="resumo-valor" id="resumoData">-</span>
+                    </div>
+                    <div class="resumo-item">
+                        <span class="resumo-label">Hor&aacute;rio:</span>
+                        <span class="resumo-valor" id="resumoHorario">-</span>
+                    </div>
+                    <div class="resumo-item">
+                        <span class="resumo-label">Servi&ccedil;os:</span>
+                        <span class="resumo-valor" id="resumoServicos">0</span>
+                    </div>
+                    <div class="resumo-total">
+                        <span class="resumo-label">Total:</span>
+                        <span class="resumo-valor" id="resumoTotal">R$ 0,00</span>
+                    </div>
+                    <button class="btn-agendar" id="btnConfirmarAgendamento" disabled>
+                        <i class="fas fa-check"></i>
+                        Confirmar Agendamento
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Dados do Cliente -->
+    <div class="modal-overlay" id="modalDadosCliente" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(26, 26, 26, 0.7); display: none; align-items: center; justify-content: center; z-index: 1000;">
+        <div class="modal-custom" style="background: rgba(26, 24, 22, 0.95); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 16px; padding: 2rem; max-width: 500px; width: 90%;">
+            <h2 style="color: #e8e8e8; font-size: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-user"></i>
+                Seus Dados
+            </h2>
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; color: #e8e8e8; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem;">Nome Completo *</label>
+                <input type="text" id="inputNomeCliente" placeholder="Digite seu nome completo" style="width: 100%; padding: 0.75rem; background: rgba(45, 37, 32, 0.5); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: #e8e8e8; font-size: 1rem;">
+                <span id="erroNome" style="display: none; color: #ef4444; font-size: 0.75rem; margin-top: 0.25rem;"></span>
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; color: #e8e8e8; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem;">WhatsApp (com DDD) *</label>
+                <input type="tel" id="inputTelefoneCliente" placeholder="(00) 00000-0000" maxlength="15" style="width: 100%; padding: 0.75rem; background: rgba(45, 37, 32, 0.5); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: #e8e8e8; font-size: 1rem;">
+                <span id="erroTelefone" style="display: none; color: #ef4444; font-size: 0.75rem; margin-top: 0.25rem;"></span>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button onclick="fecharModalDados()" style="flex: 1; padding: 0.75rem; background: rgba(255, 255, 255, 0.15); color: #e8e8e8; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button onclick="validarEConfirmar()" style="flex: 1; padding: 0.75rem; background: linear-gradient(135deg, #4a4a4a, #1f1f1f); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    <i class="fas fa-check"></i> Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Meus Agendamentos -->
+    <div class="modal-overlay" id="modalMeusAgendamentos" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(26, 26, 26, 0.7); display: none; align-items: center; justify-content: center; z-index: 1000;">
+        <div class="modal-custom" style="background: rgba(26, 24, 22, 0.95); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 16px; padding: 2rem; max-width: 500px; width: 90%;">
+            <h2 style="color: #e8e8e8; font-size: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-list"></i>
+                Consultar Meus Agendamentos
+            </h2>
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; color: #e8e8e8; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem;">WhatsApp (com DDD) *</label>
+                <input type="tel" id="inputTelefoneMeusAgendamentos" placeholder="(00) 00000-0000" maxlength="15" style="width: 100%; padding: 0.75rem; background: rgba(45, 37, 32, 0.5); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: #e8e8e8; font-size: 1rem;">
+                <span id="erroTelefoneMeusAgendamentos" style="display: none; color: #ef4444; font-size: 0.75rem; margin-top: 0.25rem;"></span>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button onclick="fecharModalMeusAgendamentos()" style="flex: 1; padding: 0.75rem; background: rgba(255, 255, 255, 0.15); color: #e8e8e8; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    <i class="fas fa-times"></i> Voltar
+                </button>
+                <button onclick="irParaMeusAgendamentos()" style="flex: 1; padding: 0.75rem; background: linear-gradient(135deg, #4a4a4a, #1f1f1f); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    <i class="fas fa-arrow-right"></i> Consultar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Sucesso -->
+    <div class="modal-overlay" id="modalSucesso" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(26, 26, 26, 0.7); display: none; align-items: center; justify-content: center; z-index: 1000;">
+        <div class="modal-custom" style="background: rgba(26, 24, 22, 0.95); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 16px; padding: 2rem; max-width: 500px; text-align: center;">
+            <h2 style="color: #10b981; font-size: 1.5rem; margin-bottom: 1rem;">
+                <i class="fas fa-check-circle"></i>
+                Agendamento Confirmado!
+            </h2>
+            <p style="color: #e8e8e8; margin-bottom: 1.5rem;">Seu agendamento foi realizado com sucesso. Voc&ecirc; receber&aacute; uma confirma&ccedil;&atilde;o via WhatsApp em breve.</p>
+            <button onclick="location.reload()" style="padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #4a4a4a, #1f1f1f); color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                <i class="fas fa-redo"></i>
+                Novo Agendamento
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Vari&aacute;veis globais
+        let dataSelecionada = null;
+        let horarioSelecionado = null;
+        let servicosSelecionados = [];
+        let servicosData = [];
+        let barbeiro_codigo = null;
+
+        // Carregar dados ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obter barbeiro da URL
+            const urlParams = new URLSearchParams(window.location.search);
+            barbeiro_codigo = urlParams.get('barbeiro');
+            console.log('Barbeiro c&oacute;digo obtido:', barbeiro_codigo);
+            
+            if (!barbeiro_codigo) {
+                alert('Link inv&aacute;lido. Barbeiro n&atilde;o informado.');
+                window.history.back();
+                return;
+            }
+            
+            // Carregar dados do barbeiro selecionado
+            console.log('Iniciando carregamento de dias e servi&ccedil;os...');
+            carregarDiasDisponiveis();
+            carregarServicos();
+        });
+
+        // Carregar dias dispon&iacute;veis (pr&oacute;ximos 30 dias)
+        async function carregarDiasDisponiveis() {
+            try {
+                if (!barbeiro_codigo) {
+                    document.getElementById('diasDisponiveis').innerHTML = '<p style="color: #a09a91; text-align: center;">Selecione um barbeiro primeiro</p>';
+                    return;
+                }
+
+                const diasContainer = document.getElementById('diasDisponiveis');
+                diasContainer.innerHTML = '';
+
+                const hoje = new Date();
+                for (let i = 0; i < 30; i++) {
+                    const data = new Date(hoje);
+                    data.setDate(data.getDate() + i);
+                    const dataStr = data.toISOString().split('T')[0];
+
+                    try {
+                        // Verificar hor&aacute;rios dispon&iacute;veis neste dia para o barbeiro selecionado
+                        const url = `../../bancodedados/agendamentos/buscar_horarios_dia.php?data=${dataStr}&barbeiro=${barbeiro_codigo}`;
+                        console.log('Buscando hor&aacute;rios:', url);
+                        const response = await fetch(url);
+                        
+                        if (!response.ok) {
+                            console.warn(`Erro HTTP ao buscar hor&aacute;rios para ${dataStr}:`, response.status);
+                            continue;
+                        }
+                        
+                        const text = await response.text();
+                        if (!text) {
+                            console.warn(`Resposta vazia para dia ${dataStr}`);
+                            continue;
+                        }
+                        
+                        const result = JSON.parse(text);
+                        console.log(`Hor&aacute;rios para ${dataStr}:`, result);
+
+                        if (result.sucesso && result.horarios && result.horarios.some(h => h.status === 'disponivel')) {
+                            const diaCard = criarDiaCard(data, result.horarios);
+                            diasContainer.appendChild(diaCard);
+                        }
+                    } catch (err) {
+                        console.warn(`Erro ao processar dia ${i}:`, err.message);
+                        continue;
+                    }
+                }
+
+                if (diasContainer.children.length === 0) {
+                    diasContainer.innerHTML = '<p style="color: #a09a91; text-align: center; grid-column: 1 / -1;">Nenhum dia dispon&iacute;vel</p>';
+                }
+            } catch (erro) {
+                console.error('Erro ao carregar dias:', erro);
+                document.getElementById('diasDisponiveis').innerHTML = '<p style="color: #ef4444;">Erro ao carregar dias dispon&iacute;veis. Recarregue a p&aacute;gina.</p>';
+            }
+        }
+
+        // Criar card de dia
+        function criarDiaCard(data, horarios) {
+            const card = document.createElement('div');
+            card.className = 'dia-card';
+
+            const disponiveisCount = horarios.filter(h => h.status === 'disponivel').length;
+            const dataStr = data.toISOString().split('T')[0];
+            const diaSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'][data.getDay()];
+
+            card.innerHTML = `
+                <div class="dia-numero">${data.getDate()}</div>
+                <div class="dia-semana">${diaSemana}</div>
+                <div class="dia-semana" style="font-size: 0.7rem; margin-top: 0.25rem;">${disponiveisCount} hor&aacute;rios</div>
+            `;
+
+            card.addEventListener('click', () => selecionarDia(card, dataStr, data, horarios));
+            return card;
+        }
+
+        // Selecionar dia
+        function selecionarDia(card, dataStr, dataObj, horarios) {
+            document.querySelectorAll('.dia-card').forEach(c => c.classList.remove('selecionado'));
+            card.classList.add('selecionado');
+
+            dataSelecionada = dataStr;
+            horarioSelecionado = null;
+
+            // Carregar hor&aacute;rios dispon&iacute;veis
+            const horariosDisponiveis = horarios.filter(h => h.status === 'disponivel');
+            const horariosDiv = document.getElementById('horariosDisponiveis');
+            horariosDiv.innerHTML = '';
+
+            horariosDisponiveis.forEach(horario => {
+                const btn = document.createElement('button');
+                btn.className = 'horario-btn';
+                btn.textContent = horario.horario;
+                btn.addEventListener('click', () => selecionarHorario(btn, horario.horario, dataObj));
+                horariosDiv.appendChild(btn);
+            });
+
+            document.getElementById('horariosWrapper').style.display = 'block';
+            document.getElementById('dataSelecionada').textContent = dataObj.toLocaleDateString('pt-BR');
+            atualizarResumo();
+        }
+
+        // Selecionar hor&aacute;rio
+        function selecionarHorario(btn, horario, dataObj) {
+            document.querySelectorAll('.horario-btn').forEach(b => b.classList.remove('selecionado'));
+            btn.classList.add('selecionado');
+
+            horarioSelecionado = horario;
+            document.getElementById('resumoHorario').textContent = horario;
+            document.getElementById('resumoData').textContent = dataObj.toLocaleDateString('pt-BR');
+            atualizarResumo();
+        }
+
+        // Carregar servi&ccedil;os
+        async function carregarServicos() {
+            try {
+                if (!barbeiro_codigo) {
+                    console.error('ERRO: barbeiro_codigo est&aacute; vazio!');
+                    document.getElementById('servicosList').innerHTML = '<p style="color: #a09a91; text-align: center;">Selecione um barbeiro primeiro</p>';
+                    return;
+                }
+
+                console.log('=== IN&Iacute;CIO CARREGAMENTO DE SERVI&Ccedil;OS ===');
+                console.log('Barbeiro c&oacute;digo (tipo):', typeof barbeiro_codigo, 'Valor:', barbeiro_codigo);
+                
+                // Usar o endpoint de servi?os que funciona na tela administrativa
+                const url = `../../bancodedados/servicos/listar_servicos.php?codigo_barbeiro=${barbeiro_codigo}&status=1`;
+                console.log('URL completa:', url);
+                console.log('Iniciando fetch...');
+                
+                const response = await fetch(url);
+                console.log('Response recebida - Status:', response.status, 'StatusText:', response.statusText);
+                
+                if (!response.ok) {
+                    console.error('Erro HTTP ao buscar servi&ccedil;os:', response.status);
+                    document.getElementById('servicosList').innerHTML = '<p style="color: #ef4444;">Erro HTTP: ' + response.status + '</p>';
+                    return;
+                }
+                
+                const text = await response.text();
+                console.log('Tipo de resposta recebida:', typeof text);
+                console.log('Tamanho do texto:', text.length, 'bytes');
+                console.log('Primeiros 200 caracteres:', text.substring(0, 200));
+                console.log('RESPOSTA COMPLETA:', text);
+                
+                if (!text || text.trim() === '') {
+                    console.warn('Resposta vazia ao buscar servi&ccedil;os');
+                    document.getElementById('servicosList').innerHTML = '<p style="color: #a09a91; text-align: center;">Nenhum servi&ccedil;o dispon&iacute;vel</p>';
+                    return;
+                }
+                
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (jsonError) {
+                    console.error('Erro ao fazer parse do JSON:', jsonError);
+                    console.error('Texto recebido:', text);
+                    document.getElementById('servicosList').innerHTML = '<p style="color: #ef4444;">Erro ao processar resposta do servidor</p>';
+                    return;
+                }
+                
+                console.log('=== AN&Aacute;LISE DA RESPOSTA ===');
+                console.log('Objeto result completo:', JSON.stringify(result, null, 2));
+                console.log('result.sucesso:', result.sucesso);
+                console.log('result.servicos existe?:', 'servicos' in result);
+                console.log('result.servicos &eacute; array?:', Array.isArray(result.servicos));
+                console.log('Quantidade de servi&ccedil;os:', result.servicos ? result.servicos.length : 'N/A');
+
+                if (result.sucesso && result.servicos && result.servicos.length > 0) {
+                    console.log('&#10003; CONDI&Ccedil;&Atilde;O OK - Renderizando', result.servicos.length, 'servi&ccedil;os');
+                    servicosData = result.servicos;
+                    const servicosList = document.getElementById('servicosList');
+                    servicosList.innerHTML = '';
+
+                    result.servicos.forEach((servico, index) => {
+                        console.log(`Renderizando servi&ccedil;o ${index + 1}:`, servico);
+                        
+                        const item = document.createElement('div');
+                        item.className = 'servico-item';
+                        item.dataset.codigo = servico.codigo;
+                        item.dataset.preco = servico.preco;
+
+                        item.innerHTML = `
+                            <div class="checkbox-custom">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="servico-info">
+                                <div class="servico-nome">${servico.nome}</div>
+                                <div class="servico-descricao">${servico.descricao || 'Servi&ccedil;o de qualidade'}</div>
+                            </div>
+                            <div class="servico-preco">R$ ${parseFloat(servico.preco).toFixed(2).replace('.', ',')}</div>
+                        `;
+
+                        item.addEventListener('click', () => selecionarServico(item, servico));
+                        servicosList.appendChild(item);
+                    });
+                    console.log('Total de servi&ccedil;os renderizados:', result.servicos.length);
+                } else {
+                    console.error('Resposta sem sucesso ou sem servi&ccedil;os:', result);
+                    document.getElementById('servicosList').innerHTML = '<p style="color: #a09a91; text-align: center;">Nenhum servi&ccedil;o dispon&iacute;vel para este barbeiro</p>';
+                }
+            } catch (erro) {
+                console.error('Erro ao carregar servi&ccedil;os:', erro);
+                console.error('Stack trace:', erro.stack);
+                document.getElementById('servicosList').innerHTML = '<p style="color: #ef4444;">Erro ao carregar servi&ccedil;os: ' + erro.message + '</p>';
+            }
+        }
+
+        // Selecionar servi&ccedil;o (apenas 1 por vez)
+        function selecionarServico(item, servico) {
+            // Se j? est? selecionado, desmarcar
+            if (item.classList.contains('selecionado')) {
+                item.classList.remove('selecionado');
+                servicosSelecionados = [];
+            } else {
+                // Desmarcar todos os outros
+                document.querySelectorAll('.servico-item').forEach(el => el.classList.remove('selecionado'));
+                
+                // Marcar o atual
+                item.classList.add('selecionado');
+                servicosSelecionados = [servico];
+            }
+
+            atualizarResumo();
+        }
+
+        // Atualizar resumo
+        function atualizarResumo() {
+            document.getElementById('resumoServicos').textContent = servicosSelecionados.length;
+
+            const total = servicosSelecionados.reduce((sum, s) => sum + parseFloat(s.preco || s.valor || 0), 0);
+            document.getElementById('resumoTotal').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+
+            const btnConfirmar = document.getElementById('btnConfirmarAgendamento');
+            btnConfirmar.disabled = !dataSelecionada || !horarioSelecionado || servicosSelecionados.length === 0;
+        }
+
+        // Fechar modal
+        function fecharModal() {
+            document.getElementById('modalSucesso').style.display = 'none';
+        }
+
+        // Fechar modal de dados
+        function fecharModalDados() {
+            document.getElementById('modalDadosCliente').style.display = 'none';
+            document.getElementById('inputNomeCliente').value = '';
+            document.getElementById('inputTelefoneCliente').value = '';
+            document.getElementById('erroNome').style.display = 'none';
+            document.getElementById('erroTelefone').style.display = 'none';
+        }
+
+        // Formatar telefone
+        document.getElementById('inputTelefoneCliente').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            if (value.length > 10) {
+                value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            } else if (value.length > 6) {
+                value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+            } else if (value.length > 2) {
+                value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+            }
+            
+            e.target.value = value;
+        });
+
+        // Formatar telefone no modal de meus agendamentos
+        document.getElementById('inputTelefoneMeusAgendamentos').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            if (value.length > 10) {
+                value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            } else if (value.length > 6) {
+                value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+            } else if (value.length > 2) {
+                value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+            }
+            
+            e.target.value = value;
+        });
+
+        // Abrir modal de meus agendamentos
+        function abrirModalMeusAgendamentos() {
+            document.getElementById('modalMeusAgendamentos').style.display = 'flex';
+            document.getElementById('inputTelefoneMeusAgendamentos').focus();
+        }
+
+        // Fechar modal de meus agendamentos
+        function fecharModalMeusAgendamentos() {
+            document.getElementById('modalMeusAgendamentos').style.display = 'none';
+            document.getElementById('inputTelefoneMeusAgendamentos').value = '';
+            document.getElementById('erroTelefoneMeusAgendamentos').style.display = 'none';
+        }
+
+        // Ir para meus agendamentos
+        function irParaMeusAgendamentos() {
+            const telefoneInput = document.getElementById('inputTelefoneMeusAgendamentos');
+            const erroTelefone = document.getElementById('erroTelefoneMeusAgendamentos');
+            const telefoneNumeros = telefoneInput.value.replace(/\D/g, '');
+            
+            // Validar telefone
+            if (!telefoneNumeros) {
+                erroTelefone.textContent = 'Por favor, digite seu WhatsApp';
+                erroTelefone.style.display = 'block';
+                telefoneInput.style.borderColor = '#ef4444';
+                return;
+            }
+            
+            if (telefoneNumeros.length < 10 || telefoneNumeros.length > 11) {
+                erroTelefone.textContent = 'Telefone inv&aacute;lido. Use o formato (00) 00000-0000';
+                erroTelefone.style.display = 'block';
+                telefoneInput.style.borderColor = '#ef4444';
+                return;
+            }
+            
+            // Redirecionar para meus agendamentos com telefone na URL
+            window.location.href = `meus-agendamentos.html?telefone=${telefoneNumeros}`;
+        }
+
+        // Validar e confirmar
+        async function validarEConfirmar() {
+            const nomeInput = document.getElementById('inputNomeCliente');
+            const telefoneInput = document.getElementById('inputTelefoneCliente');
+            const erroNome = document.getElementById('erroNome');
+            const erroTelefone = document.getElementById('erroTelefone');
+            
+            let valido = true;
+            
+            // Validar nome
+            if (!nomeInput.value.trim()) {
+                erroNome.textContent = 'Por favor, digite seu nome';
+                erroNome.style.display = 'block';
+                nomeInput.style.borderColor = '#ef4444';
+                valido = false;
+            } else if (nomeInput.value.trim().length < 3) {
+                erroNome.textContent = 'Nome deve ter no m&iacute;nimo 3 caracteres';
+                erroNome.style.display = 'block';
+                nomeInput.style.borderColor = '#ef4444';
+                valido = false;
+            } else {
+                erroNome.style.display = 'none';
+                nomeInput.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            }
+            
+            // Validar telefone
+            const telefoneNumeros = telefoneInput.value.replace(/\D/g, '');
+            if (!telefoneNumeros) {
+                erroTelefone.textContent = 'Por favor, digite seu WhatsApp';
+                erroTelefone.style.display = 'block';
+                telefoneInput.style.borderColor = '#ef4444';
+                valido = false;
+            } else if (telefoneNumeros.length < 10 || telefoneNumeros.length > 11) {
+                erroTelefone.textContent = 'Telefone inv&aacute;lido. Use o formato (00) 00000-0000';
+                erroTelefone.style.display = 'block';
+                telefoneInput.style.borderColor = '#ef4444';
+                valido = false;
+            } else {
+                erroTelefone.style.display = 'none';
+                telefoneInput.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            }
+            
+            if (!valido) return;
+            
+            // Processar agendamento
+            await processarAgendamento(nomeInput.value.trim(), telefoneNumeros);
+        }
+
+        // Processar agendamento
+        async function processarAgendamento(cliente_nome, cliente_telefone) {
+            const btnConfirmar = document.querySelector('#modalDadosCliente button[onclick="validarEConfirmar()"]');
+            btnConfirmar.disabled = true;
+            btnConfirmar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+
+            try {
+                const formData = new FormData();
+                formData.append('cliente_nome', cliente_nome);
+                formData.append('cliente_telefone', cliente_telefone);
+                formData.append('cod_barbeiro', barbeiro_codigo);
+                formData.append('data_agendamento', dataSelecionada);
+                formData.append('hora_agendamento', horarioSelecionado);
+                formData.append('servicos', JSON.stringify(servicosSelecionados.map(s => ({ codigo: s.codigo }))));
+                formData.append('observacoes', 'Agendamento realizado via link cliente');
+
+                const response = await fetch('../../bancodedados/agendamentos/cadastro_agendamento_cliente.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.sucesso) {
+                    fecharModalDados();
+                    document.getElementById('modalSucesso').style.display = 'flex';
+                } else {
+                    alert('Erro ao agendar: ' + (result.mensagem || 'Erro desconhecido'));
+                    btnConfirmar.disabled = false;
+                    btnConfirmar.innerHTML = '<i class="fas fa-check"></i> Confirmar';
+                }
+            } catch (erro) {
+                console.error('Erro:', erro);
+                alert('Erro ao processar agendamento: ' + erro.message);
+                btnConfirmar.disabled = false;
+                btnConfirmar.innerHTML = '<i class="fas fa-check"></i> Confirmar';
+            }
+        }
+
+        // Confirmar agendamento - abrir modal
+        document.getElementById('btnConfirmarAgendamento').addEventListener('click', function() {
+            if (!barbeiro_codigo) {
+                alert('Por favor, selecione um barbeiro');
+                return;
+            }
+            
+            document.getElementById('modalDadosCliente').style.display = 'flex';
+        });
+    </script>
+</body>
+</html>
+
+

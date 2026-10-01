@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="P&aacute;gina de login - MustaBarber">
+    <meta name="theme-color" content="#d4a574">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MustaBarber">
+    <link rel="icon" type="image/png" href="uploads/logo/logo.png">
+    <link rel="apple-touch-icon" href="uploads/logo/logo.png">
+    <link rel="manifest" href="manifest.json">
+    <title>Login - MustaBarber</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #d4a574;
+            --primary-hover: #c99456;
+            --primary-dark: #b8843d;
+            --background: #0f0e0d;
+            --surface: #1a1816;
+            --surface-light: #2d2520;
+            --text-primary: #e8e8e8;
+            --text-secondary: #e8e8e8;
+            --error: #ef4444;
+            --success: #10b981;
+            --border: #4a433c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1f1f1f 0%, #141414 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: rgba(25, 25, 28, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .logo-container img {
+            width: 220px;
+            height: auto;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            color: var(--text-primary);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--surface-light);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
+        }
+
+        input::placeholder {
+            color: #64748b;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .password-toggle svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .forgot-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-link:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 165, 116, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .divider span {
+            padding: 0 16px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .signup-text {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 24px;
+        }
+
+        .signup-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .signup-link:hover {
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--error);
+            color: var(--error);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Acessibilidade */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 32px 24px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .remember-forgot {
+                justify-content: center;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ===== MODAL RECUPERAR SENHA ===== */
+        .modal-rec-backdrop {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,.75);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal-rec-backdrop.show { display: flex; animation: fadeIn .25s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal-rec-box {
+            background: #1a1816;
+            border: 1px solid rgba(212,165,116,.2);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 420px;
+            animation: slideUp .28s ease;
+        }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .modal-rec-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        .modal-rec-header h3 { color: #d4a574; font-size: 1.1rem; font-weight: 700; }
+        .modal-rec-close {
+            background: none; border: none; color: #9ca3af; cursor: pointer;
+            font-size: 1.3rem; padding: 4px; line-height: 1; transition: color .2s;
+        }
+        .modal-rec-close:hover { color: #ef4444; }
+
+        .modal-rec-step { display: none; }
+        .modal-rec-step.active { display: block; }
+
+        .modal-rec-label {
+            display: block; color: #9ca3af; font-size: .83rem;
+            margin-bottom: .5rem; font-weight: 500;
+        }
+        .modal-rec-input {
+            width: 100%; padding: 11px 14px;
+            background: #2d2520; border: 2px solid #4a433c;
+            border-radius: 10px; color: #e8e8e8; font-size: .95rem;
+            outline: none; transition: border-color .2s; box-sizing: border-box;
+        }
+        .modal-rec-input:focus { border-color: #d4a574; }
+        .modal-rec-input.error { border-color: #ef4444; }
+
+        .modal-rec-hint {
+            font-size: .78rem; color: #6b7280; margin-top: .5rem; line-height: 1.5;
+        }
+        .modal-rec-hint.success { color: #10b981; }
+        .modal-rec-hint.error   { color: #ef4444; }
+
+        .modal-rec-canais {
+            background: rgba(212,165,116,.08); border: 1px solid rgba(212,165,116,.2);
+            border-radius: 10px; padding: .75rem 1rem; margin: .75rem 0;
+            font-size: .82rem; color: #d4a574; line-height: 1.6;
+        }
+
+        /* código de 6 dígitos */
+        .codigo-inputs {
+            display: flex; gap: .5rem; justify-content: center; margin: 1rem 0;
+        }
+        .codigo-inputs input {
+            width: 44px; height: 52px; text-align: center;
+            font-size: 1.4rem; font-weight: 700; color: #d4a574;
+            background: #2d2520; border: 2px solid #4a433c;
+            border-radius: 10px; outline: none; transition: border-color .2s;
+            padding: 0; line-height: 52px; box-sizing: border-box;
+        }
+        .codigo-inputs input:focus { border-color: #d4a574; }
+        .codigo-inputs input.filled { border-color: rgba(212,165,116,.5); }
+
+        .modal-rec-btn {
+            width: 100%; padding: 13px; margin-top: 1.25rem;
+            background: linear-gradient(135deg, #d4a574, #b8843d);
+            color: #fff; border: none; border-radius: 10px;
+            font-size: .95rem; font-weight: 600; cursor: pointer;
+            transition: opacity .2s, transform .15s;
+        }
+        .modal-rec-btn:hover { opacity: .9; transform: translateY(-1px); }
+        .modal-rec-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+        .modal-rec-link {
+            background: none; border: none; color: #d4a574;
+            font-size: .82rem; cursor: pointer; text-decoration: underline;
+            padding: 0; margin-top: .75rem; display: block; text-align: center;
+        }
+        .modal-rec-link:hover { color: #c99456; }
+
+        .modal-rec-progress {
+            display: flex; align-items: center; gap: .5rem; margin-bottom: 1.25rem;
+        }
+        .rec-step-dot {
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .75rem; font-weight: 700;
+            background: #2d2520; color: #6b7280; border: 2px solid #4a433c;
+            transition: all .2s;
+        }
+        .rec-step-dot.active { background: #d4a574; color: #1a1816; border-color: #d4a574; }
+        .rec-step-dot.done   { background: #10b981; color: #fff; border-color: #10b981; }
+        .rec-step-line {
+            flex: 1; height: 2px; background: #4a433c; border-radius: 2px; transition: background .2s;
+        }
+        .rec-step-line.done { background: #10b981; }
+
+        .password-rec-wrapper { position: relative; }
+        .password-rec-toggle {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: #6b7280; cursor: pointer; padding: 4px;
+        }
+        .password-rec-toggle:hover { color: #d4a574; }
+    </style>
+</head>
+<body>
+    <div class="login-container" role="main">
+        <div class="logo-container">
+            <img src="uploads/logo/logo.png" alt="MustaBarber">
+            <p class="subtitle">Fa&ccedil;a login para continuar</p>
+        </div>
+
+        <div class="error-message" id="errorMessage" role="alert" aria-live="polite">
+            Usu&aacute;rio ou senha incorretos
+        </div>
+
+        <form id="loginForm" novalidate>
+            <div class="form-group">
+                <label for="email">E-mail ou Telefone</label>
+                <input 
+                    type="text" 
+                    id="email" 
+                    name="email" 
+                    placeholder="Digite seu e-mail"
+                    required
+                    aria-required="true"
+                    autocomplete="username"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <div class="input-wrapper">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Digite sua senha"
+                        required
+                        aria-required="true"
+                        autocomplete="current-password"
+                    >
+                    <button 
+                        type="button" 
+                        class="password-toggle" 
+                        id="togglePassword"
+                        aria-label="Mostrar ou ocultar senha"
+                    >
+                        <svg id="eyeIcon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="remember-forgot">
+                <a href="#" class="forgot-link" onclick="abrirModalRecuperacao(); return false;">Esqueceu a senha?</a>
+            </div>
+
+            <button type="submit" class="btn-login">
+                Entrar
+            </button>
+        </form>
+
+        <div class="divider">
+            <span>ou</span>
+        </div>
+
+        <p class="signup-text">
+            N&atilde;o tem uma conta? 
+            <a href="paginas/usuarios/cadastro-barbeiro.html" class="signup-link">Cadastre-se</a>
+        </p>
+        
+        <p class="signup-text" style="margin-top: 1rem;">
+            <a href="instalacao-app.html?origem=login" class="signup-link">
+                <i class="fas fa-mobile-alt"></i> Instalar App no Celular
+            </a>
+        </p>
+    </div>
+
+    <!-- ===== MODAL RECUPERAR SENHA ===== -->
+    <div class="modal-rec-backdrop" id="modal-recuperacao">
+      <div class="modal-rec-box">
+        <div class="modal-rec-header">
+          <h3>&#128274; Recuperar Senha</h3>
+          <button class="modal-rec-close" onclick="fecharModalRecuperacao()" title="Fechar">&times;</button>
+        </div>
+
+        <!-- Indicador de progresso -->
+        <div class="modal-rec-progress">
+          <div class="rec-step-dot active" id="rec-dot1">1</div>
+          <div class="rec-step-line"        id="rec-line1"></div>
+          <div class="rec-step-dot"          id="rec-dot2">2</div>
+          <div class="rec-step-line"        id="rec-line2"></div>
+          <div class="rec-step-dot"          id="rec-dot3">3</div>
+        </div>
+
+        <!-- STEP 1 — Identificar conta -->
+        <div class="modal-rec-step active" id="rec-step1">
+          <p style="color:#9ca3af;font-size:.85rem;margin-bottom:1rem;line-height:1.5">
+            Informe o e-mail ou telefone cadastrado na sua conta.
+          </p>
+          <label class="modal-rec-label" for="rec-login">E-mail ou Telefone</label>
+          <input class="modal-rec-input" id="rec-login" type="text"
+                 placeholder="seuemail@exemplo.com ou (62) 9 9999-9999"
+                 autocomplete="off">
+          <div class="modal-rec-hint" id="rec-hint1"></div>
+          <button class="modal-rec-btn" id="rec-btn1" onclick="recSolicitarCodigo()">
+            Enviar C&oacute;digo
+          </button>
+        </div>
+
+        <!-- STEP 2 — Verificar código -->
+        <div class="modal-rec-step" id="rec-step2">
+          <p style="color:#9ca3af;font-size:.85rem;margin-bottom:.5rem;line-height:1.5">
+            Digite o c&oacute;digo de 6 d&iacute;gitos enviado para:
+          </p>
+          <div class="modal-rec-canais" id="rec-canais-info"></div>
+          <div class="codigo-inputs" id="rec-codigo-inputs">
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+          </div>
+          <div class="modal-rec-hint" id="rec-hint2"></div>
+          <button class="modal-rec-btn" id="rec-btn2" onclick="recVerificarCodigo()">
+            Verificar C&oacute;digo
+          </button>
+          <button class="modal-rec-link" onclick="recReenviar()">
+            N&atilde;o recebi o c&oacute;digo &rarr; Reenviar
+          </button>
+        </div>
+
+        <!-- STEP 3 — Nova senha -->
+        <div class="modal-rec-step" id="rec-step3">
+          <p style="color:#9ca3af;font-size:.85rem;margin-bottom:1rem;line-height:1.5">
+            Crie uma nova senha para sua conta.
+          </p>
+          <label class="modal-rec-label" for="rec-nova-senha">Nova Senha</label>
+          <div class="password-rec-wrapper" style="margin-bottom:.85rem">
+            <input class="modal-rec-input" id="rec-nova-senha" type="password"
+                   placeholder="M&iacute;nimo 6 caracteres" autocomplete="new-password">
+            <button class="password-rec-toggle" type="button"
+                    onclick="recToggleSenha('rec-nova-senha', this)">
+              &#128065;
+            </button>
+          </div>
+          <label class="modal-rec-label" for="rec-confirmar-senha">Confirmar Nova Senha</label>
+          <div class="password-rec-wrapper">
+            <input class="modal-rec-input" id="rec-confirmar-senha" type="password"
+                   placeholder="Repita a nova senha" autocomplete="new-password">
+            <button class="password-rec-toggle" type="button"
+                    onclick="recToggleSenha('rec-confirmar-senha', this)">
+              &#128065;
+            </button>
+          </div>
+          <div class="modal-rec-hint" id="rec-hint3"></div>
+          <button class="modal-rec-btn" id="rec-btn3" onclick="recAlterarSenha()">
+            &#10003; Salvar Nova Senha
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    // ============================================================
+    // MODAL RECUPERAR SENHA
+    // ============================================================
+    function abrirModalRecuperacao() {
+      recResetarModal();
+      document.getElementById('modal-recuperacao').classList.add('show');
+      setTimeout(() => document.getElementById('rec-login').focus(), 100);
+    }
+
+    function fecharModalRecuperacao() {
+      document.getElementById('modal-recuperacao').classList.remove('show');
+    }
+
+    function recResetarModal() {
+      // Steps
+      document.querySelectorAll('.modal-rec-step').forEach(s => s.classList.remove('active'));
+      document.getElementById('rec-step1').classList.add('active');
+      // Dots
+      ['rec-dot1','rec-dot2','rec-dot3'].forEach((id, i) => {
+        const el = document.getElementById(id);
+        el.className = 'rec-step-dot' + (i === 0 ? ' active' : '');
+        el.textContent = i + 1;
+      });
+      ['rec-line1','rec-line2'].forEach(id => {
+        document.getElementById(id).className = 'rec-step-line';
+      });
+      // Limpar inputs
+      document.getElementById('rec-login').value = '';
+      document.getElementById('rec-login').classList.remove('error');
+      document.getElementById('rec-nova-senha').value = '';
+      document.getElementById('rec-confirmar-senha').value = '';
+      document.querySelectorAll('#rec-codigo-inputs input').forEach(i => {
+        i.value = ''; i.classList.remove('filled','error');
+      });
+      // Hints
+      ['rec-hint1','rec-hint2','rec-hint3'].forEach(id => {
+        const el = document.getElementById(id);
+        el.textContent = ''; el.className = 'modal-rec-hint';
+      });
+    }
+
+    function recAvancarStep(de, para) {
+      document.getElementById('rec-step' + de).classList.remove('active');
+      document.getElementById('rec-step' + para).classList.add('active');
+      // Dots
+      const dotAnterior = document.getElementById('rec-dot' + de);
+      dotAnterior.className = 'rec-step-dot done';
+      dotAnterior.innerHTML = '&#10003;';
+      document.getElementById('rec-dot' + para).className = 'rec-step-dot active';
+      if (de < 3) document.getElementById('rec-line' + de).className = 'rec-step-line done';
+    }
+
+    function recHint(id, msg, tipo) {
+      const el = document.getElementById(id);
+      el.innerHTML = msg;
+      el.className = 'modal-rec-hint ' + (tipo || '');
+    }
+
+    function recBtnLoading(id, loading) {
+      const btn = document.getElementById(id);
+      if (loading) { btn.disabled = true; btn.dataset.orig = btn.innerHTML; btn.innerHTML = '&#9203; Aguarde...'; }
+      else         { btn.disabled = false; btn.innerHTML = btn.dataset.orig || btn.innerHTML; }
+    }
+
+    // &#9472;&#9472; Step 1: solicitar código &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+    async function recSolicitarCodigo() {
+      const login = document.getElementById('rec-login').value.trim();
+      if (!login) { recHint('rec-hint1', 'Preencha o campo.', 'error'); return; }
+
+      recBtnLoading('rec-btn1', true);
+      recHint('rec-hint1', '', '');
+
+      try {
+        const res  = await fetch('bancodedados/usuarios/recuperar_senha.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'solicitar_codigo', login })
+        });
+        const data = await res.json();
+        recBtnLoading('rec-btn1', false);
+
+        if (!data.sucesso) {
+          recHint('rec-hint1', data.mensagem, 'error');
+          document.getElementById('rec-login').classList.add('error');
+          return;
+        }
+
+        // Mostrar para quem foi enviado
+        let info = '&#128232; ' + data.mensagem;
+        if (data.email)    info += '<br>&#128231; ' + data.email;
+        if (data.telefone) info += '<br>&#128241; ' + data.telefone;
+        document.getElementById('rec-canais-info').innerHTML = info;
+
+        recAvancarStep(1, 2);
+        // Focar primeiro campo do código
+        setTimeout(() => {
+          const inputs = document.querySelectorAll('#rec-codigo-inputs input');
+          inputs[0]?.focus();
+          recIniciarNavegacaoCodigo(inputs);
+        }, 100);
+      } catch (e) {
+        recBtnLoading('rec-btn1', false);
+        recHint('rec-hint1', 'Erro ao conectar com o servidor.', 'error');
+      }
+    }
+
+    // Navegação entre os 6 campos do código
+    function recIniciarNavegacaoCodigo(inputs) {
+      inputs.forEach((input, idx) => {
+        input.addEventListener('input', function() {
+          this.value = this.value.replace(/[^0-9]/g, '').slice(-1);
+          this.classList.toggle('filled', this.value !== '');
+          if (this.value && idx < inputs.length - 1) inputs[idx + 1].focus();
+        });
+        input.addEventListener('keydown', function(e) {
+          if (e.key === 'Backspace' && !this.value && idx > 0) inputs[idx - 1].focus();
+          if (e.key === 'Enter') recVerificarCodigo();
+        });
+        input.addEventListener('paste', function(e) {
+          e.preventDefault();
+          const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
+          [...paste].forEach((c, i) => { if (inputs[idx + i]) { inputs[idx + i].value = c; inputs[idx + i].classList.add('filled'); } });
+          const next = Math.min(idx + paste.length, inputs.length - 1);
+          inputs[next].focus();
+        });
+      });
+    }
+
+    // &#9472;&#9472; Step 2: verificar código &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+    async function recVerificarCodigo() {
+      const inputs = document.querySelectorAll('#rec-codigo-inputs input');
+      const codigo = [...inputs].map(i => i.value).join('');
+
+      if (codigo.length < 6) {
+        recHint('rec-hint2', 'Digite todos os 6 dígitos.', 'error');
+        inputs.forEach(i => i.classList.toggle('error', !i.value));
+        return;
+      }
+
+      recBtnLoading('rec-btn2', true);
+      recHint('rec-hint2', '', '');
+
+      try {
+        const res  = await fetch('bancodedados/usuarios/recuperar_senha.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'verificar_codigo', codigo })
+        });
+        const data = await res.json();
+        recBtnLoading('rec-btn2', false);
+
+        if (!data.sucesso) {
+          recHint('rec-hint2', data.mensagem, 'error');
+          inputs.forEach(i => i.classList.add('error'));
+          return;
+        }
+        recAvancarStep(2, 3);
+        setTimeout(() => document.getElementById('rec-nova-senha').focus(), 100);
+      } catch (e) {
+        recBtnLoading('rec-btn2', false);
+        recHint('rec-hint2', 'Erro ao conectar com o servidor.', 'error');
+      }
+    }
+
+    // Reenviar código
+    async function recReenviar() {
+      const login = document.getElementById('rec-login').value.trim();
+      if (!login) { recResetarModal(); return; }
+      document.querySelectorAll('#rec-codigo-inputs input').forEach(i => { i.value = ''; i.classList.remove('filled','error'); });
+      recHint('rec-hint2', 'Reenviando...', '');
+      try {
+        const res  = await fetch('bancodedados/usuarios/recuperar_senha.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'solicitar_codigo', login })
+        });
+        const data = await res.json();
+        recHint('rec-hint2', data.sucesso ? '&#10003; Código reenviado!' : (data.mensagem || 'Erro.'), data.sucesso ? 'success' : 'error');
+      } catch(e) {
+        recHint('rec-hint2', 'Erro ao conectar.', 'error');
+      }
+    }
+
+    // &#9472;&#9472; Step 3: alterar senha &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+    async function recAlterarSenha() {
+      const nova      = document.getElementById('rec-nova-senha').value;
+      const confirmar = document.getElementById('rec-confirmar-senha').value;
+
+      if (!nova || !confirmar) { recHint('rec-hint3', 'Preencha todos os campos.', 'error'); return; }
+      if (nova !== confirmar)  { recHint('rec-hint3', 'As senhas não coincidem.', 'error'); return; }
+      if (nova.length < 6)     { recHint('rec-hint3', 'A senha deve ter pelo menos 6 caracteres.', 'error'); return; }
+
+      recBtnLoading('rec-btn3', true);
+      recHint('rec-hint3', '', '');
+
+      try {
+        const res  = await fetch('bancodedados/usuarios/recuperar_senha.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'alterar_senha', nova_senha: nova, confirmar_senha: confirmar })
+        });
+        const data = await res.json();
+        recBtnLoading('rec-btn3', false);
+
+        if (!data.sucesso) { recHint('rec-hint3', data.mensagem, 'error'); return; }
+
+        recHint('rec-hint3', '&#10003; ' + data.mensagem, 'success');
+        document.getElementById('rec-btn3').style.display = 'none';
+        setTimeout(() => fecharModalRecuperacao(), 2500);
+      } catch (e) {
+        recBtnLoading('rec-btn3', false);
+        recHint('rec-hint3', 'Erro ao conectar com o servidor.', 'error');
+      }
+    }
+
+    function recToggleSenha(inputId, btn) {
+      const input = document.getElementById(inputId);
+      input.type = input.type === 'password' ? 'text' : 'password';
+      btn.innerHTML = input.type === 'password' ? '&#128065;' : '&#128064;';
+    }
+
+    </script>
+
+    <script>
+        // ===== SISTEMA DE ATUALIZA&ccedil;&atilde;O AUTOM&aacute;TICA PWA =====
+        if ('serviceWorker' in navigator) {
+            let refreshing = false;
+            
+            // Detectar quando o Service Worker &eacute; atualizado
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshing) return;
+                console.log('[PWA] Nova vers&atilde;o detectada! Recarregando...');
+                refreshing = true;
+                window.location.reload();
+            });
+            
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                    .then((registration) => {
+                        console.log('[PWA] Service Worker registrado:', registration.scope);
+                        
+                        // Verificar atualiza&ccedil;&otilde;es a cada 30 segundos
+                        setInterval(() => {
+                            registration.update();
+                        }, 30000);
+                        
+                        // Detectar nova vers&atilde;o instalando
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            console.log('[PWA] Nova vers&atilde;o encontrada, instalando...');
+                            
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed') {
+                                    if (navigator.serviceWorker.controller) {
+                                        // Nova vers&atilde;o dispon&iacute;vel
+                                        console.log('[PWA] Nova vers&atilde;o instalada, ativando...');
+                                        
+                                        // Mostrar notifica&ccedil;&atilde;o visual
+                                        const notification = document.createElement('div');
+                                        notification.style.cssText = `
+                                            position: fixed;
+                                            top: 20px;
+                                            right: 20px;
+                                            background: linear-gradient(135deg, #10b981, #059669);
+                                            color: white;
+                                            padding: 16px 24px;
+                                            border-radius: 12px;
+                                            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+                                            z-index: 10000;
+                                            font-family: 'Segoe UI', sans-serif;
+                                            font-size: 14px;
+                                            animation: slideIn 0.3s ease-out;
+                                        `;
+                                        notification.innerHTML = `
+                                            <div style="display: flex; align-items: center; gap: 12px;">
+                                                <i class="fas fa-sync-alt" style="font-size: 20px;"></i>
+                                                <div>
+                                                    <strong>Atualiza&ccedil;&atilde;o Dispon&iacute;vel!</strong><br>
+                                                    <small>Aplicando automaticamente...</small>
+                                                </div>
+                                            </div>
+                                        `;
+                                        document.body.appendChild(notification);
+                                        
+                                        // Ativar novo service worker e recarregar
+                                        setTimeout(() => {
+                                            newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                        }, 1500);
+                                    } else {
+                                        // Primeira instala&ccedil;&atilde;o
+                                        console.log('[PWA] Service Worker instalado pela primeira vez');
+                                    }
+                                }
+                            });
+                        });
+                        
+                        // Receber mensagens do Service Worker
+                        navigator.serviceWorker.addEventListener('message', (event) => {
+                            if (event.data && event.data.type === 'SW_UPDATED') {
+                                console.log('[PWA] Service Worker atualizado para vers&atilde;o:', event.data.version);
+                            }
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('[PWA] Erro ao registrar Service Worker:', error);
+                    });
+            });
+        }
+
+        // Toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            if (type === 'text') {
+                eyeIcon.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
+            } else {
+                eyeIcon.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+            }
+        });
+
+        // Form submission
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const login = document.getElementById('email').value;
+            const senha = document.getElementById('password').value;
+
+            // Valida&ccedil;&atilde;o b&aacute;sica
+            if (!login || !senha) {
+                errorMessage.textContent = 'Por favor, preencha todos os campos';
+                errorMessage.classList.add('show');
+                setTimeout(() => {
+                    errorMessage.classList.remove('show');
+                }, 3000);
+                return;
+            }
+
+            // Desabilitar bot&atilde;o durante o login
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
+
+            try {
+                // Enviar dados para o servidor
+                const formData = new FormData();
+                formData.append('login', login);
+                formData.append('senha', senha);
+
+                const response = await fetch('bancodedados/usuarios/login_usuario.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const resultado = await response.json();
+
+                if (resultado.sucesso) {
+                    // Login bem-sucedido
+                    errorMessage.classList.remove('show');
+                    
+                    // Mostrar mensagem de sucesso
+                    submitBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                    submitBtn.innerHTML = '<i class="fas fa-check"></i> Login realizado!';
+                    
+                    // Redirecionar para home
+                    setTimeout(() => {
+                        window.location.href = 'paginas/home.php';
+                    }, 1000);
+                } else {
+                    // Erro no login
+                    throw new Error(resultado.mensagem);
+                }
+            } catch (error) {
+                // Mostrar erro
+                errorMessage.textContent = error.message || 'Erro ao conectar com o servidor';
+                errorMessage.classList.add('show');
+                
+                // Restaurar bot&atilde;o
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+                
+                setTimeout(() => {
+                    errorMessage.classList.remove('show');
+                }, 5000);
+            }
+        });
+
+        // Remove error message when user starts typing
+        document.getElementById('email').addEventListener('input', function() {
+            errorMessage.classList.remove('show');
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            errorMessage.classList.remove('show');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Links para Clientes - MustaBarber</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link href="../tema-claro.css" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #1f1f1f 0%, #141414 100%);
+      color: #e8e8e8;
+      min-height: 100vh;
+      padding: 1.2rem;
+    }
+
+    .container { max-width: 980px; margin: 0 auto; }
+
+    .header {
+      background: rgba(25,25,28,.9);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 16px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .8rem;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .title-wrap h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #f5f1ed;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+
+    .title-wrap p {
+      color: #a8a29e;
+      font-size: .88rem;
+      margin-top: .25rem;
+    }
+
+    .toggle-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 12px;
+      padding: .55rem .75rem;
+      font-size: .84rem;
+      color: #e8e8e8;
+      font-weight: 600;
+    }
+
+    .toggle-wrap input { accent-color: #10b981; width: 18px; height: 18px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: .9rem;
+    }
+
+    .card {
+      background: rgba(25,25,28,.9);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 16px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+    }
+
+    .card h3 {
+      color: #f5f1ed;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+    }
+
+    .card p {
+      color: #a8a29e;
+      font-size: .86rem;
+      line-height: 1.45;
+    }
+
+    .url-box {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px;
+      padding: .65rem .75rem;
+      font-size: .8rem;
+      color: #e8e8e8;
+      word-break: break-all;
+      min-height: 62px;
+      display: flex;
+      align-items: center;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: .5rem;
+      font-size: .76rem;
+      color: #a8a29e;
+    }
+
+    .badge {
+      background: rgba(16,185,129,.16);
+      border: 1px solid rgba(16,185,129,.4);
+      color: #34d399;
+      border-radius: 999px;
+      padding: .18rem .58rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+    }
+
+    .btn-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: .55rem;
+      margin-top: .15rem;
+    }
+
+    .btn {
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: #e8e8e8;
+      border-radius: 10px;
+      padding: .58rem .65rem;
+      font-size: .82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .45rem;
+      text-decoration: none;
+    }
+
+    .btn:hover { background: rgba(255,255,255,.12); color: #f5f1ed; }
+
+    .btn.primary {
+      background: linear-gradient(135deg, #10b981, #059669);
+      border-color: #059669;
+      color: #fff;
+    }
+
+    .btn.primary:hover { filter: brightness(1.06); }
+
+    .empty,
+    .loading {
+      background: rgba(25,25,28,.9);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 16px;
+      padding: 1.2rem;
+      text-align: center;
+      color: #a8a29e;
+    }
+
+    .toast {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      background: rgba(25,25,28,.95);
+      border: 1px solid rgba(255,255,255,.2);
+      color: #e8e8e8;
+      border-radius: 10px;
+      padding: .65rem .9rem;
+      font-size: .84rem;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all .2s;
+      z-index: 30;
+      pointer-events: none;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    body.tema-claro {
+      background: linear-gradient(135deg, #fdfcfb 0%, #f5f3f0 100%);
+      color: #2d2520;
+    }
+
+    body.tema-claro .header,
+    body.tema-claro .card,
+    body.tema-claro .empty,
+    body.tema-claro .loading {
+      background: rgba(255,255,255,.96);
+      border-color: rgba(212,165,116,.2);
+    }
+
+    body.tema-claro .title-wrap h1,
+    body.tema-claro .card h3 { color: #2d2520; }
+
+    body.tema-claro .title-wrap p,
+    body.tema-claro .card p,
+    body.tema-claro .meta-row { color: #8b7968; }
+
+    body.tema-claro .toggle-wrap,
+    body.tema-claro .url-box,
+    body.tema-claro .btn {
+      background: rgba(245,243,240,.85);
+      border-color: rgba(212,165,116,.25);
+      color: #4b3b2d;
+    }
+
+    body.tema-claro .btn:hover {
+      background: rgba(212,165,116,.18);
+      color: #2d2520;
+    }
+
+    body.tema-claro .btn.primary {
+      background: linear-gradient(135deg, #d4a574, #c4935b);
+      border-color: #c4935b;
+      color: #fff;
+    }
+
+    @media (max-width: 680px) {
+      body { padding: .8rem; }
+      .btn-row { grid-template-columns: 1fr; }
+      .header { padding: .85rem .9rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title-wrap">
+        <h1><i class="fas fa-link"></i> Links para Clientes</h1>
+        <p>Centralize e compartilhe rapidamente os links do seu atendimento.</p>
+      </div>
+      <label class="toggle-wrap" for="useShort">
+        <input id="useShort" type="checkbox" checked />
+        Usar links encurtados
+      </label>
+    </div>
+
+    <div id="content" class="loading">
+      <i class="fas fa-spinner fa-spin"></i> Carregando links...
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    var linksDisponiveis = [];
+    var usarCurto = true;
+
+    function aplicarTema() {
+      try {
+        if (window.parent && window.parent.document && window.parent.document.body.classList.contains('tema-claro')) {
+          document.body.classList.add('tema-claro');
+        } else {
+          document.body.classList.remove('tema-claro');
+        }
+      } catch (e) {}
+    }
+
+    function toast(msg) {
+      var el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(el._timer);
+      el._timer = setTimeout(function() { el.classList.remove('show'); }, 2200);
+    }
+
+    function escapeHtml(s) {
+      return String(s || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function urlAtiva(link) {
+      return usarCurto && link.short_url ? link.short_url : link.long_url;
+    }
+
+    function urlParaWhatsapp(link) {
+      var base = link && link.short_url ? link.short_url : urlAtiva(link);
+      return String(base || '').replace(/\s+/g, '');
+    }
+
+    function render() {
+      var content = document.getElementById('content');
+
+      if (!linksDisponiveis.length) {
+        content.className = 'empty';
+        content.innerHTML = '<i class="fas fa-inbox"></i><div style="margin-top:.55rem">Nenhum link disponivel para este usuario.</div>';
+        return;
+      }
+
+      content.className = 'grid';
+      content.innerHTML = linksDisponiveis.map(function(link, idx) {
+        var ativo = urlAtiva(link);
+        var tipo = usarCurto ? 'encurtado' : 'completo';
+        return '' +
+          '<article class="card">' +
+            '<h3><i class="fas fa-share-alt"></i>' + escapeHtml(link.titulo) + '</h3>' +
+            '<p>' + escapeHtml(link.descricao) + '</p>' +
+            '<div class="meta-row">' +
+              '<span>Formato atual</span>' +
+              '<span class="badge">' + escapeHtml(tipo) + '</span>' +
+            '</div>' +
+            '<div class="url-box" id="url-box-' + idx + '">' + escapeHtml(ativo) + '</div>' +
+            '<div class="btn-row">' +
+              '<button class="btn" onclick="copiarLink(' + idx + ')"><i class="fas fa-copy"></i> Copiar</button>' +
+              '<button class="btn" onclick="compartilharWhatsapp(' + idx + ')"><i class="fab fa-whatsapp"></i> WhatsApp</button>' +
+              '<a class="btn primary" href="' + escapeHtml(ativo) + '" target="_blank" rel="noopener"><i class="fas fa-up-right-from-square"></i> Abrir</a>' +
+            '</div>' +
+          '</article>';
+      }).join('');
+    }
+
+    function copiarLink(idx) {
+      var link = linksDisponiveis[idx];
+      if (!link) return;
+      var valor = urlAtiva(link);
+
+      navigator.clipboard.writeText(valor).then(function() {
+        toast('Link copiado com sucesso!');
+      }).catch(function() {
+        var temp = document.createElement('textarea');
+        temp.value = valor;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        temp.remove();
+        toast('Link copiado!');
+      });
+    }
+
+    function compartilharWhatsapp(idx) {
+      var link = linksDisponiveis[idx];
+      if (!link) return;
+
+      var valor = urlParaWhatsapp(link);
+      if (!valor) {
+        toast('Link indisponivel para compartilhar.');
+        return;
+      }
+
+      var urlWhatsapp = 'https://wa.me/?text=' + encodeURIComponent(valor);
+      window.open(urlWhatsapp, '_blank', 'noopener');
+    }
+
+    async function carregarLinks() {
+      var content = document.getElementById('content');
+      content.className = 'loading';
+      content.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Carregando links...';
+
+      try {
+        var res = await fetch('../../bancodedados/links/obter_links.php?t=' + Date.now(), { cache: 'no-store' });
+        var data = await res.json();
+
+        if (!data.sucesso) {
+          content.className = 'empty';
+          content.innerHTML = '<i class="fas fa-exclamation-circle"></i><div style="margin-top:.55rem">' + escapeHtml(data.mensagem || 'Nao foi possivel carregar os links.') + '</div>';
+          return;
+        }
+
+        linksDisponiveis = Array.isArray(data.links) ? data.links : [];
+        render();
+      } catch (e) {
+        content.className = 'empty';
+        content.innerHTML = '<i class="fas fa-triangle-exclamation"></i><div style="margin-top:.55rem">Erro de conexao ao buscar links.</div>';
+      }
+    }
+
+    document.getElementById('useShort').addEventListener('change', function(ev) {
+      usarCurto = !!ev.target.checked;
+      render();
+    });
+
+    window.copiarLink = copiarLink;
+    window.compartilharWhatsapp = compartilharWhatsapp;
+
+    aplicarTema();
+    try {
+      var observer = new MutationObserver(aplicarTema);
+      if (window.parent && window.parent.document && window.parent.document.body) {
+        observer.observe(window.parent.document.body, { attributes: true, attributeFilter: ['class'] });
+      }
+    } catch (e) {}
+
+    carregarLinks();
+  </script>
+</body>
+</html>

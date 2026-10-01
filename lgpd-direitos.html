@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Canal LGPD - Direitos do Titular</title>
+  <link rel="icon" type="image/png" href="uploads/logo/logo.png">
+  <link rel="apple-touch-icon" href="uploads/logo/logo.png">
+  <style>
+    body { font-family: Arial, sans-serif; background: #111; color: #eee; margin: 0; }
+    .container { max-width: 860px; margin: 0 auto; padding: 32px 16px 48px; }
+    h1, h2 { color: #d4a574; }
+    .card { background: #1b1b1b; border: 1px solid #333; border-radius: 12px; padding: 20px; margin-top: 16px; }
+    label { display: block; margin-bottom: 6px; color: #ccc; font-size: 14px; }
+    select, textarea, button { width: 100%; border-radius: 8px; border: 1px solid #444; background: #0f0f0f; color: #eee; padding: 10px; font-size: 16px; }
+    button { cursor: pointer; background: #d4a574; border-color: #d4a574; color: #1a1713; font-weight: 700; margin-top: 12px; }
+    p, li { line-height: 1.6; color: #ddd; }
+    .help { color: #aaa; font-size: 13px; margin-top: 6px; }
+    .status { margin-top: 12px; font-size: 14px; color: #f5d3a8; }
+    a { color: #d4a574; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Canal LGPD - Direitos do Titular</h1>
+    <div class="card">
+      <p>Use este canal para solicitar acesso, correção, eliminação, oposição ou informações sobre seus dados pessoais, conforme a LGPD.</p>
+      <p class="help">Para enviar solicitações autenticadas no sistema, faça login antes. Se preferir, envie e-mail para <a href="mailto:contato.mustech@gmail.com">contato.mustech@gmail.com</a>.</p>
+
+      <h2>Abrir solicitação</h2>
+      <label for="tipoSolicitacao">Tipo de solicitação</label>
+      <select id="tipoSolicitacao">
+        <option value="acesso">Acesso aos dados</option>
+        <option value="correcao">Correção de dados</option>
+        <option value="portabilidade">Portabilidade</option>
+        <option value="eliminacao">Eliminação de dados</option>
+        <option value="oposicao">Oposição ao tratamento</option>
+      </select>
+
+      <label for="descricaoSolicitacao" style="margin-top:10px">Descrição</label>
+      <textarea id="descricaoSolicitacao" rows="6" placeholder="Descreva com detalhes sua solicitação"></textarea>
+
+      <button id="enviarSolicitacao" type="button">Enviar solicitação</button>
+      <div id="statusSolicitacao" class="status"></div>
+    </div>
+
+    <p><a href="index.html">Voltar para a página inicial</a></p>
+  </div>
+
+  <script>
+    document.getElementById('enviarSolicitacao').addEventListener('click', async function () {
+      const tipo = document.getElementById('tipoSolicitacao').value;
+      const descricao = document.getElementById('descricaoSolicitacao').value.trim();
+      const status = document.getElementById('statusSolicitacao');
+
+      if (!descricao) {
+        status.textContent = 'Descreva a solicitação para continuar.';
+        return;
+      }
+
+      status.textContent = 'Enviando...';
+
+      try {
+        const res = await fetch('bancodedados/usuarios/solicitacoes_privacidade.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ tipo: tipo, descricao: descricao })
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.sucesso) {
+          throw new Error(data.mensagem || 'Não foi possível enviar.');
+        }
+
+        status.textContent = 'Solicitação registrada com sucesso. Protocolo: ' + data.protocolo;
+        document.getElementById('descricaoSolicitacao').value = '';
+      } catch (err) {
+        status.textContent = err.message || 'Erro ao enviar solicitação.';
+      }
+    });
+  </script>
+</body>
+</html>

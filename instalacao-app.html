@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#d4a574">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Instalar App - MustaBarber</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="paginas/tema-claro.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1f1f1f 0%, #141414 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 2rem;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #d4a574, #b8843d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #ffffff;
+            font-size: 1.1rem;
+        }
+
+        .install-card {
+            background: rgba(25, 25, 28, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 165, 116, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .platform-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(212, 165, 116, 0.1);
+        }
+
+        .platform-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #d4a574, #b8843d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #fff;
+        }
+
+        .platform-header h2 {
+            font-size: 1.8rem;
+            color: #ffffff;
+        }
+
+        .steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .step {
+            counter-increment: step-counter;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            background: rgba(25, 25, 28, 0.5);
+            border-radius: 12px;
+            position: relative;
+            padding-left: 4rem;
+        }
+
+        .step::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #d4a574, #b8843d);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .step-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .step-description {
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .step-icon {
+            display: inline-block;
+            margin: 0 0.25rem;
+            color: #d4a574;
+        }
+
+        .note {
+            background: rgba(212, 165, 116, 0.1);
+            border-left: 4px solid #d4a574;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+
+        .note-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #d4a574;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .note-text {
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .btn-install {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #d4a574, #b8843d);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            margin-top: 2rem;
+        }
+
+        .btn-install:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212, 165, 116, 0.4);
+        }
+
+        .btn-install i {
+            font-size: 1.3rem;
+        }
+
+        .benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .benefit-card {
+            background: rgba(25, 25, 28, 0.5);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .benefit-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 1rem;
+            border-radius: 12px;
+            background: rgba(212, 165, 116, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #d4a574;
+        }
+
+        .benefit-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .benefit-text {
+            font-size: 0.9rem;
+            color: #ffffff;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #d4a574;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            color: #c99456;
+            transform: translateX(-5px);
+        }
+
+        /* Responsividade Mobile */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
+
+            .install-card {
+                padding: 1.5rem;
+            }
+
+            .platform-header h2 {
+                font-size: 1.4rem;
+            }
+
+            .platform-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+
+            .step {
+                padding: 1rem;
+                padding-left: 3.5rem;
+            }
+
+            .step::before {
+                width: 30px;
+                height: 30px;
+                left: 1rem;
+                font-size: 1rem;
+            }
+
+            .step-title {
+                font-size: 1rem;
+            }
+
+            .benefits {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-install {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .platform-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .step-title {
+                font-size: 0.95rem;
+            }
+
+            .step-description {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link" id="backLink">
+            <i class="fas fa-arrow-left"></i>
+            Voltar
+        </a>
+
+        <div class="header">
+            <h1>Instalar MustaBarber App</h1>
+            <p>Tenha acesso r&aacute;pido e trabalhe offline</p>
+        </div>
+
+        <div class="benefits">
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="benefit-title">Acesso R&aacute;pido</div>
+                <div class="benefit-text">Abra o app direto da tela inicial</div>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-wifi"></i>
+                </div>
+                <div class="benefit-title">Funciona Offline</div>
+                <div class="benefit-text">Continue trabalhando sem internet</div>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="benefit-title">Notifica&ccedil;&otilde;es</div>
+                <div class="benefit-text">Receba alertas importantes</div>
+            </div>
+        </div>
+
+        <button class="btn-install" id="btnInstall" style="display: none;">
+            <i class="fas fa-download"></i>
+            Instalar Aplicativo
+        </button>
+
+        <!-- Android / Chrome -->
+        <div class="install-card">
+            <div class="platform-header">
+                <div class="platform-icon">
+                    <i class="fab fa-android"></i>
+                </div>
+                <h2>Android / Chrome</h2>
+            </div>
+
+            <ol class="steps">
+                <li class="step">
+                    <div class="step-title">Acesse o site pelo Chrome</div>
+                    <div class="step-description">
+                        Abra o navegador <strong>Google Chrome</strong> no seu celular Android e acesse o MustaBarber.
+                    </div>
+                </li>
+                <li class="step">
+                    <div class="step-title">Toque no menu de op&ccedil;&otilde;es</div>
+                    <div class="step-description">
+                        Clique nos <strong>tr&ecirc;s pontos verticais</strong> <i class="fas fa-ellipsis-v step-icon"></i> no canto superior direito da tela.
+                    </div>
+                </li>
+                <li class="step">
+                    <div class="step-title">Selecione "Adicionar &agrave; tela inicial"</div>
+                    <div class="step-description">
+                        No menu que aparecer, toque em <strong>"Adicionar &agrave; tela inicial"</strong> ou <strong>"Instalar app"</strong>.
+                    </div>
+                </li>
+                <li class="step">
+                    <div class="step-title">Confirme a instala&ccedil;&atilde;o</div>
+                    <div class="step-description">
+                        Uma janela ser&aacute; exibida. Toque em <strong>"Adicionar"</strong> ou <strong>"Instalar"</strong> para confirmar.
+                    </div>
+                </li>
+                <li class="step">
+                    <div class="step-title">Pronto! App instalado</div>
+                    <div class="step-description">
+                        O &iacute;cone do MustaBarber aparecer&aacute; na sua tela inicial. Toque nele para abrir o app.
+                    </div>
+                </li>
+            </ol>
+
+            <div class="note">
+                <div class="note-title">
+                    <i class="fas fa-info-circle"></i>
+                    Observa&ccedil;&atilde;o
+                </div>
+                <div class="note-text">
+                    Se a op&ccedil;&atilde;o "Instalar app" aparecer automaticamente no topo da p&aacute;gina, voc&ecirc; pode clicar diretamente nela para instalar mais rapidamente.
+                </div>
+            </div>
+        </div>
+
+        <!-- iOS / Safari -->
+        <div class="install-card">
+            <div class="platform-header">
+                <div class="platform-icon">
+                    <i class="fab fa-apple"></i>
+                </div>
+                <h2>iOS / Safari</h2>
+            </div>
+
+            <ol class="steps">
+                <li class="step">
+                    <div class="step-title">Acesse o site pelo Safari</div>
+                    <div class="step-description">
+                        Abra o navegador <strong>Safari</strong> (nativo do iPhone/iPad) e acesse o MustaBarber. <br>
+                        <strong>Importante:</strong> N&atilde;o funciona no Chrome do iOS.
+                    </div>
+                </li>
+                <li class="step">
+                    <div class="step-title">Toque no bot&atilde;o "Compartilhar"</div>
+                    <div class="step-description">
+                        Clique no &iacute;cone de <strong>compartilhar</strong> <i class="fas fa-share step-icon"></i> (quadrado com seta para cima) localizado na barra inferior ou superior do Safari.
+                    </div>
+                </li>
+                <li class="step">
+                    <div class="step-title">Selecione "Adicionar &agrave; Tela de In&iacute;cio"</div>
+                    <div class="step-description">
+                        Role o menu de op&ccedil;&otilde;es e toque em <strong>"Adicionar &agrave; Tela de In&iacute;cio"</strong> <i class="fas fa-plus-square step-icon"></i>.
+                    </div>
+                </li>
+                <li class="step">
+                    <div class="step-title">Personalize o nome (opcional)</div>
+                    <div class="step-description">
+                        Voc&ecirc; pode editar o nome do atalho se desejar. Depois, toque em <strong>"Adicionar"</strong> no canto superior direito.
+                    </div>
+                </li>
+                <li class="step">
+                    <div class="step-title">Pronto! App instalado</div>
+                    <div class="step-description">
+                        O &iacute;cone do MustaBarber aparecer&aacute; na sua tela inicial. Toque nele para abrir o app.
+                    </div>
+                </li>
+            </ol>
+
+            <div class="note">
+                <div class="note-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Aten&ccedil;&atilde;o
+                </div>
+                <div class="note-text">
+                    No iOS, a instala&ccedil;&atilde;o de PWA s&oacute; funciona no <strong>Safari</strong>. Se voc&ecirc; estiver usando Chrome, Firefox ou outro navegador, abra o link no Safari primeiro.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // PWA - Instala&ccedil;&atilde;o autom&aacute;tica (Android/Chrome)
+        let deferredPrompt;
+        const btnInstall = document.getElementById('btnInstall');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            btnInstall.style.display = 'inline-flex';
+        });
+
+        btnInstall.addEventListener('click', async () => {
+            if (!deferredPrompt) {
+                alert('A instala&ccedil;&atilde;o autom&aacute;tica n&atilde;o est&aacute; dispon&iacute;vel. Siga as instru&ccedil;&otilde;es acima para instalar manualmente.');
+                return;
+            }
+
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+
+            if (outcome === 'accepted') {
+                console.log('App instalado com sucesso!');
+                btnInstall.style.display = 'none';
+            }
+
+            deferredPrompt = null;
+        });
+
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA instalado com sucesso!');
+            btnInstall.style.display = 'none';
+        });
+
+        // Registrar Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then((registration) => {
+                    console.log('Service Worker registrado:', registration);
+                })
+                .catch((error) => {
+                    console.log('Erro ao registrar Service Worker:', error);
+                });
+        }
+
+        // Definir link de voltar com base na origem
+        (function() {
+            var backLink = document.getElementById('backLink');
+            var params = new URLSearchParams(window.location.search);
+            var origem = params.get('origem');
+            if (origem === 'login') {
+                backLink.href = 'login.html';
+            } else if (origem === 'sistema') {
+                backLink.href = 'paginas/home.php';
+            } else {
+                backLink.href = 'index.html';
+            }
+        })();
+
+        // Aplicar tema salvo no localStorage
+        const temaSalvo = localStorage.getItem('tema');
+        if (temaSalvo === 'claro') {
+            document.body.classList.add('tema-claro');
+        }
+
+        // Observar mudan&ccedil;as no tema
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'class') {
+                    const temAtual = document.body.classList.contains('tema-claro') ? 'claro' : 'escuro';
+                    localStorage.setItem('tema', temAtual);
+                }
+            });
+        });
+
+        observer.observe(document.body, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+    </script>
+</body>
+</html>

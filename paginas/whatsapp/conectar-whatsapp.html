@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conectar WhatsApp</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-card: rgba(25, 26, 33, 0.86);
+      --bd-card: rgba(255,255,255,.12);
+      --text-main: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --accent: #22c55e;
+      --accent-2: #16a34a;
+      --warn: #f59e0b;
+      --error: #ef4444;
+      --ok: #10b981;
+      --fallback: #6b7280;
+      --shadow: 0 18px 48px rgba(0,0,0,.35);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(34,197,94,.12), transparent 44%),
+        radial-gradient(circle at 100% 100%, rgba(20,184,166,.12), transparent 40%),
+        linear-gradient(135deg, #14151b 0%, #101217 100%);
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1.2rem;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .header h1 {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .header p {
+      margin-top: .45rem;
+      color: var(--text-muted);
+      font-size: .95rem;
+      line-height: 1.5;
+      max-width: 760px;
+    }
+
+    .status-pill {
+      padding: .45rem .8rem;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .status-open { background: rgba(16,185,129,.15); border-color: rgba(16,185,129,.3); color: #6ee7b7; }
+    .status-connecting { background: rgba(245,158,11,.14); border-color: rgba(245,158,11,.3); color: #fcd34d; }
+    .status-disconnected { background: rgba(239,68,68,.14); border-color: rgba(239,68,68,.3); color: #fca5a5; }
+    .status-fallback { background: rgba(107,114,128,.2); border-color: rgba(156,163,175,.3); color: #d1d5db; }
+
+    .connection-hero {
+      border-radius: 16px;
+      border: 1px solid var(--bd-card);
+      background: linear-gradient(135deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+      padding: 1rem 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      box-shadow: var(--shadow);
+    }
+
+    .connection-hero-main {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      min-width: 0;
+    }
+
+    .connection-hero-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 1px solid transparent;
+      font-size: .95rem;
+      flex-shrink: 0;
+    }
+
+    .connection-hero-title {
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .connection-hero-subtitle {
+      margin-top: .2rem;
+      color: var(--text-muted);
+      font-size: .86rem;
+      line-height: 1.45;
+    }
+
+    .connection-hero.connected {
+      border-color: rgba(16,185,129,.35);
+      background: linear-gradient(135deg, rgba(16,185,129,.18), rgba(16,185,129,.06));
+    }
+    .connection-hero.connected .connection-hero-icon {
+      color: #bbf7d0;
+      border-color: rgba(16,185,129,.4);
+      background: rgba(16,185,129,.2);
+    }
+
+    .connection-hero.connecting {
+      border-color: rgba(245,158,11,.35);
+      background: linear-gradient(135deg, rgba(245,158,11,.16), rgba(245,158,11,.05));
+    }
+    .connection-hero.connecting .connection-hero-icon {
+      color: #fde68a;
+      border-color: rgba(245,158,11,.4);
+      background: rgba(245,158,11,.2);
+    }
+
+    .connection-hero.disconnected {
+      border-color: rgba(239,68,68,.35);
+      background: linear-gradient(135deg, rgba(239,68,68,.12), rgba(239,68,68,.04));
+    }
+    .connection-hero.disconnected .connection-hero-icon {
+      color: #fecaca;
+      border-color: rgba(239,68,68,.45);
+      background: rgba(239,68,68,.2);
+    }
+
+    .connection-hero.fallback .connection-hero-icon {
+      color: #e5e7eb;
+      border-color: rgba(156,163,175,.4);
+      background: rgba(107,114,128,.2);
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--bd-card);
+      border-radius: 18px;
+      padding: 1.4rem;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    .card h2 {
+      font-size: 1.05rem;
+      margin-bottom: .4rem;
+    }
+
+    .meta {
+      color: var(--text-muted);
+      font-size: .9rem;
+      line-height: 1.5;
+    }
+
+    .instance-name {
+      margin-top: .8rem;
+      font-family: 'Courier New', monospace;
+      font-size: .9rem;
+      color: #86efac;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px;
+      padding: .7rem .85rem;
+      word-break: break-all;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+      margin-top: 1rem;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: .72rem 1rem;
+      font-size: .86rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      transition: transform .15s ease, opacity .2s ease;
+    }
+
+    .btn:disabled { opacity: .6; cursor: wait; transform: none; }
+
+    .btn-primary {
+      color: #062b12;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    }
+
+    .btn-secondary {
+      color: var(--text-main);
+      background: rgba(255,255,255,.09);
+      border: 1px solid rgba(255,255,255,.16);
+    }
+
+    .btn-danger {
+      color: #fecaca;
+      background: rgba(239,68,68,.16);
+      border: 1px solid rgba(239,68,68,.35);
+    }
+
+    .qrcode-wrap {
+      margin-top: 1.1rem;
+      border: 1px dashed rgba(255,255,255,.2);
+      border-radius: 14px;
+      min-height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.2);
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .qrcode-wrap img {
+      width: min(320px, 100%);
+      height: auto;
+      border-radius: 10px;
+      background: #fff;
+      padding: .6rem;
+      box-shadow: 0 10px 26px rgba(0,0,0,.3);
+    }
+
+    .hint {
+      margin-top: .8rem;
+      color: var(--text-muted);
+      font-size: .88rem;
+      line-height: 1.45;
+    }
+
+    .alert {
+      border-radius: 12px;
+      padding: .85rem .95rem;
+      font-size: .86rem;
+      line-height: 1.45;
+      margin-top: .9rem;
+      border: 1px solid transparent;
+      display: none;
+    }
+
+    .alert.show { display: block; }
+    .alert.success { background: rgba(16,185,129,.16); border-color: rgba(16,185,129,.3); color: #bbf7d0; }
+    .alert.error { background: rgba(239,68,68,.16); border-color: rgba(239,68,68,.3); color: #fecaca; }
+    .alert.info { background: rgba(59,130,246,.14); border-color: rgba(59,130,246,.3); color: #bfdbfe; }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(9,10,14,.68);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 9999;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(460px, 100%);
+      background: rgba(25,26,33,.97);
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 1.2rem;
+    }
+
+    .modal-confirm-icon {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto .8rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fecaca;
+      background: rgba(239,68,68,.16);
+      border: 1px solid rgba(239,68,68,.34);
+      font-size: 1.2rem;
+    }
+
+    .modal h3 {
+      text-align: center;
+      font-size: 1.03rem;
+      margin-bottom: .45rem;
+    }
+
+    .modal p {
+      color: var(--text-muted);
+      text-align: center;
+      font-size: .9rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: .7rem;
+    }
+
+    .modal-actions .btn {
+      flex: 1;
+      justify-content: center;
+    }
+
+    @media (max-width: 720px) {
+      body { padding: 1rem; }
+      .header h1 { font-size: 1.3rem; }
+      .connection-hero {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .qrcode-wrap { min-height: 230px; }
+      .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1><i class="fab fa-whatsapp"></i> WhatsApp Exclusivo</h1>
+        <p>Gere automaticamente sua instância, leia o QR Code no seu WhatsApp e use seu próprio número para notificações dos seus clientes. Se remover a instância, o sistema volta para o número padrão do MustaBarber.</p>
+      </div>
+      <span id="status-pill" class="status-pill status-fallback">fallback</span>
+    </div>
+
+    <div id="connection-hero" class="connection-hero fallback">
+      <div class="connection-hero-main">
+        <div class="connection-hero-icon" id="connection-hero-icon">
+          <i class="fas fa-link"></i>
+        </div>
+        <div>
+          <div id="connection-hero-title" class="connection-hero-title">Status da conexão</div>
+          <div id="connection-hero-subtitle" class="connection-hero-subtitle">Carregando status da instância...</div>
+        </div>
+      </div>
+      <span id="connection-hero-pill" class="status-pill status-fallback">verificando</span>
+    </div>
+
+    <div class="card">
+      <h2>Instância do barbeiro</h2>
+      <p id="status-text" class="meta">Carregando status da conexão...</p>
+      <div id="instance-name" class="instance-name" style="display:none"></div>
+
+      <div class="actions">
+        <button id="btn-gerar" class="btn btn-primary" onclick="gerarInstancia()">
+          <i class="fas fa-plus-circle"></i> Gerar instância
+        </button>
+        <button id="btn-atualizar" class="btn btn-secondary" onclick="carregarStatus(true)">
+          <i class="fas fa-rotate"></i> Atualizar status
+        </button>
+        <button id="btn-remover" class="btn btn-danger" onclick="removerInstancia()" style="display:none">
+          <i class="fas fa-trash"></i> Excluir instância
+        </button>
+      </div>
+
+      <div id="alert" class="alert"></div>
+    </div>
+
+    <div class="card">
+      <h2>QR Code para conexão</h2>
+      <div class="qrcode-wrap" id="qrcode-wrap">
+        <div class="meta">Gere uma instância para exibir o QR Code.</div>
+      </div>
+      <p class="hint">Abra o WhatsApp no celular, toque em Dispositivos conectados e leia o QR Code. Assim que conectar, este espaço será atualizado automaticamente.</p>
+    </div>
+  </div>
+
+  <div id="modal-remover-overlay" class="modal-overlay" onclick="fecharModalRemover(event)">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-remover-titulo">
+      <div class="modal-confirm-icon">
+        <i class="fas fa-trash"></i>
+      </div>
+      <h3 id="modal-remover-titulo">Excluir instância do WhatsApp?</h3>
+      <p>Ao excluir, seu número será desconectado e o sistema voltará para o número padrão do MustaBarber.</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="fecharModalRemover()">
+          <i class="fas fa-xmark"></i> Cancelar
+        </button>
+        <button type="button" class="btn btn-danger" onclick="confirmarRemoverInstancia()">
+          <i class="fas fa-trash"></i> Excluir
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let pollingStatus = null;
+    let removendoInstancia = false;
+
+    function mostrarAlerta(tipo, mensagem) {
+      const alert = document.getElementById('alert');
+      alert.className = `alert show ${tipo}`;
+      alert.textContent = mensagem;
+    }
+
+    function limparAlerta() {
+      const alert = document.getElementById('alert');
+      alert.className = 'alert';
+      alert.textContent = '';
+    }
+
+    function setCarregando(ativo) {
+      const btnGerar = document.getElementById('btn-gerar');
+      const btnAtualizar = document.getElementById('btn-atualizar');
+      const btnRemover = document.getElementById('btn-remover');
+
+      btnGerar.disabled = ativo;
+      btnAtualizar.disabled = ativo;
+      btnRemover.disabled = ativo;
+    }
+
+    function setProcessandoGeracao(ativo) {
+      const btnGerar = document.getElementById('btn-gerar');
+      if (!btnGerar) {
+        return;
+      }
+
+      if (!btnGerar.dataset.labelOriginal) {
+        btnGerar.dataset.labelOriginal = btnGerar.innerHTML;
+      }
+
+      if (ativo) {
+        btnGerar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando instância...';
+        return;
+      }
+
+      btnGerar.innerHTML = btnGerar.dataset.labelOriginal;
+    }
+
+    function classeStatus(status) {
+      const valor = (status || 'fallback').toLowerCase();
+      if (valor === 'open' || valor === 'connected') return 'status-open';
+      if (valor === 'connecting' || valor === 'qr' || valor === 'pairing') return 'status-connecting';
+      if (valor === 'fallback') return 'status-fallback';
+      return 'status-disconnected';
+    }
+
+    function labelStatus(status) {
+      const valor = (status || 'fallback').toLowerCase();
+      if (valor === 'open' || valor === 'connected') return 'Conectado';
+      if (valor === 'connecting' || valor === 'qr' || valor === 'pairing') return 'Aguardando conexão';
+      if (valor === 'fallback') return 'Número padrão';
+      if (valor === 'disconnected' || valor === 'close' || valor === 'closed') return 'Desconectado';
+      return 'Desconectado';
+    }
+
+    function atualizarHero(data, status) {
+      const hero = document.getElementById('connection-hero');
+      const icon = document.getElementById('connection-hero-icon');
+      const title = document.getElementById('connection-hero-title');
+      const subtitle = document.getElementById('connection-hero-subtitle');
+      const pill = document.getElementById('connection-hero-pill');
+
+      const statusClasse = classeStatus(status);
+      const statusLabel = labelStatus(status);
+
+      hero.className = 'connection-hero fallback';
+      if (statusClasse === 'status-open') hero.className = 'connection-hero connected';
+      if (statusClasse === 'status-connecting') hero.className = 'connection-hero connecting';
+      if (statusClasse === 'status-disconnected') hero.className = 'connection-hero disconnected';
+
+      pill.className = `status-pill ${statusClasse}`;
+      pill.textContent = statusLabel;
+
+      if (!data.possui_instancia) {
+        icon.innerHTML = '<i class="fas fa-circle-info"></i>';
+        title.textContent = 'Você ainda não conectou seu número';
+        subtitle.textContent = 'Crie uma instância para usar seu WhatsApp próprio. Enquanto isso, o sistema usa o número padrão.';
+        return;
+      }
+
+      if (data.conectada) {
+        icon.innerHTML = '<i class="fas fa-circle-check"></i>';
+        title.textContent = 'WhatsApp conectado com sucesso';
+        subtitle.textContent = 'As notificações deste usuário já estão saindo pelo número próprio da instância.';
+        return;
+      }
+
+      icon.innerHTML = '<i class="fas fa-qrcode"></i>';
+      title.textContent = 'Instância criada, falta conectar';
+      subtitle.textContent = 'Leia o QR Code no celular para ativar o envio pelo seu número.';
+    }
+
+    function desenharQrCode(qrcode) {
+      const wrap = document.getElementById('qrcode-wrap');
+
+      if (!qrcode) {
+        wrap.innerHTML = '<div class="meta">Nenhum QR Code disponível no momento. Clique em "Atualizar status" ou gere novamente.</div>';
+        return;
+      }
+
+      const img = document.createElement('img');
+      img.src = qrcode;
+      img.alt = 'QR Code para conectar WhatsApp';
+
+      wrap.innerHTML = '';
+      wrap.appendChild(img);
+    }
+
+    function atualizarTela(data) {
+      const pill = document.getElementById('status-pill');
+      const statusText = document.getElementById('status-text');
+      const instanceName = document.getElementById('instance-name');
+      const btnRemover = document.getElementById('btn-remover');
+      const btnGerar = document.getElementById('btn-gerar');
+
+      const status = (data.status || 'fallback').toLowerCase();
+      pill.className = `status-pill ${classeStatus(status)}`;
+      pill.textContent = labelStatus(status);
+
+      atualizarHero(data, status);
+
+      if (!data.possui_instancia) {
+        statusText.textContent = 'Sem instância exclusiva cadastrada. O sistema está usando o número padrão do MustaBarber.';
+        instanceName.style.display = 'none';
+        btnRemover.style.display = 'none';
+        btnGerar.style.display = 'inline-flex';
+        desenharQrCode(null);
+        pararPolling();
+        return;
+      }
+
+      instanceName.style.display = 'block';
+      instanceName.textContent = `Instância: ${data.instancia_nome}`;
+      btnRemover.style.display = 'inline-flex';
+      btnGerar.style.display = 'none';
+
+      if (data.conectada) {
+        statusText.textContent = 'Conectado. As notificações desse barbeiro já saem pelo número próprio desta instância.';
+        desenharQrCode(null);
+        pararPolling();
+      } else {
+        statusText.textContent = 'Instância criada, aguardando leitura do QR Code para conectar o número.';
+        desenharQrCode(data.qrcode || null);
+        iniciarPolling();
+      }
+    }
+
+    function iniciarPolling() {
+      if (pollingStatus) return;
+      pollingStatus = setInterval(() => carregarStatus(false), 8000);
+    }
+
+    function pararPolling() {
+      if (!pollingStatus) return;
+      clearInterval(pollingStatus);
+      pollingStatus = null;
+    }
+
+    function abrirModalRemover() {
+      const overlay = document.getElementById('modal-remover-overlay');
+      overlay.classList.add('show');
+    }
+
+    function fecharModalRemover(event, forcar = false) {
+      if (event && event.target !== event.currentTarget) {
+        return;
+      }
+
+      if (removendoInstancia && !forcar) {
+        return;
+      }
+
+      const overlay = document.getElementById('modal-remover-overlay');
+      overlay.classList.remove('show');
+    }
+
+    async function carregarStatus(exibirFeedback) {
+      try {
+        const response = await fetch('../../bancodedados/whatsapp/status_instancia.php', {
+          method: 'GET',
+          credentials: 'include'
+        });
+        const data = await response.json();
+
+        if (!data.sucesso) {
+          throw new Error(data.mensagem || 'Falha ao buscar status.');
+        }
+
+        atualizarTela(data);
+
+        if (exibirFeedback) {
+          mostrarAlerta('info', 'Status atualizado.');
+        }
+      } catch (error) {
+        mostrarAlerta('error', error.message || 'Erro ao carregar status da instância.');
+      }
+    }
+
+    async function gerarInstancia() {
+      limparAlerta();
+      setCarregando(true);
+      setProcessandoGeracao(true);
+      mostrarAlerta('info', 'Estamos processando sua solicitação. Isso pode levar alguns segundos...');
+
+      try {
+        const response = await fetch('../../bancodedados/whatsapp/gerar_instancia.php', {
+          method: 'POST',
+          credentials: 'include'
+        });
+        const data = await response.json();
+
+        if (!data.sucesso) {
+          throw new Error(data.mensagem || 'Não foi possível gerar a instância.');
+        }
+
+        mostrarAlerta('success', 'Instância criada. Leia o QR Code para concluir a conexão.');
+
+        atualizarTela({
+          possui_instancia: true,
+          instancia_nome: data.instancia_nome,
+          status: data.status,
+          conectada: data.conectada,
+          qrcode: data.qrcode
+        });
+
+        if (!data.conectada) {
+          iniciarPolling();
+        }
+      } catch (error) {
+        mostrarAlerta('error', error.message || 'Erro ao gerar instância.');
+      } finally {
+        setProcessandoGeracao(false);
+        setCarregando(false);
+      }
+    }
+
+    async function removerInstancia() {
+      abrirModalRemover();
+    }
+
+    async function confirmarRemoverInstancia() {
+      if (removendoInstancia) {
+        return;
+      }
+
+      removendoInstancia = true;
+
+      limparAlerta();
+      setCarregando(true);
+
+      try {
+        const response = await fetch('../../bancodedados/whatsapp/remover_instancia.php', {
+          method: 'POST',
+          credentials: 'include'
+        });
+        const data = await response.json();
+
+        if (!data.sucesso) {
+          throw new Error(data.mensagem || 'Não foi possível remover a instância.');
+        }
+
+        mostrarAlerta('success', data.mensagem || 'Instância removida com sucesso.');
+        await carregarStatus(false);
+        fecharModalRemover(null, true);
+      } catch (error) {
+        mostrarAlerta('error', error.message || 'Erro ao remover instância.');
+      } finally {
+        removendoInstancia = false;
+        setCarregando(false);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarStatus(false);
+    });
+  </script>
+</body>
+</html>

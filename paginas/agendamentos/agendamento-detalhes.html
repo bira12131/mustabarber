@@ -1,0 +1,2482 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Agendamento - MustaBaber</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../tema-claro.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1f1f1f 0%, #141414 100%);
+            color: #e8e8e8;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: rgba(25, 25, 28, 0.5);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .page-header h1 {
+            color: #e8e8e8;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-voltar {
+            background: rgba(255, 255, 255, 0.2);
+            color: #e8e8e8;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-voltar:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: #e8e8e8;
+        }
+
+        /* Conte&uacute;do Principal */
+        .detalhes-content {
+            background: linear-gradient(135deg, #1f1f1f 0%, #141414 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-section-title {
+            color: #e8e8e8;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+
+        .modal-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .modal-info-label {
+            color: #e8e8e8;
+            font-size: 0.875rem;
+        }
+
+        .modal-info-value {
+            color: #e8e8e8;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .servicos-modal-list {
+            background: rgba(45, 37, 32, 0.5);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .servico-modal-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            color: #e8e8e8;
+        }
+
+        .servico-modal-item:not(:last-child) {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .servico-modal-valor {
+            color: #e8e8e8;
+            font-weight: 600;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(45, 37, 32, 0.3);
+        }
+
+        .cancelamento-section {
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .cancelamento-title {
+            color: #ef4444;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #e8e8e8;
+        }
+
+        .checkbox-group label {
+            color: #e8e8e8;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .textarea-cancelamento {
+            width: 100%;
+            background: rgba(25, 25, 28, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: #e8e8e8;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.875rem;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .textarea-cancelamento::placeholder {
+            color: #e8e8e8;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-modal {
+            flex: 1;
+            min-width: 150px;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-cancelar {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-cancelar:hover:not(:disabled) {
+            background: rgba(239, 68, 68, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-concluir {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+        }
+
+        .btn-concluir:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-modal:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Lista de servi&ccedil;os no modal de altera&ccedil;&atilde;o */
+        .servico-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+
+        .servico-lista-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: rgba(45, 37, 32, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .servico-lista-item:hover {
+            border-color: rgba(245, 158, 11, 0.5);
+            background: rgba(245, 158, 11, 0.08);
+        }
+
+        .servico-lista-item.selecionado {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.15);
+        }
+
+        .servico-lista-item .srv-nome {
+            font-weight: 600;
+            color: #e8e8e8;
+            font-size: 0.9rem;
+        }
+
+        .servico-lista-item .srv-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.2rem;
+        }
+
+        .servico-lista-item .srv-preco {
+            color: #f59e0b;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .servico-lista-item .srv-duracao {
+            color: #9ca3af;
+            font-size: 0.75rem;
+        }
+
+        /* Se&ccedil;&atilde;o de Produtos */
+        .produtos-section {
+            background: rgba(45, 37, 32, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .add-produto-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .produto-select {
+            flex: 1;
+            min-width: 150px;
+            background: rgba(25, 25, 28, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 0.625rem;
+            color: #e8e8e8;
+            font-size: 0.875rem;
+        }
+
+        .produto-input {
+            width: 80px;
+            background: rgba(25, 25, 28, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 0.625rem;
+            color: #e8e8e8;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+
+        .btn-add-produto {
+            padding: 0.625rem 1rem;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-add-produto:hover {
+            background: rgba(16, 185, 129, 0.3);
+        }
+
+        .produtos-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .produto-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: rgba(26, 24, 22, 0.6);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .produto-item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            flex: 1;
+        }
+
+        .produto-item-nome {
+            color: #e8e8e8;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .produto-item-detalhes {
+            color: #e8e8e8;
+            font-size: 0.75rem;
+        }
+
+        .produto-item-valor {
+            color: #e8e8e8;
+            font-weight: 700;
+            font-size: 1rem;
+            margin: 0 1rem;
+        }
+
+        .btn-remove-produto {
+            padding: 0.5rem;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
+
+        .btn-remove-produto:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .produtos-empty {
+            text-align: center;
+            color: #e8e8e8;
+            padding: 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Forma de Pagamento */
+        .pagamento-section {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .pagamento-title {
+            color: #10b981;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pagamento-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .pagamento-option {
+            position: relative;
+        }
+
+        .pagamento-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .pagamento-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: rgba(25, 25, 28, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #e8e8e8;
+            font-size: 0.875rem;
+        }
+
+        .pagamento-option input[type="radio"]:checked + .pagamento-label {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        .pagamento-label:hover {
+            border-color: #e8e8e8;
+        }
+
+        .valor-total-final {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .valor-total-final-label {
+            color: #e8e8e8;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .valor-total-final-valor {
+            color: #e8e8e8;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .valor-editavel-input {
+            width: 100%;
+            background: rgba(25, 25, 28, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 0.625rem 0.75rem;
+            color: #e8e8e8;
+            font-size: 0.95rem;
+        }
+
+        .valor-editavel-help {
+            margin-top: 0.45rem;
+            color: #e8e8e8;
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        /* Modal de Confirma&ccedil;&atilde;o */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-custom {
+            background: linear-gradient(135deg, #1f1f1f 0%, #141414 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            animation: slideDown 0.3s;
+        }
+
+        .modal-header-custom {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .modal-title {
+            color: #e8e8e8;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-body-custom {
+            padding: 1.5rem;
+            color: #e8e8e8;
+            line-height: 1.6;
+        }
+
+        .modal-footer-custom {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Mantém o modal de finalizar usável em telas baixas */
+        #modalFinalizar.active {
+            align-items: flex-start;
+            overflow-y: auto;
+            padding: 1rem 0;
+        }
+
+        #modalFinalizar .modal-custom {
+            max-height: calc(100vh - 2rem);
+            display: flex;
+            flex-direction: column;
+            margin: auto;
+        }
+
+        #modalFinalizar .modal-body-custom {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        #modalFinalizar .modal-footer-custom {
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #1f1f1f 0%, #141414 100%);
+        }
+
+        .btn-modal-action {
+            flex: 1;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-modal-cancel {
+            background: rgba(255, 255, 255, 0.2);
+            color: #e8e8e8;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-modal-cancel:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-modal-confirm {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+        }
+
+        .btn-modal-confirm:hover {
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-voltar-agendamento {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #fff;
+            border: none;
+        }
+
+        .btn-voltar-agendamento:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+
+        .alert-status-finalizado {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            color: #10b981;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-status-cancelado {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            color: #ef4444;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .page-header h1 {
+                font-size: 1.25rem;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .btn-modal {
+                width: 100%;
+            }
+
+            #modalFinalizar.active {
+                padding: 0.5rem 0;
+            }
+
+            #modalFinalizar .modal-custom {
+                max-height: calc(100vh - 1rem);
+                width: 94%;
+            }
+
+            #modalFinalizar .modal-footer-custom {
+                padding: 1rem;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-calendar-check"></i> Detalhes do Agendamento</h1>
+            <a href="agendamentos.html" class="btn-voltar" id="btnVoltarPagina">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+
+        <div class="detalhes-content">
+            <div class="modal-body">
+                <!-- Informa&ccedil;&otilde;es do Cliente -->
+                <div class="modal-section">
+                    <div class="modal-section-title"><i class="fas fa-user"></i> Cliente</div>
+                    <div class="modal-info-row">
+                        <span class="modal-info-label">Nome</span>
+                        <span class="modal-info-value" id="modalClienteNome">-</span>
+                    </div>
+                    <div class="modal-info-row">
+                        <span class="modal-info-label">Telefone</span>
+                        <span class="modal-info-value" id="modalClienteTelefone">-</span>
+                    </div>
+                </div>
+
+                <!-- Informa&ccedil;&otilde;es do Agendamento -->
+                <div class="modal-section">
+                    <div class="modal-section-title"><i class="fas fa-calendar-alt"></i> Agendamento</div>
+                    <div class="modal-info-row">
+                        <span class="modal-info-label">Data</span>
+                        <span class="modal-info-value" id="modalData">-</span>
+                    </div>
+                    <div class="modal-info-row">
+                        <span class="modal-info-label">Hor&aacute;rio</span>
+                        <span class="modal-info-value" id="modalHora">-</span>
+                    </div>
+                    <div class="modal-info-row">
+                        <span class="modal-info-label">Barbeiro</span>
+                        <span class="modal-info-value" id="modalBarbeiro">-</span>
+                    </div>
+                    <div class="modal-info-row">
+                        <span class="modal-info-label">Status</span>
+                        <span class="modal-info-value" id="modalStatus">-</span>
+                    </div>
+                </div>
+
+                <!-- Servi&ccedil;os -->
+                <div class="modal-section">
+                    <div class="modal-section-title"><i class="fas fa-scissors"></i> Servi&ccedil;os</div>
+                    <div class="servicos-modal-list" id="modalServicos">
+                        <!-- Servi&ccedil;os ser&atilde;o carregados aqui -->
+                    </div>
+                </div>
+
+                <!-- Produtos Adicionais -->
+                <div class="modal-section">
+                    <div class="modal-section-title"><i class="fas fa-shopping-bag"></i> Produtos Comprados</div>
+                    <div class="produtos-section">
+                        <div class="produtos-list" id="produtosList">
+                            <div class="produtos-empty">Nenhum produto adicionado</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Valor Total -->
+                <div class="modal-section">
+                    <div class="valor-total-final">
+                        <span class="valor-total-final-label">Valor Total</span>
+                        <span class="valor-total-final-valor" id="modalValorTotal">R$ 0,00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <!-- Alerta para agendamentos finalizados ou cancelados -->
+                <div id="alertStatusFinalizado" class="alert-status-finalizado" style="display: none;">
+                    <i class="fas fa-check-circle" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <strong>Agendamento Finalizado</strong><br>
+                        <small>Este agendamento j&aacute; foi conclu&iacute;do. Para modificar, clique em "Voltar Agendamento".</small>
+                    </div>
+                </div>
+
+                <div id="alertStatusCancelado" class="alert-status-cancelado" style="display: none;">
+                    <i class="fas fa-times-circle" style="font-size: 1.5rem;"></i>
+                    <div>
+                        <strong>Agendamento Cancelado</strong><br>
+                        <small>Este agendamento foi cancelado. Para reabrir, clique em "Voltar Agendamento".</small>
+                    </div>
+                </div>
+
+                <!-- Bot&otilde;es de A&ccedil;&atilde;o -->
+                <div class="modal-actions" id="botoesAcaoPadrao">
+                    <button class="btn-modal btn-cancelar" id="btnCancelarAgendamento">
+                        <i class="fas fa-ban"></i>
+                        Cancelar Agendamento
+                    </button>
+                    <button class="btn-modal" id="btnAlterarHorario" style="background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.3);">
+                        <i class="fas fa-clock"></i>
+                        Alterar Hor&aacute;rio
+                    </button>
+                    <button class="btn-modal" id="btnAlterarServico" style="background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.3);">
+                        <i class="fas fa-scissors"></i>
+                        Alterar Servi&ccedil;o
+                    </button>
+                    <button class="btn-modal btn-concluir" id="btnConcluirAgendamento">
+                        <i class="fas fa-check-double"></i>
+                        Finalizar Atendimento
+                    </button>
+                </div>
+
+                <!-- Bot&atilde;o para voltar agendamento (aparece apenas se status for 4 ou 5) -->
+                <div class="modal-actions" id="botoesVoltarAgendamento" style="display: none;">
+                    <button class="btn-modal btn-voltar-agendamento" id="btnVoltarAgendamento">
+                        <i class="fas fa-undo"></i>
+                        Voltar Agendamento
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modais de Confirma&ccedil;&atilde;o -->
+    <div class="modal-overlay" id="modalConfirmacao">
+        <div class="modal-custom">
+            <div class="modal-header-custom">
+                <h2 class="modal-title"><i class="fas fa-exclamation-circle"></i> Confirma&ccedil;&atilde;o</h2>
+            </div>
+            <div class="modal-body-custom" id="modalConfirmacaoMensagem"></div>
+            <div class="modal-footer-custom">
+                <button class="btn-modal-action btn-modal-cancel" onclick="fecharModalConfirmacao()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn-modal-action btn-modal-confirm" id="btnConfirmarAcao">
+                    <i class="fas fa-check"></i> Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Finalizar Atendimento -->
+    <div class="modal-overlay" id="modalFinalizar">
+        <div class="modal-custom" style="max-width: 600px;">
+            <div class="modal-header-custom">
+                <h2 class="modal-title"><i class="fas fa-check-circle"></i> Finalizar Atendimento</h2>
+            </div>
+            <div class="modal-body-custom">
+                <!-- Se&ccedil;&atilde;o de Produtos -->
+                <div class="modal-section">
+                    <div class="modal-section-title">Adicionar Produtos (Opcional)</div>
+                    <div class="add-produto-form">
+                        <select id="selectProdutoModal" class="produto-select">
+                            <option value="">Selecione um produto</option>
+                        </select>
+                        <input type="number" id="qtdProdutoModal" class="produto-input" placeholder="Qtd" min="1" value="1">
+                        <button id="btnAddProdutoModal" class="btn-add-produto">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <div id="listaProdutosModal" class="produtos-list"></div>
+                </div>
+
+                <!-- Forma de Pagamento -->
+                <div class="modal-section">
+                    <div class="modal-section-title">Forma de Pagamento*</div>
+                    <div class="pagamento-options">
+                        <div class="pagamento-option">
+                            <input type="radio" name="formaPagamentoModal" id="dinheiro-modal" value="dinheiro">
+                            <label class="pagamento-label" for="dinheiro-modal">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <span>Dinheiro</span>
+                            </label>
+                        </div>
+                        <div class="pagamento-option">
+                            <input type="radio" name="formaPagamentoModal" id="debito-modal" value="debito">
+                            <label class="pagamento-label" for="debito-modal">
+                                <i class="fas fa-credit-card"></i>
+                                <span>D&eacute;bito</span>
+                            </label>
+                        </div>
+                        <div class="pagamento-option">
+                            <input type="radio" name="formaPagamentoModal" id="credito-modal" value="credito">
+                            <label class="pagamento-label" for="credito-modal">
+                                <i class="fas fa-credit-card"></i>
+                                <span>Cr&eacute;dito</span>
+                            </label>
+                        </div>
+                        <div class="pagamento-option">
+                            <input type="radio" name="formaPagamentoModal" id="pix-modal" value="pix">
+                            <label class="pagamento-label" for="pix-modal">
+                                <i class="fas fa-qrcode"></i>
+                                <span>PIX</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-section" id="planoInfoSection" style="display:none;">
+                    <div style="background: rgba(59,130,246,.12); border:1px solid rgba(59,130,246,.28); border-radius:10px; padding:.65rem .8rem; color:#bfdbfe; font-size:.84rem; line-height:1.45;">
+                        <div style="font-weight:700; margin-bottom:.25rem;"><i class="fas fa-crown" style="margin-right:.35rem;"></i>Agendamento de plano</div>
+                        <div id="planoInfoTexto">Este atendimento faz parte de um plano.</div>
+                    </div>
+                </div>
+
+                <!-- Valor do Servico -->
+                <div class="modal-section">
+                    <div class="modal-section-title">Valor do Servi&ccedil;o</div>
+                    <input
+                        type="number"
+                        id="valorServicoModal"
+                        class="valor-editavel-input"
+                        min="0"
+                        step="0.01"
+                        placeholder="0,00"
+                    >
+                    <div class="valor-editavel-help">Use este campo quando o cliente pagar um valor diferente do servi&ccedil;o original.</div>
+                </div>
+
+                <!-- Valor Total -->
+                <div class="valor-total-final">
+                    <span class="valor-total-final-label">Valor Total:</span>
+                    <span class="valor-total-final-valor" id="valorTotalModal">R$ 0,00</span>
+                </div>
+            </div>
+            <div class="modal-footer-custom">
+                <button class="btn-modal-action btn-modal-cancel" onclick="fecharModalFinalizar()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn-modal-action btn-modal-confirm" id="btnConfirmarFinalizar">
+                    <i class="fas fa-check"></i> Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Cancelar Agendamento -->
+    <div class="modal-overlay" id="modalCancelar">
+        <div class="modal-custom">
+            <div class="modal-header-custom">
+                <h2 class="modal-title"><i class="fas fa-times-circle"></i> Cancelar Agendamento</h2>
+            </div>
+            <div class="modal-body-custom">
+                <div class="checkbox-group" style="margin-bottom: 1rem;">
+                    <input type="checkbox" id="checkFecharHorarioModal">
+                    <label for="checkFecharHorarioModal">Fechar este hor&aacute;rio (n&atilde;o permitir novos agendamentos)</label>
+                </div>
+                <textarea 
+                    class="textarea-cancelamento" 
+                    id="motivoCancelamentoModal" 
+                    placeholder="Motivo do cancelamento (opcional)..."
+                    style="width: 100%; min-height: 100px; padding: 0.75rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(45, 37, 32, 0.5); color: #e8e8e8; resize: vertical;"
+                ></textarea>
+            </div>
+            <div class="modal-footer-custom">
+                <button class="btn-modal-action btn-modal-cancel" onclick="fecharModalCancelar()">
+                    <i class="fas fa-times"></i> Voltar
+                </button>
+                <button class="btn-modal-action btn-modal-confirm" id="btnConfirmarCancelar" style="background: rgba(239, 68, 68, 0.8);">
+                    <i class="fas fa-ban"></i> Confirmar Cancelamento
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Reabrir Hor&aacute;rio (s&oacute; aparece se h&aacute; bloqueio) -->
+    <div class="modal-overlay" id="modalReabrirHorario">
+        <div class="modal-custom">
+            <div class="modal-header-custom">
+                <h2 class="modal-title"><i class="fas fa-clock"></i> Voltar Agendamento</h2>
+            </div>
+            <div class="modal-body-custom">
+                <p style="margin-bottom: 1.5rem;">Voltar agendamento do hor&aacute;rio <strong id="horario-bloqueado-texto" style="color: #e8e8e8;"></strong>?</p>
+                
+                <div style="background: rgba(255, 255, 255, 0.15); padding: 1rem; border-radius: 8px; border-left: 3px solid #e8e8e8; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.75rem;">
+                        <input type="checkbox" id="desbloquear-horario-voltar" style="width: 18px; height: 18px; cursor: pointer; margin-top: 2px;">
+                        <label for="desbloquear-horario-voltar" style="cursor: pointer; margin: 0; font-weight: 600; flex: 1;">
+                            Remover bloqueio do hor&aacute;rio
+                        </label>
+                    </div>
+                    
+                    <div style="display: flex; align-items: flex-start; gap: 0.75rem; padding-left: 26px;">
+                        <input type="checkbox" id="desbloquear-todos-dias-voltar" style="width: 18px; height: 18px; cursor: pointer; margin-top: 2px;">
+                        <div style="flex: 1;">
+                            <label for="desbloquear-todos-dias-voltar" style="cursor: pointer; margin: 0; font-weight: 600; display: block;">
+                                Remover em todos os dias futuros
+                            </label>
+                            <small style="color: #e8e8e8; display: block; margin-top: 0.25rem;">
+                                Remove o bloqueio deste hor&aacute;rio em todas as datas futuras
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                
+                <p style="font-size: 0.875rem; color: #e8e8e8; margin: 0;">
+                    <i class="fas fa-info-circle"></i> Se n&atilde;o marcar a op&ccedil;&atilde;o acima, o hor&aacute;rio permanecer&aacute; bloqueado (se houver bloqueio).
+                </p>
+            </div>
+            <div class="modal-footer-custom">
+                <button class="btn-modal-action btn-modal-cancel" onclick="fecharModalReabrirHorario()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn-modal-action btn-modal-confirm" onclick="confirmarVoltarAgendamento()">
+                    <i class="fas fa-undo"></i> Voltar Agendamento
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Alterar Hor&aacute;rio -->
+    <div class="modal-overlay" id="modalAlterarHorario">
+        <div class="modal-custom">
+            <div class="modal-header-custom">
+                <h2 class="modal-title"><i class="fas fa-clock"></i> Alterar Hor&aacute;rio</h2>
+            </div>
+            <div class="modal-body-custom">
+                <p style="margin-bottom:1.25rem;color:#e8e8e8;">Selecione a nova data e o novo hor&aacute;rio para este agendamento.</p>
+
+                <div style="display:flex;flex-direction:column;gap:1rem;">
+                    <div>
+                        <label style="display:block;margin-bottom:.5rem;font-weight:600;color:#e8e8e8;">
+                            <i class="fas fa-calendar" style="margin-right:.4rem;color:#f59e0b;"></i>Nova data
+                        </label>
+                        <input type="date" id="alterarNovaData"
+                               style="width:auto;min-width:160px;padding:.6rem .9rem;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(45,37,32,.5);color:#e8e8e8;font-size:.95rem;"
+                               onchange="carregarHorariosParaAlteracao(this.value)">
+                    </div>
+
+                    <div>
+                        <label style="display:block;margin-bottom:.5rem;font-weight:600;color:#e8e8e8;">
+                            <i class="fas fa-clock" style="margin-right:.4rem;color:#f59e0b;"></i>Novo hor&aacute;rio
+                        </label>
+                        <div id="alterarHorariosContainer" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:.5rem;max-height:220px;overflow-y:auto;"></div>
+                        <p id="alterarHorariosMensagem" style="color:#e8e8e8;font-size:.875rem;margin-top:.5rem;display:none;"></p>
+                        <p style="color:#b8b2a8;font-size:.8rem;margin-top:.65rem;">
+                            <i class="fas fa-circle" style="font-size:.5rem;color:#f59e0b;margin-right:.35rem;"></i>Hor&aacute;rios em laranja j&aacute; possuem agendamento, mas podem ser selecionados mediante confirma&ccedil;&atilde;o.
+                        </p>
+                    </div>
+                </div>
+
+                <input type="hidden" id="alterarHorarioSelecionado">
+            </div>
+            <div class="modal-footer-custom">
+                <button class="btn-modal-action btn-modal-cancel" onclick="fecharModalAlterarHorario()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn-modal-action btn-modal-confirm" id="btnConfirmarAlterarHorario"
+                        onclick="confirmarAlteracaoHorario()" disabled
+                        style="opacity:.5;cursor:not-allowed;">
+                    <i class="fas fa-check"></i> Confirmar Altera&ccedil;&atilde;o
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Alterar Servi&ccedil;o -->
+    <div class="modal-overlay" id="modalAlterarServico">
+        <div class="modal-custom">
+            <div class="modal-header-custom">
+                <h2 class="modal-title"><i class="fas fa-scissors"></i> Alterar Servi&ccedil;o</h2>
+            </div>
+            <div class="modal-body-custom">
+                <p style="margin-bottom:1.25rem;color:#e8e8e8;">Selecione o novo servi&ccedil;o para este agendamento.</p>
+                <div class="servico-lista" id="servicosAlterarLista"></div>
+                <p id="servicosAlterarMensagem" style="color:#9ca3af;font-size:.875rem;margin-top:.75rem;display:none;"></p>
+                <input type="hidden" id="servicoAlterarSelecionado">
+            </div>
+            <div class="modal-footer-custom">
+                <button class="btn-modal-action btn-modal-cancel" onclick="fecharModalAlterarServico()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn-modal-action btn-modal-confirm" id="btnConfirmarAlterarServico"
+                        onclick="confirmarAlteracaoServico()" disabled
+                        style="opacity:.5;cursor:not-allowed;background:linear-gradient(135deg,#8b5cf6,#7c3aed);">
+                    <i class="fas fa-check"></i> Confirmar Altera&ccedil;&atilde;o
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Conflito de Horário -->
+    <div class="modal-overlay" id="modalConflitoHorario">
+        <div class="modal-custom">
+            <div class="modal-header-custom" style="border-left:4px solid #f59e0b;">
+                <h2 class="modal-title"><i class="fas fa-exclamation-triangle" style="color:#f59e0b;"></i> Conflito de Hor&aacute;rio</h2>
+            </div>
+            <div class="modal-body-custom">
+                <p style="margin-bottom:1rem;">O servi&ccedil;o agendado terminar&aacute; &agrave;s <strong id="conflitoFimServico" style="color:#f59e0b;"></strong>, mas o pr&oacute;ximo agendamento come&ccedil;a antes:</p>
+
+                <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:8px;padding:1rem;margin-bottom:1rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;">
+                        <span style="font-weight:600;color:#e8e8e8;" id="conflitoClienteNome"></span>
+                        <span style="font-size:.8rem;color:#aaa;" id="conflitoServico"></span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:.75rem;">
+                        <span style="color:#ef4444;font-weight:700;" id="conflitoHorarioAtual"></span>
+                        <i class="fas fa-arrow-right" style="color:#aaa;"></i>
+                        <span style="color:#10b981;font-weight:700;" id="conflitoHorarioNovo"></span>
+                    </div>
+                </div>
+
+                <p style="font-size:.875rem;color:#aaa;">Se confirmar, o hor&aacute;rio desse cliente tamb&eacute;m ser&aacute; ajustado e ele receber&aacute; uma notifica&ccedil;&atilde;o via WhatsApp.</p>
+            </div>
+            <div class="modal-footer-custom">
+                <button class="btn-modal-action btn-modal-cancel" onclick="fecharModalConflitoHorario()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn-modal-action btn-modal-confirm" id="btnConfirmarConflito"
+                        onclick="confirmarComConflito()"
+                        style="background:linear-gradient(135deg,#f59e0b,#d97706);">
+                    <i class="fas fa-check"></i> Confirmar os dois
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação - Horário já ocupado por outro agendamento -->
+    <div class="modal-overlay" id="modalHorarioOcupado">
+        <div class="modal-custom">
+            <div class="modal-header-custom" style="border-left:4px solid #f59e0b;">
+                <h2 class="modal-title"><i class="fas fa-exclamation-triangle" style="color:#f59e0b;"></i> Hor&aacute;rio j&aacute; agendado</h2>
+            </div>
+            <div class="modal-body-custom">
+                <p style="margin-bottom:1rem;">J&aacute; existe um agendamento marcado para <strong id="horarioOcupadoHora" style="color:#f59e0b;"></strong> no dia <strong id="horarioOcupadoData" style="color:#f59e0b;"></strong>:</p>
+
+                <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:8px;padding:1rem;margin-bottom:1rem;">
+                    <span style="font-weight:600;color:#e8e8e8;" id="horarioOcupadoCliente"></span>
+                </div>
+
+                <p style="font-size:.875rem;color:#aaa;">Deseja mesmo assim mover este agendamento para esse hor&aacute;rio? Os dois atendimentos ficar&atilde;o marcados ao mesmo tempo.</p>
+            </div>
+            <div class="modal-footer-custom">
+                <button class="btn-modal-action btn-modal-cancel" onclick="fecharModalHorarioOcupado()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn-modal-action btn-modal-confirm" id="btnConfirmarHorarioOcupado"
+                        onclick="confirmarComHorarioOcupado()"
+                        style="background:linear-gradient(135deg,#f59e0b,#d97706);">
+                    <i class="fas fa-check"></i> Sim, agendar mesmo assim
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Vari&aacute;veis globais
+        let produtosAdicionados = [];
+        let agendamentoAtual = null;
+        let agendamentoId = null;
+        let barbeiroLogado = null;
+        let callbackConfirmacao = null;
+        let confirmarBloqueioHorario = false;
+        let _pendingConflito = null; // guarda dados do conflito aguardando confirmação
+        let _pendingHorarioOcupado = null; // guarda dados de horário ocupado aguardando confirmação
+        const pageParams = new URLSearchParams(window.location.search);
+        let abrirRemarcacaoDireta = pageParams.get('acao') === 'remarcar';
+
+        function getReturnPageUrl() {
+            const origem = pageParams.get('origem');
+            const basePage = origem === 'agenda' ? 'agenda-visualizacao.html' : 'agendamentos.html';
+
+            if (origem !== 'agenda') {
+                return basePage;
+            }
+
+            const returnParams = new URLSearchParams();
+            const codBarbeiro = pageParams.get('cod_barbeiro');
+            if (codBarbeiro) {
+                returnParams.set('cod_barbeiro', codBarbeiro);
+            }
+
+            const query = returnParams.toString();
+            return query ? `${basePage}?${query}` : basePage;
+        }
+
+        const returnPageUrl = getReturnPageUrl();
+
+        function redirectToReturnPage(delayMs = 0) {
+            if (delayMs > 0) {
+                setTimeout(() => {
+                    window.location.href = returnPageUrl;
+                }, delayMs);
+                return;
+            }
+
+            window.location.href = returnPageUrl;
+        }
+
+        // Obter c&oacute;digo do agendamento da URL
+        document.addEventListener('DOMContentLoaded', function() {
+            agendamentoId = pageParams.get('codigo');
+
+            const btnVoltar = document.getElementById('btnVoltarPagina');
+            if (btnVoltar) {
+                btnVoltar.href = returnPageUrl;
+            }
+
+            if (!agendamentoId) {
+                showNotification('C&oacute;digo do agendamento n&atilde;o fornecido', 'error');
+                redirectToReturnPage(2000);
+                return;
+            }
+
+            // Primeiro obter dados do barbeiro logado
+            obterBarbeiroLogado();
+        });
+
+        // Obter dados do barbeiro logado via sess&atilde;o
+        async function obterBarbeiroLogado() {
+            try {
+                const response = await fetch('../../bancodedados/usuarios/sessao.php?action=get_user');
+                const data = await response.json();
+                
+                if (data.success && data.usuario) {
+                    barbeiroLogado = data.usuario;
+                    carregarDetalhesAgendamento();
+                    adicionarEventListeners();
+                } else {
+                    showNotification('Erro ao obter dados do barbeiro logado', 'error');
+                    setTimeout(() => {
+                        window.location.href = '../../login.html';
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error('Erro ao obter barbeiro logado:', error);
+                showNotification('Erro ao verificar sess&atilde;o: ' + error.message, 'error');
+                setTimeout(() => {
+                    window.location.href = '../../login.html';
+                }, 2000);
+            }
+        }
+
+        // Carregar detalhes do agendamento
+        async function carregarDetalhesAgendamento() {
+            try {
+                const response = await fetch(`../../bancodedados/agendamentos/listar_agendamento.php?codigo=${agendamentoId}&cod_barbeiro=${barbeiroLogado.codigo}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                
+                const data = await response.json();
+
+                if (!data.sucesso || !data.agendamentos || data.agendamentos.length === 0) {
+                    showNotification(data.mensagem || 'Agendamento n&atilde;o encontrado', 'error');
+                    return;
+                }
+
+                const agendamento = data.agendamentos[0];
+                console.log('Agendamento carregado:', agendamento);
+                agendamentoAtual = agendamento;
+                preencherFormulario(agendamento);
+                renderizarServicos(agendamento.servicos);
+                calcularValorServicos(agendamento);
+
+                if (abrirRemarcacaoDireta) {
+                    abrirRemarcacaoDireta = false;
+                    abrirModalAlterarHorario();
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showNotification('Erro ao carregar detalhes do agendamento: ' + error.message, 'error');
+            }
+        }
+
+        // Preencher formul&aacute;rio com dados do agendamento
+        function preencherFormulario(agendamento) {
+            document.getElementById('modalClienteNome').textContent = agendamento.cliente_nome || '-';
+            document.getElementById('modalClienteTelefone').textContent = agendamento.cliente_telefone || '-';
+            document.getElementById('modalData').textContent = agendamento.data_formatada || agendamento.data_agendamento || '-';
+            document.getElementById('modalHora').textContent = agendamento.hora_formatada || (agendamento.horario ? agendamento.horario.substring(0, 5) : '-') || '-';
+            document.getElementById('modalBarbeiro').textContent = agendamento.barbeiro_nome || '-';
+            document.getElementById('modalStatus').textContent = agendamento.status_nome || '-';
+            
+            // Verificar status e ajustar interface
+            const statusCodigo = parseInt(agendamento.codigo_status);
+            controlarBotoesPorStatus(statusCodigo);
+        }
+        
+        // Controlar vis&atilde;o dos bot&otilde;es baseado no status
+        function controlarBotoesPorStatus(statusCodigo) {
+            const botoesAcaoPadrao = document.getElementById('botoesAcaoPadrao');
+            const botoesVoltarAgendamento = document.getElementById('botoesVoltarAgendamento');
+            const alertFinalizado = document.getElementById('alertStatusFinalizado');
+            const alertCancelado = document.getElementById('alertStatusCancelado');
+            
+            // Status 4 = Finalizado, Status 5 = Cancelado
+            if (statusCodigo === 4 || statusCodigo === 5) {
+                // Esconder bot&otilde;es padr&atilde;o
+                botoesAcaoPadrao.style.display = 'none';
+                
+                // Mostrar bot&atilde;o de voltar agendamento
+                botoesVoltarAgendamento.style.display = 'flex';
+                
+                // Mostrar alerta apropriado
+                if (statusCodigo === 4) {
+                    alertFinalizado.style.display = 'flex';
+                    alertCancelado.style.display = 'none';
+                } else {
+                    alertFinalizado.style.display = 'none';
+                    alertCancelado.style.display = 'flex';
+                }
+            } else {
+                // Mostrar bot&otilde;es padr&atilde;o
+                botoesAcaoPadrao.style.display = 'flex';
+                botoesVoltarAgendamento.style.display = 'none';
+                alertFinalizado.style.display = 'none';
+                alertCancelado.style.display = 'none';
+            }
+        }
+
+        // Renderizar servi&ccedil;os
+        function renderizarServicos(servicos) {
+            const container = document.getElementById('modalServicos');
+            container.innerHTML = '';
+            
+            if (!servicos || servicos.length === 0) {
+                container.innerHTML = '<div style="color: #e8e8e8; padding: 1rem;">Nenhum servi&ccedil;o associado</div>';
+                return;
+            }
+
+            servicos.forEach(servico => {
+                const div = document.createElement('div');
+                div.className = 'servico-modal-item';
+                div.innerHTML = `
+                    <span>${servico.nome}</span>
+                    <span class="servico-modal-valor">R$ ${parseFloat(servico.valor).toFixed(2).replace('.', ',')}</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Calcular valor dos servi&ccedil;os
+        function calcularValorServicos(agendamento) {
+            const valorServicos = agendamento.valor || 0;
+            document.getElementById('modalValorTotal').textContent = `R$ ${parseFloat(valorServicos).toFixed(2).replace('.', ',')}`;
+        }
+
+        // Renderizar produtos
+        function renderizarProdutos() {
+            const container = document.getElementById('produtosList');
+            
+            if (produtosAdicionados.length === 0) {
+                container.innerHTML = '<div class="produtos-empty">Nenhum produto adicionado</div>';
+                calcularValorTotal();
+                return;
+            }
+
+            container.innerHTML = produtosAdicionados.map((produto, index) => `
+                <div class="produto-item">
+                    <div class="produto-item-info">
+                        <div class="produto-item-nome">${produto.nome}</div>
+                        <div class="produto-item-detalhes">Qtd: ${produto.quantidade}</div>
+                    </div>
+                    <div class="produto-item-valor">R$ ${(produto.preco * produto.quantidade).toFixed(2).replace('.', ',')}</div>
+                    <button class="btn-remove-produto" onclick="removerProduto(${index})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+
+            calcularValorTotal();
+        }
+
+        // Calcular valor total
+        function calcularValorTotal() {
+            const valorServicos = obterValorServicoAtual();
+            const valorProdutos = produtosAdicionados.reduce((total, p) => total + (p.preco * p.quantidade), 0);
+            const total = valorServicos + valorProdutos;
+            document.getElementById('modalValorTotal').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+
+        function calcularValorTotalNumerico() {
+            const valorServicos = obterValorServicoAtual();
+            const valorProdutos = produtosAdicionados.reduce((total, p) => total + (p.preco * p.quantidade), 0);
+            return valorServicos + valorProdutos;
+        }
+
+        function obterValorServicoAtual() {
+            const inputValorServico = document.getElementById('valorServicoModal');
+            if (!inputValorServico || inputValorServico.value === '') {
+                return parseFloat(agendamentoAtual?.valor || 0);
+            }
+
+            const valorDigitado = parseFloat(inputValorServico.value);
+            if (Number.isNaN(valorDigitado) || valorDigitado < 0) {
+                return 0;
+            }
+
+            return valorDigitado;
+        }
+
+        // Remover produto
+        function removerProduto(index) {
+            produtosAdicionados.splice(index, 1);
+            renderizarProdutos();
+        }
+
+        // Adicionar event listeners
+        function adicionarEventListeners() {
+            // Cancelar agendamento - Abre modal
+            document.getElementById('btnCancelarAgendamento').addEventListener('click', function() {
+                abrirModalCancelar();
+            });
+
+            // Finalizar atendimento - Abre modal
+            document.getElementById('btnConcluirAgendamento').addEventListener('click', function() {
+                abrirModalFinalizar();
+            });
+
+            // Alterar horário - Abre modal
+            document.getElementById('btnAlterarHorario').addEventListener('click', function() {
+                abrirModalAlterarHorario();
+            });
+
+            // Alterar serviço - Abre modal
+            document.getElementById('btnAlterarServico').addEventListener('click', function() {
+                abrirModalAlterarServico();
+            });
+        }
+
+        // ==========================================
+        // Alterar Horário
+        // ==========================================
+        function abrirModalAlterarHorario() {
+            // Pré-preencher com a data atual do agendamento
+            const dataAtual = agendamentoAtual.data_agendamento
+                ? agendamentoAtual.data_agendamento.substring(0, 10)
+                : '';
+            document.getElementById('alterarNovaData').value = dataAtual;
+            document.getElementById('alterarHorarioSelecionado').value = '';
+            document.getElementById('alterarHorariosContainer').innerHTML = '';
+            document.getElementById('alterarHorariosMensagem').style.display = 'none';
+
+            const btnConfirmar = document.getElementById('btnConfirmarAlterarHorario');
+            btnConfirmar.disabled = true;
+            btnConfirmar.style.opacity = '.5';
+            btnConfirmar.style.cursor = 'not-allowed';
+
+            document.getElementById('modalAlterarHorario').classList.add('active');
+
+            if (dataAtual) {
+                carregarHorariosParaAlteracao(dataAtual);
+            }
+        }
+
+        function fecharModalAlterarHorario() {
+            document.getElementById('modalAlterarHorario').classList.remove('active');
+        }
+
+        // ==========================================
+        // Alterar Serviço
+        // ==========================================
+        async function abrirModalAlterarServico() {
+            document.getElementById('servicoAlterarSelecionado').value = '';
+            document.getElementById('servicosAlterarMensagem').style.display = 'none';
+            const btn = document.getElementById('btnConfirmarAlterarServico');
+            btn.disabled = true;
+            btn.style.opacity = '.5';
+            btn.style.cursor = 'not-allowed';
+
+            document.getElementById('modalAlterarServico').classList.add('active');
+            await carregarServicosParaAlteracao();
+        }
+
+        function fecharModalAlterarServico() {
+            document.getElementById('modalAlterarServico').classList.remove('active');
+        }
+
+        async function carregarServicosParaAlteracao() {
+            const lista    = document.getElementById('servicosAlterarLista');
+            const mensagem = document.getElementById('servicosAlterarMensagem');
+
+            lista.innerHTML = '<div style="color:#9ca3af;padding:.5rem;"><i class="fas fa-spinner fa-spin"></i> Carregando servi&ccedil;os...</div>';
+
+            try {
+                const resp = await fetch(`../../bancodedados/agendamentos/listar_servicos.php?barbeiro=${barbeiroLogado.codigo}`);
+                const data = await resp.json();
+
+                lista.innerHTML = '';
+
+                if (!data.sucesso || !data.servicos || data.servicos.length === 0) {
+                    mensagem.textContent = 'Nenhum servi&ccedil;o encontrado.';
+                    mensagem.style.display = 'block';
+                    return;
+                }
+
+                // Serviço atualmente no agendamento
+                const codAtual = agendamentoAtual.codigo_servico
+                    ? parseInt(agendamentoAtual.codigo_servico)
+                    : (agendamentoAtual.servicos && agendamentoAtual.servicos[0]
+                        ? parseInt(agendamentoAtual.servicos[0].codigo)
+                        : 0);
+
+                data.servicos.forEach(s => {
+                    const item = document.createElement('div');
+                    item.className = 'servico-lista-item' + (parseInt(s.codigo) === codAtual ? ' selecionado' : '');
+                    item.dataset.codigo = s.codigo;
+                    item.innerHTML = `
+                        <span class="srv-nome">${s.nome}</span>
+                        <div class="srv-info">
+                            <span class="srv-preco">R$ ${parseFloat(s.valor).toFixed(2).replace('.', ',')}</span>
+                            <span class="srv-duracao"><i class="fas fa-clock" style="margin-right:.2rem;"></i>${s.duracao} min</span>
+                        </div>`;
+
+                    item.addEventListener('click', function () {
+                        document.querySelectorAll('.servico-lista-item').forEach(el => el.classList.remove('selecionado'));
+                        item.classList.add('selecionado');
+                        document.getElementById('servicoAlterarSelecionado').value = s.codigo;
+
+                        const btnConf = document.getElementById('btnConfirmarAlterarServico');
+                        if (parseInt(s.codigo) !== codAtual) {
+                            btnConf.disabled = false;
+                            btnConf.style.opacity = '1';
+                            btnConf.style.cursor = 'pointer';
+                        } else {
+                            btnConf.disabled = true;
+                            btnConf.style.opacity = '.5';
+                            btnConf.style.cursor = 'not-allowed';
+                        }
+                    });
+
+                    lista.appendChild(item);
+                });
+
+            } catch (err) {
+                lista.innerHTML = '';
+                mensagem.textContent = 'Erro ao carregar serviços.';
+                mensagem.style.display = 'block';
+            }
+        }
+
+        async function confirmarAlteracaoServico() {
+            const codServico = document.getElementById('servicoAlterarSelecionado').value;
+            if (!codServico) return;
+
+            const btn = document.getElementById('btnConfirmarAlterarServico');
+            btn.disabled = true;
+            btn.style.opacity = '.5';
+            btn.style.cursor = 'not-allowed';
+            const textoOriginal = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+
+            try {
+                const resp = await fetch('../../bancodedados/agendamentos/alterar_servico.php', {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({
+                        codigo:          agendamentoAtual.id,
+                        codigo_servico:  parseInt(codServico),
+                    }),
+                });
+
+                const dados = await resp.json();
+
+                if (dados.sucesso) {
+                    fecharModalAlterarServico();
+                    showNotification(dados.mensagem || 'Serviço alterado com sucesso!', 'success');
+                    setTimeout(() => carregarDetalhesAgendamento(), 600);
+                } else {
+                    throw new Error(dados.mensagem || 'Erro ao alterar serviço.');
+                }
+            } catch (err) {
+                showNotification(err.message, 'error');
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                btn.innerHTML = textoOriginal;
+            }
+        }
+
+        async function carregarHorariosParaAlteracao(data) {
+            const container  = document.getElementById('alterarHorariosContainer');
+            const mensagem   = document.getElementById('alterarHorariosMensagem');
+            const btnConfirmar = document.getElementById('btnConfirmarAlterarHorario');
+
+            // Limpa seleção ao trocar data
+            document.getElementById('alterarHorarioSelecionado').value = '';
+            btnConfirmar.disabled = true;
+            btnConfirmar.style.opacity = '.5';
+            btnConfirmar.style.cursor = 'not-allowed';
+
+            if (!data) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = '<p style="color:#e8e8e8;font-size:.875rem;">Carregando hor&aacute;rios...</p>';
+            mensagem.style.display = 'none';
+
+            try {
+                const resp = await fetch(
+                    `../../bancodedados/horarios/buscar_horarios_dia.php?data=${data}`
+                );
+                const dados = await resp.json();
+
+                container.innerHTML = '';
+
+                if (!dados.sucesso || !dados.horarios || dados.horarios.length === 0) {
+                    mensagem.textContent = 'Nenhum horário disponível para esta data.';
+                    mensagem.style.display = 'block';
+                    return;
+                }
+
+                const horarioAtual = agendamentoAtual.horario ? agendamentoAtual.horario.substring(0, 5) : '';
+                const dataAtualAg  = agendamentoAtual.data_agendamento
+                    ? agendamentoAtual.data_agendamento.substring(0, 10)
+                    : '';
+
+                dados.horarios.forEach(h => {
+                    const hora   = h.horario ? h.horario.substring(0, 5) : h;
+                    const status = h.status || 'disponivel';
+                    const eAtual = (hora === horarioAtual && data === dataAtualAg);
+                    const bloqueado  = status === 'bloqueado';
+                    const ehAlmoco   = bloqueado && h.motivo_bloqueio === 'almoco';
+                    const agendado   = status === 'agendado' && !eAtual;
+                    const nomeOcupante = agendado && h.info && h.info.cliente_nome ? h.info.cliente_nome : '';
+
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.textContent = hora;
+
+                    let bg, color, cursor;
+                    if (eAtual) {
+                        bg = 'rgba(100,100,100,.3)'; color = '#888'; cursor = 'default';
+                        btn.title = 'Horário atual do agendamento';
+                    } else if (bloqueado) {
+                        bg = 'rgba(239,68,68,.1)'; color = '#666'; cursor = 'not-allowed';
+                        btn.title = ehAlmoco ? 'Horário de almoço' : 'Horário bloqueado';
+                    } else if (agendado) {
+                        bg = 'rgba(245,158,11,.12)'; color = '#f59e0b'; cursor = 'pointer';
+                        btn.title = nomeOcupante
+                            ? `Já agendado para ${nomeOcupante} — clique para agendar mesmo assim`
+                            : 'Já existe agendamento neste horário — clique para agendar mesmo assim';
+                    } else {
+                        bg = 'rgba(16,185,129,.1)'; color = '#10b981'; cursor = 'pointer';
+                    }
+
+                    btn.dataset.bg    = bg;
+                    btn.dataset.color  = color;
+                    btn.style.cssText = `
+                        padding:.5rem;border-radius:6px;border:1px solid rgba(255,255,255,.2);
+                        background:${bg};color:${color};cursor:${cursor};
+                        font-size:.875rem;font-weight:600;transition:background .15s;
+                        ${agendado ? 'border-style:dashed;' : ''}
+                    `;
+
+                    if (eAtual || bloqueado) {
+                        btn.disabled = true;
+                    } else {
+                        btn.addEventListener('click', function () {
+                            // Restaura apenas botões disponíveis (não desabilitados)
+                            container.querySelectorAll('button:not(:disabled)').forEach(b => {
+                                b.style.background = b.dataset.bg;
+                                b.style.color = b.dataset.color;
+                                b.style.border = '1px solid rgba(255,255,255,.2)';
+                            });
+                            btn.style.background = 'rgba(245,158,11,.8)';
+                            btn.style.color = '#1a1a1a';
+                            btn.style.border = '1px solid #f59e0b';
+
+                            const inputHorario = document.getElementById('alterarHorarioSelecionado');
+                            inputHorario.value = hora;
+                            inputHorario.dataset.ocupado = agendado ? '1' : '0';
+                            inputHorario.dataset.ocupanteNome = nomeOcupante;
+                            btnConfirmar.disabled = false;
+                            btnConfirmar.style.opacity = '1';
+                            btnConfirmar.style.cursor = 'pointer';
+                        });
+                    }
+
+                    container.appendChild(btn);
+                });
+
+            } catch (err) {
+                container.innerHTML = '';
+                mensagem.textContent = 'Erro ao carregar horários: ' + err.message;
+                mensagem.style.display = 'block';
+            }
+        }
+
+        async function confirmarAlteracaoHorario(confirmarConflito = false, forcarOcupado = false) {
+            const novaData    = document.getElementById('alterarNovaData').value;
+            const inputHorario = document.getElementById('alterarHorarioSelecionado');
+            const novoHorario = inputHorario.value;
+
+            if (!novaData || !novoHorario) {
+                showNotification('Selecione uma data e um horário.', 'error');
+                return;
+            }
+
+            // Se o horário selecionado já possui agendamento e ainda não foi confirmado, exibe aviso antes de prosseguir
+            if (inputHorario.dataset.ocupado === '1' && !forcarOcupado) {
+                _pendingHorarioOcupado = { novaData, novoHorario };
+                const [ano, mes, dia] = novaData.split('-');
+                document.getElementById('horarioOcupadoHora').textContent = novoHorario;
+                document.getElementById('horarioOcupadoData').textContent = `${dia}/${mes}/${ano}`;
+                document.getElementById('horarioOcupadoCliente').textContent = inputHorario.dataset.ocupanteNome
+                    ? inputHorario.dataset.ocupanteNome
+                    : 'Cliente não informado';
+                document.getElementById('modalHorarioOcupado').classList.add('active');
+                return;
+            }
+
+            const btnConfirmar = document.getElementById('btnConfirmarAlterarHorario');
+            btnConfirmar.disabled = true;
+            btnConfirmar.style.opacity = '.5';
+            btnConfirmar.style.cursor = 'not-allowed';
+            const textoOriginalAlterar = btnConfirmar.innerHTML;
+            btnConfirmar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+
+            try {
+                const resp = await fetch('../../bancodedados/agendamentos/alterar_horario.php', {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({
+                        codigo:             agendamentoAtual.id,
+                        nova_data:          novaData,
+                        novo_horario:       novoHorario,
+                        confirmar_conflito: confirmarConflito,
+                        forcar_horario_ocupado: forcarOcupado,
+                    }),
+                });
+
+                const dados = await resp.json();
+
+                if (dados.sucesso) {
+                    fecharModalAlterarHorario();
+                    showNotification(dados.mensagem || 'Horário alterado com sucesso!', 'success');
+                    setTimeout(() => carregarDetalhesAgendamento(), 800);
+                } else if (dados.conflito) {
+                    // Ajuste automático para evitar sobreposição com o próximo atendimento
+                    const respAjuste = await fetch('../../bancodedados/agendamentos/alterar_horario.php', {
+                        method:  'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body:    JSON.stringify({
+                            codigo:             agendamentoAtual.id,
+                            nova_data:          novaData,
+                            novo_horario:       novoHorario,
+                            confirmar_conflito: true,
+                            forcar_horario_ocupado: forcarOcupado,
+                        }),
+                    });
+
+                    const dadosAjuste = await respAjuste.json();
+                    if (dadosAjuste.sucesso) {
+                        fecharModalAlterarHorario();
+                        const nomeProximo = dados.proximo_agendamento && dados.proximo_agendamento.cliente_nome
+                            ? ` O atendimento de ${dados.proximo_agendamento.cliente_nome} foi ajustado automaticamente.`
+                            : '';
+                        showNotification((dadosAjuste.mensagem || 'Horário alterado com ajuste automático de conflito!') + nomeProximo, 'success');
+                        setTimeout(() => carregarDetalhesAgendamento(), 800);
+                    } else {
+                        throw new Error(dadosAjuste.mensagem || 'Erro ao ajustar conflito automaticamente.');
+                    }
+                } else {
+                    throw new Error(dados.mensagem || 'Erro ao alterar horário.');
+                }
+            } catch (err) {
+                showNotification(err.message, 'error');
+                btnConfirmar.disabled = false;
+                btnConfirmar.style.opacity = '1';
+                btnConfirmar.style.cursor = 'pointer';
+                btnConfirmar.innerHTML = textoOriginalAlterar;
+            }
+        }
+
+        function fecharModalConflitoHorario() {
+            document.getElementById('modalConflitoHorario').classList.remove('active');
+            _pendingConflito = null;
+        }
+
+        function fecharModalHorarioOcupado() {
+            document.getElementById('modalHorarioOcupado').classList.remove('active');
+            _pendingHorarioOcupado = null;
+        }
+
+        function confirmarComHorarioOcupado() {
+            if (!_pendingHorarioOcupado) return;
+            document.getElementById('modalHorarioOcupado').classList.remove('active');
+            _pendingHorarioOcupado = null;
+            confirmarAlteracaoHorario(false, true);
+        }
+
+        async function confirmarComConflito() {
+            if (!_pendingConflito) return;
+
+            const btnConflito = document.getElementById('btnConfirmarConflito');
+            btnConflito.disabled = true;
+            btnConflito.style.opacity = '.5';
+            const textoOriginalConflito = btnConflito.innerHTML;
+            btnConflito.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+
+            try {
+                const resp = await fetch('../../bancodedados/agendamentos/alterar_horario.php', {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({
+                        codigo:             agendamentoAtual.id,
+                        nova_data:          _pendingConflito.novaData,
+                        novo_horario:       _pendingConflito.novoHorario,
+                        confirmar_conflito: true,
+                    }),
+                });
+
+                const dados = await resp.json();
+
+                document.getElementById('modalConflitoHorario').classList.remove('active');
+                _pendingConflito = null;
+                fecharModalAlterarHorario();
+
+                if (dados.sucesso) {
+                    showNotification(dados.mensagem || 'Horários alterados com sucesso!', 'success');
+                    setTimeout(() => carregarDetalhesAgendamento(), 800);
+                } else {
+                    throw new Error(dados.mensagem || 'Erro ao alterar horários.');
+                }
+            } catch (err) {
+                showNotification(err.message, 'error');
+                btnConflito.disabled = false;
+                btnConflito.style.opacity = '1';
+                btnConflito.innerHTML = textoOriginalConflito;
+            }
+        }
+
+        // Fun&ccedil;&otilde;es de Modal de Confirma&ccedil;&atilde;o
+        function abrirModalConfirmacao(mensagem, titulo, callback) {
+            document.getElementById('modalConfirmacaoMensagem').textContent = mensagem;
+            document.getElementById('modalConfirmacao').querySelector('.modal-title').textContent = titulo;
+            document.getElementById('modalConfirmacao').classList.add('active');
+            callbackConfirmacao = callback;
+        }
+
+        function fecharModalConfirmacao() {
+            document.getElementById('modalConfirmacao').classList.remove('active');
+            callbackConfirmacao = null;
+        }
+
+        document.getElementById('btnConfirmarAcao').addEventListener('click', function() {
+            if (callbackConfirmacao) {
+                callbackConfirmacao();
+            }
+            fecharModalConfirmacao();
+        });
+        
+        // Fun&ccedil;&atilde;o para voltar agendamento
+        async function voltarAgendamento(reabrirHorario = false, desbloquearPermanente = false) {
+            // Loading no botão ativo do modal de reabrir ou no botão principal
+            const btnReabrir   = document.querySelector('#modalReabrirHorario .btn-modal-confirm');
+            const btnPrincipal = document.getElementById('btnVoltarAgendamento');
+            let btnAtivo = null, textoOriginalVoltar = '';
+            if (btnReabrir && document.getElementById('modalReabrirHorario').classList.contains('active')) {
+                btnAtivo = btnReabrir;
+            } else if (btnPrincipal) {
+                btnAtivo = btnPrincipal;
+            }
+            if (btnAtivo) {
+                textoOriginalVoltar = btnAtivo.innerHTML;
+                btnAtivo.disabled = true;
+                btnAtivo.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+            }
+            try {
+                const response = await fetch('../../bancodedados/agendamentos/voltar_agendamento.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        codigo: agendamentoId,
+                        reabrir_horario: reabrirHorario,
+                        desbloquear_permanente: desbloquearPermanente
+                    })
+                });
+                
+                // Ler a resposta como texto primeiro para debug
+                const responseText = await response.text();
+                console.log('Resposta recebida:', responseText);
+                
+                // Tentar parsear como JSON
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('Erro ao parsear JSON. Resposta:', responseText);
+                    throw new Error('Resposta inv&aacute;lida do servidor');
+                }
+                
+                // Log para debug
+                if (result.debug) {
+                    console.log('Debug do servidor:', result.debug);
+                }
+                
+                if (result.sucesso) {
+                    showNotification(result.mensagem, 'success');
+                    
+                    // Log adicional sobre desbloqueio
+                    if (result.horario_desbloqueado !== undefined) {
+                        console.log('Hor&aacute;rio desbloqueado:', result.horario_desbloqueado);
+                    }
+                    
+                    redirectToReturnPage(1500);
+                } else {
+                    showNotification('Erro: ' + result.mensagem, 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao voltar agendamento:', error);
+                showNotification('Erro ao voltar agendamento: ' + error.message, 'error');
+            }
+        }
+        
+        // Fun&ccedil;&atilde;o para verificar se existe hor&aacute;rio bloqueado
+        async function verificarHorarioBloqueado() {
+            try {
+                const data = agendamentoAtual.data_agendamento;
+                // O hor&aacute;rio vem como HH:MM:SS no banco, precisamos comparar apenas HH:MM
+                const horario = agendamentoAtual.horario ? agendamentoAtual.horario.substring(0, 5) : agendamentoAtual.hora_formatada;
+                
+                const response = await fetch(`../../bancodedados/horarios/buscar_horarios_dia.php?data=${data}&codigo_barbeiro=${barbeiroLogado.codigo}`);
+                const result = await response.json();
+                
+                if (result.sucesso && result.horarios_bloqueados) {
+                    // Verificar se o hor&aacute;rio espec&iacute;fico est&aacute; bloqueado
+                    const horarioBloqueado = result.horarios_bloqueados.find(h => {
+                        const horarioBloqueadoFormatado = h.horario ? h.horario.substring(0, 5) : h.horario;
+                        return horarioBloqueadoFormatado === horario;
+                    });
+                    
+                    if (horarioBloqueado) {
+                        console.log('Hor&aacute;rio bloqueado encontrado:', horarioBloqueado);
+                        return horarioBloqueado;
+                    }
+                }
+                
+                return null;
+            } catch (error) {
+                console.error('Erro ao verificar hor&aacute;rio bloqueado:', error);
+                return null;
+            }
+        }
+        
+        // Fun&ccedil;&atilde;o chamada ao clicar no bot&atilde;o Voltar Agendamento
+        async function iniciarVoltarAgendamento() {
+            const statusAtual = parseInt(agendamentoAtual.codigo_status);
+            
+            // Se status &eacute; 4 (finalizado), apenas confirmar e voltar
+            if (statusAtual === 4) {
+                abrirModalConfirmacao(
+                    'Deseja realmente reabrir este agendamento finalizado? A transa&ccedil;&atilde;o financeira ser&aacute; removida.',
+                    'Voltar Agendamento',
+                    async function() {
+                        await voltarAgendamento(false, false);
+                    }
+                );
+            }
+            // Se status &eacute; 5 (cancelado), sempre mostrar op&ccedil;&atilde;o de desbloquear
+            else if (statusAtual === 5) {
+                // Verificar se existe hor&aacute;rio bloqueado
+                const horarioBloqueado = await verificarHorarioBloqueado();
+                
+                // Obter hor&aacute;rio formatado para exibir no modal
+                const horario = agendamentoAtual.horario ? agendamentoAtual.horario.substring(0, 5) : agendamentoAtual.hora_formatada;
+                document.getElementById('horario-bloqueado-texto').textContent = horario;
+                
+                // Sempre mostrar modal para escolher se desbloquear hor&aacute;rio
+                // Isso permite desbloquear mesmo se o bloqueio foi criado junto com o cancelamento
+                document.getElementById('modalReabrirHorario').classList.add('active');
+            }
+        }
+        
+        // Fun&ccedil;&otilde;es para modal de reabrir hor&aacute;rio
+        function fecharModalReabrirHorario() {
+            document.getElementById('modalReabrirHorario').classList.remove('active');
+            document.getElementById('desbloquear-horario-voltar').checked = false;
+            document.getElementById('desbloquear-todos-dias-voltar').checked = false;
+        }
+        
+        function confirmarVoltarAgendamento() {
+            const removerBloqueio = document.getElementById('desbloquear-horario-voltar').checked;
+            const desbloquearPermanente = document.getElementById('desbloquear-todos-dias-voltar').checked;
+            
+            document.getElementById('modalReabrirHorario').classList.remove('active');
+            
+            // Se checkbox principal estiver marcado, passa true e verifica se &eacute; permanente
+            // Se n&atilde;o estiver marcado, passa false (n&atilde;o remove bloqueio)
+            voltarAgendamento(removerBloqueio, removerBloqueio && desbloquearPermanente);
+            
+            // Limpar checkboxes
+            document.getElementById('desbloquear-horario-voltar').checked = false;
+            document.getElementById('desbloquear-todos-dias-voltar').checked = false;
+        }
+        
+        // Adicionar event listener para bot&atilde;o de voltar agendamento
+        document.getElementById('btnVoltarAgendamento').addEventListener('click', iniciarVoltarAgendamento);
+        
+        // Controlar habilita&ccedil;&atilde;o do checkbox "todos os dias"
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxPrincipal = document.getElementById('desbloquear-horario-voltar');
+            const checkboxTodosDias = document.getElementById('desbloquear-todos-dias-voltar');
+            
+            if (checkboxPrincipal && checkboxTodosDias) {
+                checkboxPrincipal.addEventListener('change', function() {
+                    if (!this.checked) {
+                        checkboxTodosDias.checked = false;
+                        checkboxTodosDias.disabled = true;
+                        checkboxTodosDias.style.opacity = '0.5';
+                    } else {
+                        checkboxTodosDias.disabled = false;
+                        checkboxTodosDias.style.opacity = '1';
+                    }
+                });
+                
+                // Inicializar estado
+                if (!checkboxPrincipal.checked) {
+                    checkboxTodosDias.disabled = true;
+                    checkboxTodosDias.style.opacity = '0.5';
+                }
+            }
+        });
+
+        // Notifica&ccedil;&atilde;o (seguindo padr&atilde;o do cadastro de servi&ccedil;o)
+        function showNotification(message, type = 'info', duration = 3000) {
+            const existing = document.querySelector('.notification');
+            if (existing) {
+                existing.remove();
+            }
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 1rem;
+                right: 1rem;
+                background: rgba(26, 24, 22, 0.95);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                border-left: 4px solid ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#e8e8e8'};
+                color: #e8e8e8;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                z-index: 10001;
+                max-width: 300px;
+                animation: slideInRight 0.3s ease-in-out;
+                font-family: 'Inter', sans-serif;
+            `;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-in-out';
+                setTimeout(() => notification.remove(), 300);
+            }, duration);
+        }
+
+        // Adicionar anima&ccedil;&otilde;es CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // ========== FUN&Ccedil;&Otilde;ES PARA MODAIS DE FINALIZAR E CANCELAR ==========
+        
+        // Abrir modal de finalizar
+        function abrirModalFinalizar() {
+            // Copiar produtos para o modal
+            renderizarProdutosModal();
+
+            aplicarFormaPagamentoAutomaticaPlano();
+
+            // Preencher valor do servico com valor atual do agendamento
+            const inputValorServico = document.getElementById('valorServicoModal');
+            if (inputValorServico) {
+                const ehPlano = !!agendamentoAtual?.eh_plano_recorrente;
+                const planoPago = !!agendamentoAtual?.plano_pago;
+                const valorPadrao = ehPlano
+                    ? (planoPago ? 0 : parseFloat(agendamentoAtual?.valor_plano_referencia || agendamentoAtual?.valor || 0))
+                    : parseFloat(agendamentoAtual?.valor || 0);
+                inputValorServico.value = Number(valorPadrao).toFixed(2);
+            }
+
+            atualizarInfoPlanoModal();
+            
+            // Atualizar valor total no modal
+            atualizarValorTotalModal();
+            
+            // Abrir modal
+            document.getElementById('modalFinalizar').classList.add('active');
+        }
+
+        function aplicarFormaPagamentoAutomaticaPlano() {
+            if (!agendamentoAtual) return;
+
+            const formaPlano = (agendamentoAtual.forma_pagamento_plano_nome || '').toString().toLowerCase();
+            if (!formaPlano) return;
+
+            const radio = document.querySelector(`input[name="formaPagamentoModal"][value="${formaPlano}"]`);
+            if (!radio) return;
+
+            radio.checked = true;
+        }
+
+        function atualizarInfoPlanoModal() {
+            const secao = document.getElementById('planoInfoSection');
+            const texto = document.getElementById('planoInfoTexto');
+            if (!secao || !texto) return;
+
+            const ehPlano = !!agendamentoAtual?.eh_plano_recorrente;
+            if (!ehPlano) {
+                secao.style.display = 'none';
+                return;
+            }
+
+            const valorPlano = parseFloat(agendamentoAtual?.valor_plano_referencia || agendamentoAtual?.valor || 0);
+            const valorFmt = 'R$ ' + valorPlano.toFixed(2).replace('.', ',');
+
+            if (agendamentoAtual?.plano_pago) {
+                texto.textContent = `Plano já pago (${valorFmt}). Informe aqui apenas valor extra desta sessão, se houver.`;
+            } else {
+                texto.textContent = `Primeiro pagamento do plano. Valor base deste plano: ${valorFmt}.`;
+            }
+
+            secao.style.display = 'block';
+        }
+        
+        // Fechar modal de finalizar
+        function fecharModalFinalizar() {
+            document.getElementById('modalFinalizar').classList.remove('active');
+        }
+        
+        // Renderizar produtos no modal
+        function renderizarProdutosModal() {
+            const lista = document.getElementById('listaProdutosModal');
+            
+            if (produtosAdicionados.length === 0) {
+                lista.innerHTML = '<p style="color: #e8e8e8; text-align: center; padding: 1rem;">Nenhum produto adicionado</p>';
+                return;
+            }
+            
+            lista.innerHTML = produtosAdicionados.map(produto => `
+                <div class="produto-item">
+                    <div class="produto-info">
+                        <span class="produto-nome">${produto.nome}</span>
+                        <span class="produto-qtd">Qtd: ${produto.quantidade}</span>
+                    </div>
+                    <div class="produto-actions">
+                        <span class="produto-preco">R$ ${(produto.preco * produto.quantidade).toFixed(2).replace('.', ',')}</span>
+                        <button class="btn-remove-produto" onclick="removerProdutoModal(${produto.codigo})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Remover produto do modal
+        function removerProdutoModal(codigo) {
+            produtosAdicionados = produtosAdicionados.filter(p => p.codigo !== codigo);
+            renderizarProdutosModal();
+            atualizarValorTotalModal();
+            // Tamb&eacute;m atualizar na tela principal
+            renderizarProdutos();
+        }
+        
+        // Atualizar valor total no modal
+        function atualizarValorTotalModal() {
+            const valorTotal = calcularValorTotalNumerico();
+            document.getElementById('valorTotalModal').textContent = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+        }
+
+        const inputValorServicoModal = document.getElementById('valorServicoModal');
+        if (inputValorServicoModal) {
+            inputValorServicoModal.addEventListener('input', function() {
+                atualizarValorTotalModal();
+                calcularValorTotal();
+            });
+        }
+        
+        // Adicionar produto no modal
+        document.getElementById('btnAddProdutoModal').addEventListener('click', function() {
+            const select = document.getElementById('selectProdutoModal');
+            const qtd = parseInt(document.getElementById('qtdProdutoModal').value);
+            
+            if (select.value && qtd > 0) {
+                const option = select.options[select.selectedIndex];
+                const codigo = parseInt(select.value);
+                const nome = option.textContent.split(' - R$ ')[0];
+                const preco = parseFloat(option.dataset.preco);
+                
+                // Verificar se produto j&aacute; foi adicionado
+                const produtoExistente = produtosAdicionados.find(p => p.codigo === codigo);
+                
+                if (produtoExistente) {
+                    produtoExistente.quantidade += qtd;
+                } else {
+                    const produto = {
+                        codigo: codigo,
+                        nome: nome,
+                        preco: preco,
+                        quantidade: qtd
+                    };
+                    produtosAdicionados.push(produto);
+                }
+                
+                renderizarProdutosModal();
+                atualizarValorTotalModal();
+                // Tamb&eacute;m atualizar na tela principal
+                renderizarProdutos();
+                
+                select.value = '';
+                document.getElementById('qtdProdutoModal').value = '1';
+            } else {
+                showNotification('Selecione um produto e informe a quantidade!', 'error');
+            }
+        });
+        
+        // Confirmar finaliza&ccedil;&atilde;o
+        document.getElementById('btnConfirmarFinalizar').addEventListener('click', async function() {
+            const btn = this;
+
+            // Prote��o contra duplo clique
+            if (btn.disabled) return;
+            btn.disabled = true;
+            const textoOriginal = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Finalizando...';
+
+            const formaPagamento = document.querySelector('input[name="formaPagamentoModal"]:checked');
+            
+            if (!formaPagamento) {
+                showNotification('Por favor, selecione uma forma de pagamento!', 'error');
+                btn.disabled = false;
+                btn.innerHTML = textoOriginal;
+                return;
+            }
+            
+            const valorTotal = calcularValorTotalNumerico();
+            const valorServico = obterValorServicoAtual();
+
+            if (Number.isNaN(valorServico) || valorServico < 0) {
+                showNotification('Informe um valor de servi\u00e7o v\u00e1lido!', 'error');
+                btn.disabled = false;
+                btn.innerHTML = textoOriginal;
+                return;
+            }
+            
+            try {
+                const payload = {
+                    codigo: agendamentoId,
+                    codigo_status: 4,  // 4 = finalizado
+                    forma_pagamento: formaPagamento.value,
+                    produtos: produtosAdicionados,
+                    valor_servico: valorServico,
+                    valor_total: valorTotal
+                };
+                
+                console.log('Enviando dados para finalizar agendamento:', payload);
+                
+                const response = await fetch('../../bancodedados/agendamentos/finalizar_agendamento.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                console.log('Status da resposta:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+                }
+                
+                const responseText = await response.text();
+                console.log('Resposta recebida:', responseText);
+                
+                if (!responseText) {
+                    throw new Error('Resposta vazia do servidor');
+                }
+                
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('Erro ao fazer parse do JSON:', parseError);
+                    console.error('Conte&uacute;do recebido:', responseText);
+                    throw new Error('Resposta inv&aacute;lida do servidor');
+                }
+                
+                console.log('Resultado parseado:', result);
+                
+                if (result.sucesso) {
+                    fecharModalFinalizar();
+                    showNotification('Atendimento finalizado com sucesso!', 'success');
+                    redirectToReturnPage(1500);
+                } else {
+                    showNotification('Erro ao finalizar atendimento: ' + (result.mensagem || 'Erro desconhecido'), 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = textoOriginal;
+                }
+            } catch (error) {
+                console.error('Erro ao finalizar agendamento:', error);
+                showNotification('Erro ao finalizar agendamento: ' + error.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = textoOriginal;
+            }
+        });
+        
+        // Abrir modal de cancelar
+        function abrirModalCancelar() {
+            document.getElementById('modalCancelar').classList.add('active');
+        }
+        
+        // Fechar modal de cancelar
+        function fecharModalCancelar() {
+            document.getElementById('modalCancelar').classList.remove('active');
+        }
+        
+        // Confirmar cancelamento
+        document.getElementById('btnConfirmarCancelar').addEventListener('click', async function() {
+            if (!agendamentoAtual) {
+                showNotification('Dados do agendamento n&atilde;o carregados. Recarregue a p&aacute;gina.', 'error');
+                return;
+            }
+
+            const btn = this;
+            if (btn.disabled) return;
+            btn.disabled = true;
+            const textoOriginal = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cancelando...';
+            
+            const fecharHorario = document.getElementById('checkFecharHorarioModal').checked;
+            const motivo = document.getElementById('motivoCancelamentoModal').value;
+            
+            try {
+                console.log('Iniciando cancelamento de agendamento:', agendamentoAtual);
+                console.log('Fechar hor&aacute;rio?', fecharHorario);
+                
+                // Se checkbox marcado, bloquear hor&aacute;rio primeiro
+                let codigoBloqueio = null;
+                if (fecharHorario && agendamentoAtual.data_agendamento && agendamentoAtual.hora_formatada) {
+                    console.log('Bloqueando hor&aacute;rio:', {
+                        data: agendamentoAtual.data_agendamento,
+                        horario: agendamentoAtual.hora_formatada
+                    });
+                    
+                    const responseBloquear = await fetch('../../bancodedados/horarios/bloquear_horario.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            data: agendamentoAtual.data_agendamento,
+                            horario: agendamentoAtual.hora_formatada,
+                            motivo: motivo || 'Hor&aacute;rio bloqueado ap&oacute;s cancelamento',
+                            codigo_tipo_bloqueio: 1
+                        })
+                    });
+                    
+                    const resultBloquear = await responseBloquear.json();
+                    console.log('Resultado do bloqueio:', resultBloquear);
+                    
+                    if (!resultBloquear.sucesso) {
+                        showNotification('Erro ao bloquear hor&aacute;rio: ' + resultBloquear.mensagem, 'error');
+                        btn.disabled = false;
+                        btn.innerHTML = textoOriginal;
+                        return;
+                    }
+                    
+                    codigoBloqueio = resultBloquear.codigo_bloqueio || null;
+                }
+                
+                // Atualizar status do agendamento para cancelado (c&oacute;digo 5)
+                console.log('Cancelando agendamento:', agendamentoId);
+                
+                const responseCancel = await fetch('../../bancodedados/agendamentos/atualizar_status.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        codigo: agendamentoId,
+                        codigo_status: 5,  // 5 = cancelado
+                        codigo_horario_bloqueado: codigoBloqueio
+                    })
+                });
+                
+                const resultCancel = await responseCancel.json();
+                console.log('Resultado do cancelamento:', resultCancel);
+                
+                if (resultCancel.sucesso) {
+                    fecharModalCancelar();
+                    showNotification('Agendamento cancelado com sucesso!', 'success');
+                    redirectToReturnPage(1500);
+                } else {
+                    showNotification('Erro ao cancelar agendamento: ' + resultCancel.mensagem, 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = textoOriginal;
+                }
+            } catch (error) {
+                console.error('Erro ao cancelar agendamento:', error);
+                showNotification('Erro ao cancelar agendamento: ' + error.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = textoOriginal;
+            }
+        });
+        
+        // Carregar produtos no select do modal
+        async function carregarProdutosModal() {
+            try {
+                const response = await fetch('../../bancodedados/produtos/listar_produtos.php');
+                const result = await response.json();
+                
+                if (result.sucesso && result.produtos) {
+                    const select = document.getElementById('selectProdutoModal');
+                    select.innerHTML = '<option value="">Selecione um produto</option>';
+                    
+                    result.produtos.forEach(produto => {
+                        const option = document.createElement('option');
+                        option.value = produto.codigo;
+                        option.textContent = `${produto.nome} - R$ ${parseFloat(produto.preco).toFixed(2).replace('.', ',')}`;
+                        option.dataset.preco = produto.preco;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao carregar produtos para o modal:', error);
+            }
+        }
+        
+        // Carregar produtos para o modal quando a p&aacute;gina carregar
+        carregarProdutosModal();
+    </script>
+    
+    <script>
+        // Aplicar tema salvo ao carregar p&aacute;gina
+        (function() {
+            const temaSalvo = localStorage.getItem('tema');
+            if (temaSalvo === 'claro') {
+                document.body.classList.add('tema-claro');
+            }
+        })();
+    </script>
+    </script>
+</body>
+</html>
+
+

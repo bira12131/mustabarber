@@ -1,0 +1,887 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solicitações de Plano</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link href="../tema-claro.css" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: transparent;
+      color: #e8e8e8;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    /* TOAST */
+    #toast-container {
+      position: fixed; top: 1rem; right: 1rem; z-index: 9999;
+      display: flex; flex-direction: column; gap: .4rem;
+    }
+    .toast {
+      display: flex; align-items: center; gap: .65rem;
+      padding: .75rem 1.1rem; border-radius: 10px; font-size: .84rem;
+      font-weight: 500; min-width: 240px; max-width: 340px;
+      backdrop-filter: blur(10px); border-left: 3px solid;
+      animation: slideIn .25s ease-out;
+    }
+    .toast.success { background: rgba(16,185,129,.15); border-color: #10b981; color: #34d399; }
+    .toast.error   { background: rgba(239,68,68,.15);  border-color: #ef4444; color: #f87171; }
+    .toast.info    { background: rgba(59,130,246,.15); border-color: #3b82f6; color: #60a5fa; }
+    @keyframes slideIn { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    .main-area { max-width: 980px; margin: 0 auto; }
+
+    .page-head {
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .page-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f4f4f5;
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+    }
+    .page-title i { color: #a78bfa; font-size: .95rem; }
+    .page-subtitle {
+      margin-top: .3rem;
+      font-size: .84rem;
+      color: #9ca3af;
+      line-height: 1.45;
+      max-width: 680px;
+    }
+
+    .toolbar-card {
+      background: rgba(30,30,35,.78);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding: .85rem;
+      margin-bottom: .9rem;
+    }
+
+    .resumo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .65rem;
+      margin-bottom: .9rem;
+    }
+    .resumo-item {
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(25,25,28,.8);
+      backdrop-filter: blur(8px);
+      border-radius: 14px;
+      padding: .75rem;
+      min-height: 82px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: .7rem;
+    }
+    .resumo-item.resumo-item-wide {
+      grid-column: 1 / -1;
+    }
+    .resumo-main {
+      min-width: 0;
+      flex: 1;
+    }
+    .resumo-item .r-head {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      margin-bottom: .35rem;
+    }
+    .resumo-item .r-label {
+      font-size: .7rem;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      line-height: 1.1;
+    }
+    .resumo-item .r-val {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #f3f4f6;
+      line-height: 1;
+    }
+    .resumo-item .r-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: .9rem;
+      flex-shrink: 0;
+    }
+    .resumo-item.pendentes .r-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .resumo-item.aguardando .r-icon { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+    .resumo-item.aceitas .r-icon { background: linear-gradient(135deg, #10b981, #059669); }
+
+    /* TOPBAR */
+    .topbar {
+      display: flex; align-items: center; gap: .6rem;
+      margin-bottom: .75rem; flex-wrap: wrap;
+    }
+    .link-pill {
+      flex: 1; min-width: 0;
+      display: flex; align-items: center; gap: .6rem;
+      background: rgba(99,102,241,.08); border: 1px solid rgba(99,102,241,.22);
+      border-radius: 10px; padding: .55rem .85rem;
+    }
+    .link-pill i { color: #a78bfa; font-size: .8rem; flex-shrink: 0; }
+    .link-pill span {
+      font-size: .78rem; color: #a78bfa; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0;
+    }
+    .btn-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border-radius: 9px; border: none;
+      cursor: pointer; font-size: .85rem; transition: background .18s; font-family: inherit;
+      flex-shrink: 0;
+    }
+    .btn-icon.copy    { background: rgba(99,102,241,.15); color: #a78bfa; }
+    .btn-icon.copy:hover    { background: rgba(99,102,241,.28); }
+    .btn-icon.refresh { background: rgba(255,255,255,.07); color: #9ca3af; }
+    .btn-icon.refresh:hover { background: rgba(255,255,255,.13); color: #e8e8e8; }
+
+    /* FILTRO SELECT */
+    .filtro-select-wrap {
+      display: flex; align-items: center; gap: .6rem;
+      margin-bottom: 0;
+    }
+    .filtro-select {
+      flex: 1; padding: .5rem .85rem;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px; color: #e8e8e8; font-size: .82rem;
+      font-family: inherit; cursor: pointer; appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath fill='%239ca3af' d='M5 7L0 0h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right .8rem center; padding-right: 2rem;
+    }
+    .filtro-select:focus { outline: none; border-color: rgba(99,102,241,.5); }
+    .pendente-badge {
+      background: #ef4444; color: #fff; border-radius: 20px;
+      font-size: .7rem; font-weight: 700; padding: .15rem .55rem;
+      display: none; white-space: nowrap;
+    }
+
+    /* CARD */
+    .sol-card {
+      background: rgba(30,30,35,.85);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px; padding: 1.1rem 1.25rem;
+      margin-bottom: .75rem; transition: border-color .18s, transform .15s ease;
+      border-left: 3px solid transparent;
+    }
+    .sol-card:hover       { border-color: rgba(255,255,255,.15); transform: translateY(-1px); }
+    .sol-card.pendente    { border-left-color: #fbbf24; }
+    .sol-card.aceito      { border-left-color: #10b981; }
+    .sol-card.recusado    { border-left-color: #ef4444; }
+    .sol-card.cancelado_cliente { border-left-color: #4b5563; }
+
+    .card-top {
+      display: flex; justify-content: space-between;
+      align-items: center; gap: .75rem; margin-bottom: .65rem;
+    }
+    .cliente-nome {
+      font-size: .95rem; font-weight: 700; color: #f0f0f0;
+      display: flex; align-items: center; gap: .4rem;
+    }
+    .cliente-nome i { color: #60a5fa; font-size: .78rem; }
+
+    .sol-badge {
+      padding: .25rem .75rem; border-radius: 20px; font-size: .68rem;
+      font-weight: 700; text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
+    }
+    .badge-pendente  { background: rgba(245,158,11,.18); color: #fbbf24; border: 1px solid rgba(245,158,11,.28); }
+    .badge-aceito    { background: rgba(16,185,129,.18); color: #34d399; border: 1px solid rgba(16,185,129,.28); }
+    .badge-recusado  { background: rgba(239,68,68,.18);  color: #f87171; border: 1px solid rgba(239,68,68,.28); }
+    .badge-cancelado { background: rgba(75,85,99,.25);   color: #9ca3af; border: 1px solid rgba(75,85,99,.35); }
+
+    .card-meta {
+      display: flex; flex-wrap: wrap; gap: .35rem .9rem;
+      font-size: .78rem; color: #6b7280; margin-bottom: .7rem;
+    }
+    .card-meta span { display: flex; align-items: center; gap: .28rem; }
+    .card-meta i { font-size: .7rem; }
+
+    .servicos-lista { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: .7rem; }
+    .servico-tag {
+      background: rgba(99,102,241,.08); border: 1px solid rgba(99,102,241,.2);
+      border-radius: 7px; padding: .22rem .6rem; font-size: .76rem; color: #a78bfa;
+    }
+    .servico-tag strong { color: #d1d5db; }
+
+    .valores-line {
+      display: flex; align-items: center; gap: .5rem;
+      font-size: .82rem; color: #9ca3af; flex-wrap: wrap; margin-bottom: .65rem;
+    }
+    .val-chip {
+      background: rgba(255,255,255,.05); border-radius: 6px;
+      padding: .22rem .6rem; font-size: .78rem;
+      display: flex; align-items: center; gap: .28rem;
+    }
+    .val-chip.principal { color: #a78bfa; font-weight: 700; }
+
+    .obs-cliente {
+      background: rgba(255,255,255,.04); border-left: 2px solid rgba(99,102,241,.35);
+      border-radius: 0 7px 7px 0; padding: .45rem .75rem;
+      font-size: .79rem; color: #9ca3af; margin-bottom: .65rem; line-height: 1.4;
+    }
+
+    .resposta-box {
+      border-radius: 9px; padding: .75rem .9rem; margin-bottom: .65rem; font-size: .8rem;
+    }
+    .resposta-box.aceito   { background: rgba(16,185,129,.07); border: 1px solid rgba(16,185,129,.18); }
+    .resposta-box.recusado { background: rgba(239,68,68,.06);  border: 1px solid rgba(239,68,68,.18); }
+    .resposta-box .resp-titulo { font-weight: 700; margin-bottom: .3rem; display: flex; align-items: center; gap: .35rem; }
+    .resposta-box.aceito  .resp-titulo { color: #34d399; }
+    .resposta-box.recusado .resp-titulo { color: #f87171; }
+    .resposta-box .resp-info { color: #9ca3af; line-height: 1.5; }
+
+    .acoes-row { display: flex; gap: .5rem; flex-wrap: wrap; padding-top: .5rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .5rem 1rem; border: none; border-radius: 9px;
+      font-size: .8rem; font-weight: 600; cursor: pointer;
+      transition: all .18s; font-family: inherit;
+    }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .btn-aceitar { background: rgba(16,185,129,.13); color: #34d399; border: 1px solid rgba(16,185,129,.28); }
+    .btn-aceitar:hover:not(:disabled) { background: rgba(16,185,129,.22); }
+    .btn-recusar { background: rgba(239,68,68,.08); color: #f87171; border: 1px solid rgba(239,68,68,.22); }
+    .btn-recusar:hover:not(:disabled) { background: rgba(239,68,68,.18); }
+    .btn-secundario { background: rgba(255,255,255,.06); color: #9ca3af; border: 1px solid rgba(255,255,255,.1); }
+    .btn-secundario:hover:not(:disabled) { background: rgba(255,255,255,.11); color: #e8e8e8; }
+
+    .empty-state {
+      text-align: center; padding: 2.5rem 1.5rem;
+      background: rgba(30,30,35,.85); border: 1px solid rgba(255,255,255,.07);
+      border-radius: 14px;
+    }
+    .empty-state i  { font-size: 2rem; color: #374151; margin-bottom: .75rem; display: block; }
+    .empty-state h3 { font-size: .9rem; color: #6b7280; font-weight: 600; margin-bottom: .3rem; }
+    .empty-state p  { font-size: .8rem; color: #4b5563; line-height: 1.5; }
+
+    .skeleton {
+      background: linear-gradient(90deg,rgba(255,255,255,.05) 25%,rgba(255,255,255,.09) 50%,rgba(255,255,255,.05) 75%);
+      background-size: 200% 100%; animation: shimmer 1.4s infinite;
+      border-radius: 6px; height: 16px; margin-bottom: .45rem;
+    }
+    @keyframes shimmer { 0%{background-position:200% 0}100%{background-position:-200% 0} }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,.65); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-box {
+      background: #1a1a1f; border: 1px solid rgba(255,255,255,.1);
+      border-radius: 16px; padding: 1.5rem; width: 100%; max-width: 520px;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1.1rem; padding-bottom: .75rem;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .modal-header h3 { font-size: .95rem; font-weight: 700; color: #f0f0f0; display: flex; align-items: center; gap: .45rem; }
+    .btn-close { background: none; border: none; color: #6b7280; cursor: pointer; font-size: .95rem; padding: .2rem; }
+    .btn-close:hover { color: #e8e8e8; }
+    .modal-resumo {
+      font-size: .82rem; color: #9ca3af; margin-bottom: 1.1rem; line-height: 1.6;
+      background: rgba(255,255,255,.04); border-radius: 8px; padding: .7rem .9rem;
+    }
+    .form-group { margin-bottom: .8rem; }
+    .form-group label { display: block; font-size: .72rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: .05em; margin-bottom: .35rem; }
+    .form-control {
+      width: 100%; box-sizing: border-box; padding: .6rem .85rem;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 9px; color: #e8e8e8; font-size: .85rem; font-family: inherit;
+      transition: border-color .18s; -webkit-appearance: none; appearance: none;
+    }
+    .form-control:focus { outline: none; border-color: rgba(99,102,241,.5); background: rgba(255,255,255,.08); }
+    .form-row   { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .65rem; }
+    .secao-label {
+      font-size: .72rem; font-weight: 700; color: #4b5563;
+      text-transform: uppercase; letter-spacing: .06em; margin: .75rem 0 .45rem;
+    }
+    .preview-valor {
+      background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.2);
+      border-radius: 7px; padding: .5rem .8rem; font-size: .82rem; color: #34d399;
+      font-weight: 700; margin-top: .4rem; display: none;
+    }
+    .modal-footer { display: flex; gap: .6rem; justify-content: flex-end; margin-top: 1.1rem; }
+
+    body.tema-claro .sol-card        { background: rgba(255,255,255,.92); border-color: rgba(212,165,116,.18); }
+    body.tema-claro .cliente-nome    { color: #1f2937; }
+    body.tema-claro .modal-box       { background: #f9fafb; }
+    body.tema-claro .form-control    { background: rgba(0,0,0,.04); border-color: rgba(0,0,0,.1); color: #1f2937; }
+    body.tema-claro .link-pill       { background: rgba(196,147,91,.06); border-color: rgba(196,147,91,.22); }
+    body.tema-claro .empty-state     { background: rgba(255,255,255,.92); border-color: rgba(212,165,116,.15); }
+
+    .badge-assinante {
+      background: rgba(16,185,129,.15); color: #34d399;
+      border: 1px solid rgba(16,185,129,.3);
+      border-radius: 20px; font-size: .65rem; font-weight: 700;
+      text-transform: uppercase; padding: .15rem .55rem;
+      display: inline-flex; align-items: center; gap: .28rem;
+    }
+    .badge-aguardando-cli {
+      background: rgba(251,191,36,.12); color: #fbbf24;
+      border: 1px solid rgba(251,191,36,.28);
+    }
+
+    @media (min-width: 900px) {
+      .resumo-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .resumo-item.resumo-item-wide { grid-column: auto; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 1rem; }
+      .resumo-item { min-height: 76px; padding: .7rem; }
+      .resumo-item .r-val { font-size: 1.2rem; }
+      .resumo-item .r-icon { width: 32px; height: 32px; border-radius: 10px; }
+      .form-row, .form-row-3 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div id="toast-container"></div>
+
+<div class="main-area">
+
+  <div class="page-head">
+    <div>
+      <div class="page-title"><i class="fas fa-clipboard-list"></i> Solicitações de Plano</div>
+      <div class="page-subtitle">Gerencie propostas enviadas pelos clientes, aprove condições e acompanhe confirmações em um só lugar.</div>
+    </div>
+  </div>
+
+  <div class="toolbar-card">
+    <div class="resumo-grid">
+      <div class="resumo-item pendentes">
+        <div class="resumo-main">
+          <div class="r-head"><div class="r-label">Pendentes</div></div>
+          <div class="r-val" id="resumo-pendentes">0</div>
+        </div>
+        <div class="r-icon"><i class="fas fa-clock"></i></div>
+      </div>
+      <div class="resumo-item aguardando">
+        <div class="resumo-main">
+          <div class="r-head"><div class="r-label">Aguardando Cliente</div></div>
+          <div class="r-val" id="resumo-aguardando">0</div>
+        </div>
+        <div class="r-icon"><i class="fas fa-user-clock"></i></div>
+      </div>
+      <div class="resumo-item aceitas resumo-item-wide">
+        <div class="resumo-main">
+          <div class="r-head"><div class="r-label">Aceitas</div></div>
+          <div class="r-val" id="resumo-aceitas">0</div>
+        </div>
+        <div class="r-icon"><i class="fas fa-check"></i></div>
+      </div>
+    </div>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="link-pill" id="link-box" style="display:none">
+      <i class="fas fa-link"></i>
+      <span id="link-url"></span>
+    </div>
+    <button class="btn-icon copy" id="btn-copiar" title="Copiar link para clientes" onclick="copiarLink()" style="display:none">
+      <i class="fas fa-copy"></i>
+    </button>
+    <button class="btn-icon refresh" title="Atualizar" onclick="carregarSolicitacoes()">
+      <i class="fas fa-sync-alt"></i>
+    </button>
+  </div>
+
+  <!-- FILTRO -->
+  <div class="filtro-select-wrap">
+    <select class="filtro-select" id="filtro-select" onchange="filtrar(this.value)">
+      <option value="pendente">Pendentes</option>
+      <option value="aguardando_confirmacao_cliente">Aguardando Cliente</option>
+      <option value="todos">Todas</option>
+      <option value="aceito">Aceitas</option>
+      <option value="recusado">Recusadas</option>
+      <option value="cancelado_cliente">Canceladas</option>
+    </select>
+    <span class="pendente-badge" id="badge-pendente"></span>
+  </div>
+  </div>
+
+  <!-- LISTA -->
+  <div id="lista-solicitacoes">
+    <div class="sol-card">
+      <div class="skeleton" style="width:45%"></div>
+      <div class="skeleton" style="width:70%"></div>
+      <div class="skeleton" style="width:55%"></div>
+    </div>
+    <div class="sol-card">
+      <div class="skeleton" style="width:38%"></div>
+      <div class="skeleton" style="width:65%"></div>
+      <div class="skeleton" style="width:50%"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== MODAL ==================== -->
+<div class="modal-overlay" id="modal-resposta">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>
+        <i id="modal-icon" class="fas fa-check-circle" style="color:#34d399"></i>
+        <span id="modal-titulo">Aceitar Proposta</span>
+      </h3>
+      <button class="btn-close" onclick="fecharModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="modal-resumo" id="modal-resumo"></div>
+
+    <!-- Aceite -->
+    <div id="modal-campos-aceite">
+      <div class="secao-label">Ajustar horário <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></div>
+      <div class="form-group" style="margin-bottom:.8rem">
+        <label>Horário</label>
+        <input type="time" id="m-horario-ajustado" class="form-control" />
+      </div>
+
+      <div class="secao-label">Valor do plano <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional — deixe vazio para manter)</span></div>
+      <div class="form-row" style="margin-bottom:.5rem">
+        <div class="form-group">
+          <label>Total original</label>
+          <input type="text" id="m-valor-original" class="form-control" readonly style="opacity:.55" />
+        </div>
+        <div class="form-group">
+          <label>Novo valor final <span style="font-size:.72rem;color:#6b7280;font-weight:400;text-transform:none">(R$ — fixo)</span></label>
+          <input type="number" id="m-valor-final-custom" class="form-control" min="0" step="0.01" placeholder="Ex: 40.00" inputmode="decimal" oninput="calcularPreview()" />
+        </div>
+      </div>
+      <div class="preview-valor" id="preview-valor">
+        <i class="fas fa-tag"></i> Desconto: <span id="preview-val"></span>
+      </div>
+
+      <div id="m-renovacao-opcoes" style="display:none;margin:.65rem 0 .4rem 0;padding:.7rem;border:1px solid rgba(52,211,153,.3);background:rgba(16,185,129,.08);border-radius:10px;">
+        <div style="font-size:.76rem;font-weight:700;color:#34d399;margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase">Renovação de plano</div>
+        <label style="display:flex;gap:.45rem;align-items:flex-start;font-size:.84rem;color:#d1d5db;margin-bottom:.35rem;cursor:pointer;">
+          <input type="radio" name="m-renovacao-valor" value="manter" checked onchange="atualizarOpcaoRenovacaoValor()" />
+          <span>Manter valor atual do plano e enviar para o cliente confirmar</span>
+        </label>
+        <label style="display:flex;gap:.45rem;align-items:flex-start;font-size:.84rem;color:#d1d5db;cursor:pointer;">
+          <input type="radio" name="m-renovacao-valor" value="alterar" onchange="atualizarOpcaoRenovacaoValor()" />
+          <span>Alterar valor e enviar nova oferta para o cliente</span>
+        </label>
+      </div>
+
+      <div class="form-group" style="margin-top:.8rem">
+        <label>Observacao para o cliente <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label>
+        <textarea id="m-obs-barbeiro" class="form-control" rows="2" placeholder="Alguma informacao adicional..."></textarea>
+      </div>
+    </div>
+
+    <!-- Recusa -->
+    <div id="modal-campos-recusa" style="display:none">
+      <div class="form-group">
+        <label>Motivo <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label>
+        <textarea id="m-obs-recusa" class="form-control" rows="3" placeholder="Informe o motivo para o cliente..."></textarea>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secundario" onclick="fecharModal()">Cancelar</button>
+      <button class="btn" id="btn-confirmar-modal" onclick="confirmarResposta()">
+        <i class="fas fa-check"></i> Confirmar
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  var DIAS_LABEL = { segunda:'Segunda-feira', terca:'Terça-feira', quarta:'Quarta-feira', quinta:'Quinta-feira', sexta:'Sexta-feira', sabado:'Sábado', domingo:'Domingo' };
+  var solicitacoesCache = [];
+  var filtroAtivo = 'pendente';
+  var modalSolicitacao  = null;
+  var modalAcao         = null;
+  var meuCodigo         = 0;
+
+  function toast(msg, tipo, dur) {
+    tipo = tipo || 'info'; dur = dur || 4000;
+    var el = document.createElement('div');
+    el.className = 'toast ' + tipo;
+    var ic = { success:'fa-check-circle', error:'fa-exclamation-circle', info:'fa-info-circle' };
+    el.innerHTML = '<i class="fas ' + (ic[tipo]||ic.info) + '"></i><span>' + msg + '</span>';
+    document.getElementById('toast-container').appendChild(el);
+    setTimeout(function() { el.style.animation = 'slideIn .25s reverse'; setTimeout(function(){ el.remove(); }, 250); }, dur);
+  }
+
+  async function init() {
+    try {
+      var res  = await fetch('../../bancodedados/usuarios/obter_usuario_logado.php');
+      var data = await res.json();
+      if (data.sucesso) { meuCodigo = data.usuario.codigo; montarLink(meuCodigo); }
+    } catch(e) {}
+    carregarSolicitacoes();
+  }
+
+  function montarLink(codigo) {
+    var base = location.href.replace('/paginas/solicitacoes-plano/solicitacoes-plano.html', '');
+    var link = base + '/paginas/agendamentoclientes/solicitar-plano.html?barbeiro=' + codigo;
+    document.getElementById('link-url').textContent = link;
+    document.getElementById('link-box').style.display = 'flex';
+    document.getElementById('btn-copiar').style.display = 'inline-flex';
+  }
+
+  function copiarLink() {
+    var link = document.getElementById('link-url').textContent;
+    navigator.clipboard.writeText(link).then(function(){ toast('Link copiado!', 'success'); });
+  }
+
+  async function carregarSolicitacoes() {
+    var skl = '<div class="sol-card"><div class="skeleton" style="width:45%"></div><div class="skeleton" style="width:70%"></div><div class="skeleton" style="width:55%"></div></div>';
+    document.getElementById('lista-solicitacoes').innerHTML = skl + skl;
+    try {
+      var res  = await fetch('../../bancodedados/solicitacoes_plano/listar_solicitacoes_barbeiro.php?status=todos');
+      var data = await res.json();
+      if (!data.sucesso) {
+        document.getElementById('lista-solicitacoes').innerHTML = '<p style="color:#f87171;font-size:.82rem;padding:.5rem">' + (data.mensagem||'Erro ao carregar') + '</p>';
+        return;
+      }
+      solicitacoesCache = data.solicitacoes || [];
+      atualizarBadge();
+      atualizarResumo();
+      renderizar();
+    } catch(e) {
+      document.getElementById('lista-solicitacoes').innerHTML = '<p style="color:#f87171;font-size:.82rem;padding:.5rem">Erro de conexao.</p>';
+    }
+  }
+
+  function atualizarBadge() {
+    var n = solicitacoesCache.filter(function(s){ return s.status === 'pendente'; }).length;
+    var b = document.getElementById('badge-pendente');
+    if (n > 0) { b.textContent = n; b.style.display = 'inline-block'; }
+    else        { b.style.display = 'none'; }
+    // Notificar home.php (parent) sobre badge
+    try { window.parent.atualizarBadgePlanos(n); } catch(e) {}
+  }
+
+  function atualizarResumo() {
+    var pendentes = solicitacoesCache.filter(function(s){ return s.status === 'pendente'; }).length;
+    var aguardando = solicitacoesCache.filter(function(s){ return s.status === 'aguardando_confirmacao_cliente'; }).length;
+    var aceitas = solicitacoesCache.filter(function(s){ return s.status === 'aceito'; }).length;
+
+    document.getElementById('resumo-pendentes').textContent = pendentes;
+    document.getElementById('resumo-aguardando').textContent = aguardando;
+    document.getElementById('resumo-aceitas').textContent = aceitas;
+  }
+
+  function filtrar(f) {
+    filtroAtivo = f;
+    var sel = document.getElementById('filtro-select');
+    if (sel) sel.value = f;
+    renderizar();
+  }
+
+  function renderizar() {
+    var lista = filtroAtivo === 'todos' ? solicitacoesCache : solicitacoesCache.filter(function(s){ return s.status === filtroAtivo; });
+    var el = document.getElementById('lista-solicitacoes');
+    if (!lista.length) {
+      var msgs = { todos:'Nenhuma solicitacao recebida ainda.', pendente:'Nenhuma solicitacao pendente.', aceito:'Nenhuma solicitacao aceita.', recusado:'Nenhuma solicitacao recusada.', cancelado_cliente:'Nenhuma solicitacao cancelada.', aguardando_confirmacao_cliente:'Nenhuma solicitação aguardando confirmação do cliente.' };
+      el.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><h3>' + (msgs[filtroAtivo]||'Nenhum resultado.') + '</h3><p>Propostas de plano enviadas pelos clientes aparecerao aqui.</p></div>';
+      return;
+    }
+    el.innerHTML = lista.map(renderCard).join('');
+  }
+
+  function renderCard(s) {
+    var badges = { pendente:'badge-pendente', aceito:'badge-aceito', recusado:'badge-recusado',
+                   cancelado_cliente:'badge-cancelado', recusado_pelo_cliente:'badge-cancelado',
+                   aguardando_confirmacao_cliente:'badge-aguardando-cli badge-pendente' };
+    var labels = { pendente:'Pendente', aceito:'Aceito', recusado:'Recusado',
+                   cancelado_cliente:'Cancelado', recusado_pelo_cliente:'Cancelado',
+                   aguardando_confirmacao_cliente:'Aguardando cliente' };
+    var diaFmt  = DIAS_LABEL[s.dia_semana] || s.dia_semana || '—';
+    var horFmt  = s.horario_preferido ? s.horario_preferido.slice(0,5) : '';
+    var diaFmt2 = s.dia_semana_2 ? (DIAS_LABEL[s.dia_semana_2] || s.dia_semana_2) : null;
+    var horFmt2 = s.horario_preferido_2 ? s.horario_preferido_2.slice(0,5) : null;
+    var diaHorInfo = diaFmt + ' às ' + horFmt + (diaFmt2 ? ' &amp; ' + diaFmt2 + ' às ' + horFmt2 : '');
+    var totalOrig = parseFloat(s.valor_total_original || 0);
+    var metaRenovacao = extrairMetaRenovacao(s.observacoes_cliente);
+    var ehRenovacao = !!metaRenovacao;
+    var valorBasePlano = ehRenovacao && metaRenovacao.valorAtual > 0
+      ? metaRenovacao.valorAtual
+      : totalOrig;
+
+    var servicosHtml = (s.servicos || []).map(function(sv) {
+      var preco = parseFloat(sv.valor || 0);
+      return '<span class="servico-tag"><strong>' + sv.nome + '</strong> x' + (sv.quantidade||1) + ' R$' + (preco*(sv.quantidade||1)).toFixed(2).replace('.',',') + '</span>';
+    }).join('') || '<span style="font-size:.76rem;color:#4b5563">-</span>';
+
+    var obsClienteLimpa = limparMetaRenovacao(s.observacoes_cliente);
+    var obsHtml = obsClienteLimpa ? '<div class="obs-cliente"><i class="fas fa-comment-dots" style="color:#60a5fa;margin-right:.35rem"></i>' + obsClienteLimpa + '</div>' : '';
+    if (ehRenovacao) {
+      obsHtml = '<div class="obs-cliente" style="border-color:rgba(52,211,153,.35);background:rgba(16,185,129,.08)"><i class="fas fa-rotate" style="color:#34d399;margin-right:.35rem"></i>Solicitação de renovação de plano.</div>' + obsHtml;
+    }
+
+    var respostaHtml = '';
+    if (s.status === 'aceito') {
+      var dataAj = s.data_ajustada ? fmtData(s.data_ajustada) : '';
+      var horAj  = s.horario_ajustado ? s.horario_ajustado.slice(0,5) : '';
+      var descInfo = 'Sem desconto.';
+      if (s.tipo_desconto) {
+        descInfo = s.tipo_desconto === 'percentual'
+          ? s.valor_desconto + '% de desconto - R$' + parseFloat(s.valor_final).toFixed(2).replace('.',',')
+          : 'R$' + parseFloat(s.valor_desconto).toFixed(2).replace('.',',') + ' de desconto - R$' + parseFloat(s.valor_final).toFixed(2).replace('.',',');
+      }
+      respostaHtml = '<div class="resposta-box aceito"><div class="resp-titulo"><i class="fas fa-check-circle"></i> Aceito' + (s.data_resposta ? ' - ' + new Date(s.data_resposta).toLocaleDateString('pt-BR') : '') + '</div><div class="resp-info">' + descInfo + ((dataAj||horAj) ? ' | Novo horário: ' + (dataAj || diaFmt) + ' às ' + (horAj||horFmt) : '') + (s.observacoes_barbeiro ? ' | ' + s.observacoes_barbeiro : '') + '</div></div>';
+    } else if (s.status === 'recusado') {
+      respostaHtml = '<div class="resposta-box recusado"><div class="resp-titulo"><i class="fas fa-times-circle"></i> Recusado' + (s.data_resposta ? ' - ' + new Date(s.data_resposta).toLocaleDateString('pt-BR') : '') + '</div>' + (s.observacoes_barbeiro ? '<div class="resp-info">' + s.observacoes_barbeiro + '</div>' : '') + '</div>';
+    } else if (s.status === 'aguardando_confirmacao_cliente') {
+      var horAjAg = s.horario_ajustado ? s.horario_ajustado.slice(0,5) : horFmt;
+      var dataAjAg = s.data_ajustada ? fmtData(s.data_ajustada) : '';
+      var horTextoAg = dataAjAg ? (dataAjAg + ' às ' + horAjAg) : (diaFmt + ' às ' + horAjAg);
+      var valFinalAg = s.valor_final ? 'R$ ' + parseFloat(s.valor_final).toFixed(2).replace('.',',') : 'R$ ' + totalOrig.toFixed(2).replace('.',',');
+      respostaHtml = '<div class="resposta-box aceito" style="border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.07)">'
+        + '<div class="resp-titulo" style="color:#fbbf24"><i class="fas fa-clock"></i> Aguardando confirmação do cliente</div>'
+        + '<div class="resp-info">Proposta enviada: ' + horTextoAg + ' — ' + valFinalAg
+        + (s.observacoes_barbeiro ? ' | ' + s.observacoes_barbeiro : '') + '</div></div>';
+    }
+
+    var acoesHtml = '';
+    if (s.status === 'pendente') {
+      acoesHtml = '<div class="acoes-row"><button class="btn btn-aceitar" onclick="abrirModalAceitar(' + s.codigo + ')"><i class="fas fa-check"></i> Aceitar</button><button class="btn btn-recusar" onclick="abrirModalRecusar(' + s.codigo + ')"><i class="fas fa-times"></i> Recusar</button></div>';
+    }
+
+    // Badge assinante ao lado do nome (quando aceito)
+    var assinanteBadge = (s.status === 'aceito')
+      ? ' <span class="badge-assinante"><i class="fas fa-crown"></i> Assinante</span>'
+      : '';
+
+    return '<div class="sol-card ' + s.status + '" id="sol-' + s.codigo + '">' +
+      '<div class="card-top"><div class="cliente-nome"><i class="fas fa-user"></i>' + s.cliente_nome + assinanteBadge + '</div><span class="sol-badge ' + (badges[s.status]||'badge-pendente') + '">' + (labels[s.status]||s.status) + '</span></div>' +
+      '<div class="card-meta"><span><i class="fas fa-phone"></i>' + s.cliente_telefone + '</span><span><i class="fas fa-calendar-week"></i>' + diaHorInfo + '</span><span><i class="fas fa-rotate"></i>' + cap(s.periodicidade) + '</span><span><i class="fas fa-clock"></i>' + s.criado_em + '</span></div>' +
+      '<div class="servicos-lista">' + servicosHtml + '</div>' +
+        '<div class="valores-line"><span class="val-chip principal"><i class="fas fa-tag"></i> R$' + valorBasePlano.toFixed(2).replace('.',',') + '</span><span class="val-chip">' + s.quantidade_sessoes + (s.quantidade_sessoes == 1 ? ' sessão' : ' sessões') + '</span></div>' +
+      obsHtml + respostaHtml + acoesHtml + '</div>';
+  }
+
+  function abrirModalAceitar(codigo) {
+    var s = solicitacoesCache.find(function(x){ return x.codigo == codigo; });
+    if (!s) return;
+    var metaRenovacao = extrairMetaRenovacao(s.observacoes_cliente);
+    var ehRenovacao = !!metaRenovacao;
+    var valorBasePlano = ehRenovacao && metaRenovacao.valorAtual > 0
+      ? metaRenovacao.valorAtual
+      : parseFloat(s.valor_total_original || 0);
+
+    s.__eh_renovacao = ehRenovacao;
+    s.__valor_base_plano = valorBasePlano;
+
+    modalSolicitacao = s; modalAcao = 'aceitar';
+    document.getElementById('modal-icon').className   = 'fas fa-check-circle';
+    document.getElementById('modal-icon').style.color = '#34d399';
+    document.getElementById('modal-titulo').textContent = ehRenovacao ? 'Responder Renovação' : 'Aceitar Proposta';
+    document.getElementById('modal-campos-aceite').style.display = '';
+    document.getElementById('modal-campos-recusa').style.display = 'none';
+    var btn = document.getElementById('btn-confirmar-modal');
+    btn.className = 'btn btn-aceitar';
+    btn.innerHTML = '<i class="fas fa-check"></i> Confirmar Aceite';
+    var nomeServs = (s.servicos||[]).map(function(x){ return x.nome; }).join(', ');
+    var diaFmt = DIAS_LABEL[s.dia_semana] || s.dia_semana || '—';
+    document.getElementById('modal-resumo').innerHTML =
+      '<strong style="color:#f0f0f0">' + s.cliente_nome + '</strong> - ' + s.cliente_telefone + '<br>' +
+      nomeServs + '<br>' +
+      '<span style="color:#a78bfa;font-weight:700">R$' + valorBasePlano.toFixed(2).replace('.',',') + ' - ' + cap(s.periodicidade) + ' - ' + s.quantidade_sessoes + (s.quantidade_sessoes == 1 ? ' sessão' : ' sessões') + '</span><br>' +
+      'Solicitado: ' + diaFmt + ' às ' + (s.horario_preferido ? s.horario_preferido.slice(0,5) : '-');
+    document.getElementById('m-data-ajustada') && (document.getElementById('m-data-ajustada').value = '');
+    document.getElementById('m-horario-ajustado').value = s.horario_ajustado ? s.horario_ajustado.slice(0,5) : (s.horario_preferido ? s.horario_preferido.slice(0,5) : '');
+    document.getElementById('m-valor-original').value   = 'R$ ' + valorBasePlano.toFixed(2).replace('.',',');
+    document.getElementById('m-valor-final-custom').value = '';
+    document.getElementById('m-obs-barbeiro').value     = '';
+    document.getElementById('preview-valor').style.display = 'none';
+
+    var blocoRenovacao = document.getElementById('m-renovacao-opcoes');
+    if (blocoRenovacao) {
+      blocoRenovacao.style.display = ehRenovacao ? 'block' : 'none';
+      var radios = document.querySelectorAll('input[name="m-renovacao-valor"]');
+      radios.forEach(function(r){ r.checked = r.value === 'manter'; });
+      atualizarOpcaoRenovacaoValor();
+    }
+    abrirModal();
+  }
+
+  function abrirModalRecusar(codigo) {
+    var s = solicitacoesCache.find(function(x){ return x.codigo == codigo; });
+    if (!s) return;
+    modalSolicitacao = s; modalAcao = 'recusar';
+    document.getElementById('modal-icon').className   = 'fas fa-times-circle';
+    document.getElementById('modal-icon').style.color = '#f87171';
+    document.getElementById('modal-titulo').textContent = 'Recusar Proposta';
+    document.getElementById('modal-campos-aceite').style.display = 'none';
+    document.getElementById('modal-campos-recusa').style.display = '';
+    var btn = document.getElementById('btn-confirmar-modal');
+    btn.className = 'btn btn-recusar';
+    btn.innerHTML = '<i class="fas fa-times"></i> Confirmar Recusa';
+    var nomeServs = (s.servicos||[]).map(function(x){ return x.nome; }).join(', ');
+    document.getElementById('modal-resumo').innerHTML =
+      '<strong style="color:#f0f0f0">' + s.cliente_nome + '</strong> - ' + s.cliente_telefone + '<br>' +
+      nomeServs + '<br><span style="font-weight:700">R$' + parseFloat(s.valor_total_original).toFixed(2).replace('.',',') + '</span>';
+    document.getElementById('m-obs-recusa').value = '';
+    abrirModal();
+  }
+
+  function abrirModal()  { document.getElementById('modal-resposta').style.display = 'flex'; }
+  function fecharModal() {
+    document.getElementById('modal-resposta').style.display = 'none';
+    modalSolicitacao = null; modalAcao = null;
+  }
+
+  function atualizarOpcaoRenovacaoValor() {
+    if (!modalSolicitacao || !modalSolicitacao.__eh_renovacao) return;
+    var opcaoEl = document.querySelector('input[name="m-renovacao-valor"]:checked');
+    var opcao = opcaoEl ? opcaoEl.value : 'manter';
+    var inputValor = document.getElementById('m-valor-final-custom');
+    var prev = document.getElementById('preview-valor');
+    if (!inputValor || !prev) return;
+
+    if (opcao === 'manter') {
+      inputValor.value = '';
+      inputValor.disabled = true;
+      prev.style.display = 'none';
+    } else {
+      inputValor.disabled = false;
+      calcularPreview();
+    }
+  }
+
+  function calcularPreview() {
+    if (!modalSolicitacao) return;
+    if (modalSolicitacao.__eh_renovacao) {
+      var opcaoEl = document.querySelector('input[name="m-renovacao-valor"]:checked');
+      if (opcaoEl && opcaoEl.value === 'manter') {
+        document.getElementById('preview-valor').style.display = 'none';
+        return;
+      }
+    }
+    var valorDigitado = parseFloat(document.getElementById('m-valor-final-custom').value);
+    var orig = parseFloat(modalSolicitacao.__valor_base_plano || modalSolicitacao.valor_total_original) || 0;
+    var prev = document.getElementById('preview-valor');
+    var pval = document.getElementById('preview-val');
+    if (isNaN(valorDigitado) || valorDigitado <= 0) {
+      prev.style.display = 'none'; return;
+    }
+    if (valorDigitado >= orig) {
+      prev.style.display = 'block';
+      pval.textContent = 'Valor igual ou maior ao original. Nenhum desconto será aplicado.';
+      pval.style.color = '#f87171';
+      return;
+    }
+    var desconto = orig - valorDigitado;
+    prev.style.display = 'block';
+    pval.textContent = 'R$ ' + desconto.toFixed(2).replace('.',',') + ' (valor final: R$ ' + valorDigitado.toFixed(2).replace('.',',') + ')';
+    pval.style.color = '#34d399';
+  }
+
+  async function confirmarResposta() {
+    if (!modalSolicitacao || !modalAcao) return;
+    var btn = document.getElementById('btn-confirmar-modal');
+    btn.disabled = true;
+    var orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Aguarde...';
+
+    var payload = { codigo: modalSolicitacao.codigo, acao: modalAcao };
+
+    if (modalAcao === 'aceitar') {
+      var dataAj  = null; // campo de data removido do modal
+      var horAj   = document.getElementById('m-horario-ajustado').value || null;
+      var obs     = document.getElementById('m-obs-barbeiro').value.trim() || null;
+      var totalOr = parseFloat(modalSolicitacao.__valor_base_plano || modalSolicitacao.valor_total_original) || 0;
+      var valorFinalDigitado = parseFloat(document.getElementById('m-valor-final-custom').value);
+      var tipo       = null;
+      var valDesc    = null;
+      var valorFinal = totalOr;
+      var forcarConfirmacao = !!modalSolicitacao.__eh_renovacao;
+
+      if (modalSolicitacao.__eh_renovacao) {
+        var opcaoRenov = document.querySelector('input[name="m-renovacao-valor"]:checked');
+        var modoRenov = opcaoRenov ? opcaoRenov.value : 'manter';
+        if (modoRenov === 'alterar') {
+          if (isNaN(valorFinalDigitado) || valorFinalDigitado <= 0) {
+            toast('Informe o novo valor da renovação para enviar a oferta.', 'error');
+            btn.disabled = false; btn.innerHTML = orig;
+            return;
+          }
+          valorFinal = valorFinalDigitado;
+          if (valorFinalDigitado < totalOr) {
+            tipo    = 'fixo';
+            valDesc = parseFloat((totalOr - valorFinalDigitado).toFixed(2));
+          }
+        }
+      } else if (!isNaN(valorFinalDigitado) && valorFinalDigitado > 0 && valorFinalDigitado < totalOr) {
+        // Solicitação nova: desconto opcional quando valor final é menor.
+        tipo       = 'fixo';
+        valDesc    = parseFloat((totalOr - valorFinalDigitado).toFixed(2));
+        valorFinal = valorFinalDigitado;
+      }
+      payload.data_ajustada        = dataAj;
+      payload.horario_ajustado     = horAj;
+      payload.tipo_desconto        = tipo;
+      payload.valor_desconto       = valDesc;
+      payload.valor_final          = valorFinal;
+      payload.observacoes_barbeiro = obs;
+      payload.forcar_confirmacao_cliente = forcarConfirmacao;
+    } else {
+      payload.observacoes_barbeiro = document.getElementById('m-obs-recusa').value.trim() || null;
+    }
+
+    try {
+      var res  = await fetch('../../bancodedados/solicitacoes_plano/responder_solicitacao.php', {
+        method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload)
+      });
+      var data = await res.json();
+      if (data.sucesso) { toast(data.mensagem, 'success'); fecharModal(); carregarSolicitacoes(); }
+      else               toast(data.mensagem || 'Erro ao responder', 'error');
+    } catch(e) { toast('Erro de conexao', 'error'); }
+    finally    { btn.disabled = false; btn.innerHTML = orig; }
+  }
+
+  function fmtData(dateStr) {
+    if (!dateStr) return '-';
+    var parts = (dateStr.split('T')[0]).split('-');
+    return parts[2] + '/' + parts[1] + '/' + parts[0];
+  }
+
+  function extrairMetaRenovacao(obs) {
+    if (!obs) return null;
+    var m = String(obs).match(/\[RENOVACAO\|origem=(\d+)\|valor_atual=([0-9]+(?:\.[0-9]+)?)\]/i);
+    if (!m) return null;
+    return {
+      origem: parseInt(m[1] || '0', 10),
+      valorAtual: parseFloat(m[2] || '0') || 0
+    };
+  }
+
+  function limparMetaRenovacao(obs) {
+    if (!obs) return '';
+    return String(obs).replace(/\s*\[RENOVACAO\|origem=\d+\|valor_atual=[0-9]+(?:\.[0-9]+)?\]\s*/ig, '').trim();
+  }
+
+  function cap(str) { return str ? str.charAt(0).toUpperCase() + str.slice(1) : ''; }
+
+  init();
+</script>
+</body>
+</html>

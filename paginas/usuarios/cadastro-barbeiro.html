@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta - MustaBarber</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="../tema-claro.css" rel="stylesheet" />
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1f1f1f 0%, #141414 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container { max-width: 820px; margin: 0 auto; }
+
+        .form-card {
+            background: rgba(25,25,28,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .form-header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #e8e8e8;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .form-header h1 i { color: rgba(255,255,255,0.35); }
+
+        .btn {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-back {
+            background: rgba(45,45,50,0.8);
+            color: #e8e8e8;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .btn-back:hover { background: rgba(255,255,255,0.1); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #5a5a5a, #343434);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+        }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-secondary {
+            background: rgba(45,45,50,0.8);
+            color: #e8e8e8;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+        .form-section { margin-bottom: 2rem; }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #e8e8e8;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+        .section-title i { color: rgba(255,255,255,0.35); font-size: 0.875rem; }
+        .section-title .badge-opt {
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: #555;
+            margin-left: auto;
+        }
+
+        .form-group { margin-bottom: 1.2rem; }
+
+        .form-group label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: #999;
+            margin-bottom: 0.4rem;
+        }
+        .form-group label .required { color: #ef4444; margin-left: 3px; }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(40,40,45,0.9);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: #e8e8e8;
+            font-size: 0.9rem;
+            transition: all 0.25s;
+            font-family: 'Inter', sans-serif;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: rgba(255,255,255,0.35);
+            box-shadow: 0 0 0 3px rgba(255,255,255,0.05);
+        }
+        .form-group input::placeholder { color: #484848; }
+        .form-group select option { background: #2a2a2f; }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .field-hint { font-size: 0.77rem; color: #555; margin-top: 0.4rem; line-height: 1.4; }
+
+        /* Billing flow info (estático) */
+        .billing-flow {
+            margin-top: .75rem;
+            background: rgba(167,139,250,.05);
+            border: 1px solid rgba(167,139,250,.15);
+            border-radius: 10px;
+            padding: .75rem 1rem;
+            font-size: .78rem;
+            color: #9ca3af;
+            line-height: 1.6;
+        }
+        .billing-flow-title {
+            font-weight: 700; color: #a78bfa;
+            font-size: .79rem; margin-bottom: .4rem;
+            display: flex; align-items: center; gap: .35rem;
+        }
+        .billing-flow ol {
+            margin: 0; padding-left: 1.2rem;
+        }
+        .billing-flow li { margin-bottom: .15rem; }
+
+        .preview-box {
+            margin-top: 0.5rem;
+            padding: 0.65rem 0.9rem;
+            background: rgba(34,197,94,0.07);
+            border: 1px solid rgba(34,197,94,0.2);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #4ade80;
+            display: none;
+            line-height: 1.5;
+        }
+        .preview-box.show { display: block; }
+
+        /* Indicacao */
+        .indicacao-wrapper { position: relative; }
+        .indicacao-wrapper input { padding-right: 2.5rem; }
+        .indicacao-icon { position: absolute; right: 0.9rem; top: 50%; transform: translateY(-50%); font-size: 0.875rem; display: none; }
+        .indicacao-icon.show { display: block; }
+        .indicacao-feedback { font-size: 0.78rem; margin-top: 0.35rem; display: none; }
+        .indicacao-feedback.ok { display: block; color: #4ade80; }
+        .indicacao-feedback.erro { display: block; color: #f87171; }
+
+        /* Photo */
+        .photo-upload-area { display: flex; align-items: center; gap: 1.5rem; }
+        .avatar-circle {
+            width: 82px;
+            height: 82px;
+            border-radius: 50%;
+            border: 2px dashed rgba(255,255,255,0.18);
+            background: rgba(40,40,45,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: border-color 0.25s;
+        }
+        .avatar-circle:hover { border-color: rgba(255,255,255,0.35); }
+        .avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-circle i { font-size: 1.8rem; color: rgba(255,255,255,0.18); }
+        .photo-desc { font-size: 0.8rem; color: #555; margin-bottom: 0.6rem; }
+        input[type="file"] { display: none; }
+
+        /* Plan select preview */
+        .plan-info-box {
+            margin-top: 0.5rem;
+            padding: 0.65rem 0.9rem;
+            background: rgba(212,165,116,0.07);
+            border: 1px solid rgba(212,165,116,0.2);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #d4a574;
+            display: none;
+            line-height: 1.5;
+        }
+        .plan-info-box.show { display: block; }
+
+        /* Messages */
+        .msg {
+            padding: 0.875rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+        }
+        .msg.show { display: flex; }
+        .msg.success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #4ade80; }
+        .msg.error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #f87171; }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.07);
+        }
+
+        @media (max-width: 700px) {
+            body { padding: 1rem 0.75rem; }
+            .form-card { padding: 1.5rem 1rem; }
+            .form-header h1 { font-size: 1.4rem; }
+            .form-row { grid-template-columns: 1fr; }
+            .form-actions { flex-direction: column-reverse; }
+            .form-actions .btn { width: 100%; justify-content: center; }
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-card">
+
+            <div class="form-header">
+                <h1><i class="fas fa-user-plus"></i> Criar Conta</h1>
+                <a href="../../login.html" class="btn btn-back">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+
+            <div id="msgContainer" class="msg">
+                <i id="msgIcon" class="fas fa-info-circle"></i>
+                <span id="msgText"></span>
+            </div>
+
+            <!-- Banner de indicação por embaixador -->
+            <div id="banner-referral" style="
+                display:none; align-items:center; gap:.5rem;
+                background:rgba(212,165,116,.1); border:1px solid rgba(212,165,116,.3);
+                border-radius:10px; padding:.875rem 1rem;
+                font-size:.875rem; color:#d4a574; font-weight:500;
+                margin-bottom:1.25rem;
+            "></div>
+
+            <form id="barbeiroForm" novalidate>
+                <input type="hidden" id="planoTrialInput" name="plano_trial" value="starter">
+                <input type="hidden" id="codigoEmbaixadorInput" name="codigo_embaixador" value="">
+                <input type="hidden" id="descontoEmbaixadorInput" name="desconto_embaixador" value="0">
+
+                <!-- PLANO -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-crown"></i> Escolha seu Plano
+                    </div>
+                    <div class="form-group" style="margin-bottom:0">
+                        <label for="planoSelect">Plano desejado <span class="required">*</span></label>
+                        <select id="planoSelect" name="plano_select">
+                            <option value="starter">Solo B&aacute;sico &mdash; R$52,90/m&ecirc;s (1 barbeiro)</option>
+                            <option value="solo-pro">Solo Pro &mdash; R$64,90/m&ecirc;s (1 barbeiro)</option>
+                            <option value="equipe">Equipe &mdash; R$94,90/m&ecirc;s (at&eacute; 3 barbeiros)</option>
+                            <option value="barbearia-pro">Barbearia+ &mdash; Plano Personalizado (+ de 3 barbeiros)</option>
+                        </select>
+                        <!-- Banner especial para Barbearia+ -->
+                        <div id="barbeariaProBanner" style="display:none;margin-top:.6rem;padding:.75rem 1rem;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.3);border-radius:10px;font-size:.82rem;color:#f87171;line-height:1.6">
+                            <strong><i class="fas fa-info-circle" style="margin-right:5px"></i>Plano Personalizado</strong><br>
+                            O plano <strong>Barbearia+</strong> &eacute; ideal para barbearias com mais de 3 profissionais. Entre em contato para montar o plano ideal para o seu neg&oacute;cio.
+                            <div style="margin-top:.6rem">
+                                <a href="https://wa.me/5562994057005?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20plano%20Barbearia%2B!" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#f87171,#ef4444);color:#fff;padding:.45rem 1rem;border-radius:8px;font-weight:700;text-decoration:none;font-size:.82rem">
+                                    <i class="fab fa-whatsapp"></i> Entrar em Contato
+                                </a>
+                            </div>
+                        </div>
+                        <div class="plan-info-box" id="planInfoBox"></div>
+                        <p class="field-hint" style="margin-top:0.5rem">
+                            <i class="fas fa-gift" style="color:#d4a574;margin-right:4px"></i>
+                            Todos os planos incluem <strong style="color:#d4a574">7 dias gr&aacute;tis</strong> sem precisar de cart&atilde;o de cr&eacute;dito.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FOTO -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-camera"></i> Foto de Perfil
+                        <span class="badge-opt">Opcional</span>
+                    </div>
+                    <div class="photo-upload-area">
+                        <div class="avatar-circle" id="avatarCircle" onclick="document.getElementById('photoInput').click()">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <p class="photo-desc">Clique no c&iacute;rculo ou no bot&atilde;o para adicionar uma foto. JPG ou PNG, m&aacute;x. 5MB.</p>
+                            <input type="file" id="photoInput" name="photo" accept="image/*">
+                            <label for="photoInput" class="btn btn-secondary" style="cursor:pointer;font-size:0.8rem;padding:0.55rem 1rem">
+                                <i class="fas fa-upload"></i> Escolher Foto
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DADOS PESSOAIS -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-id-card"></i> Dados Pessoais
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nome">Nome Completo <span class="required">*</span></label>
+                            <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cpf">CPF <span class="required">*</span></label>
+                            <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" maxlength="14" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">E-mail <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="telefone">Telefone <span class="required">*</span></label>
+                            <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" maxlength="15" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ENDERECO -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-map-marker-alt"></i> Endere&ccedil;o
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="enderecoCep">CEP <span class="required">*</span></label>
+                            <input type="text" id="enderecoCep" name="endereco_cep" placeholder="00000-000" maxlength="9" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="enderecoEstado">Estado (UF) <span class="required">*</span></label>
+                            <input type="text" id="enderecoEstado" name="endereco_estado" placeholder="GO" maxlength="2" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="enderecoLogradouro">Logradouro <span class="required">*</span></label>
+                            <input type="text" id="enderecoLogradouro" name="endereco_logradouro" placeholder="Rua, Avenida..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="enderecoNumero">N&uacute;mero <span class="required">*</span></label>
+                            <input type="text" id="enderecoNumero" name="endereco_numero" placeholder="123" maxlength="20" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="enderecoBairro">Bairro <span class="required">*</span></label>
+                            <input type="text" id="enderecoBairro" name="endereco_bairro" placeholder="Seu bairro" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="enderecoCidade">Cidade <span class="required">*</span></label>
+                            <input type="text" id="enderecoCidade" name="endereco_cidade" placeholder="Sua cidade" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" style="width:100%">
+                            <label for="enderecoComplemento">Complemento</label>
+                            <input type="text" id="enderecoComplemento" name="endereco_complemento" placeholder="Apartamento, sala, refer&ecirc;ncia...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEGURANCA -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-lock"></i> Seguran&ccedil;a
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="senha">Senha <span class="required">*</span></label>
+                            <input type="password" id="senha" name="senha" placeholder="M&iacute;nimo 6 caracteres" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmarSenha">Confirmar Senha <span class="required">*</span></label>
+                            <input type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Repita a senha" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONFIGURACOES -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-sliders-h"></i> Configura&ccedil;&otilde;es
+                    </div>
+
+                    <div class="form-group">
+                        <label for="diaVencimento">Dia de Vencimento da Mensalidade <span class="required">*</span></label>
+                        <select id="diaVencimento" name="dia_vencimento" required>
+                            <option value="">Escolha o dia do m&ecirc;s...</option>
+                        </select>
+                        <div class="billing-flow">
+                            <div class="billing-flow-title"><i class="fas fa-info-circle"></i> Como funciona a cobran&ccedil;a</div>
+                            <ol>
+                                <li><strong>7 dias gr&aacute;tis</strong> a partir do cadastro &mdash; sem precisar de cart&atilde;o</li>
+                                <li><strong>1&ordf; cobran&ccedil;a</strong> no 7&ordm; dia ap&oacute;s o cadastro &mdash; valor cheio do plano</li>
+                                <li><strong>2&ordf; cobran&ccedil;a</strong> no dia escolhido abaixo &mdash; valor cheio do plano</li>
+                                <li><strong>A partir da&iacute;</strong>: cobrado mensalmente no dia escolhido</li>
+                            </ol>
+                        </div>
+                        <div class="preview-box" id="previewVencimento"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="indicacao">
+                            Indica&ccedil;&atilde;o
+                            <span style="font-size:0.72rem;color:#555;font-weight:400;margin-left:4px">(Opcional)</span>
+                        </label>
+                        <div class="indicacao-wrapper">
+                            <input type="text" id="indicacao" name="indicacao" placeholder="E-mail ou telefone de quem te indicou" maxlength="150" autocomplete="off">
+                            <i class="fas fa-check indicacao-icon" id="iconOk" style="color:#4ade80"></i>
+                            <i class="fas fa-times indicacao-icon" id="iconErro" style="color:#f87171"></i>
+                        </div>
+                        <p class="indicacao-feedback" id="feedbackIndicacao"></p>
+                        <p class="field-hint">Se um barbeiro te indicou, informe o contato dele para registrar a indica&ccedil;&atilde;o.</p>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <div style="width:100%;margin-bottom:0.75rem;padding:0.85rem 1rem;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.12);border-radius:10px;">
+                        <label style="display:flex;align-items:flex-start;gap:8px;font-size:0.82rem;color:#c7c7c7;line-height:1.45;cursor:pointer;">
+                            <input type="checkbox" id="aceiteTermos" style="margin-top:2px;">
+                            <span>
+                                Li e aceito os <a href="../../termos-de-uso.html" target="_blank" rel="noopener" style="color:#d4a574;">Termos de Uso</a>
+                                e a <a href="../../politica-de-privacidade.html" target="_blank" rel="noopener" style="color:#d4a574;">Politica de Privacidade</a>.
+                            </span>
+                        </label>
+                        <label style="display:flex;align-items:flex-start;gap:8px;font-size:0.8rem;color:#9ca3af;line-height:1.45;cursor:pointer;margin-top:8px;">
+                            <input type="checkbox" id="aceiteMarketing" style="margin-top:2px;">
+                            <span>Autorizo receber comunicacoes promocionais (opcional, posso revogar depois).</span>
+                        </label>
+                    </div>
+
+                    <button type="button" class="btn btn-secondary" id="btnCancelar">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="btnSubmit">
+                        <i class="fas fa-user-plus"></i> Criar Conta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    const PLANOS_INFO = {
+        'starter':      { preco: 52.90,  label: 'Solo B\u00e1sico',   barbeiros: '1 barbeiro',              features: 'Agendamentos, Clientes, Servi\u00e7os, App mobile (PWA)' },
+        'solo-pro':     { preco: 64.90,  label: 'Solo Pro',            barbeiros: '1 barbeiro',              features: 'Tudo do B\u00e1sico + Financeiro, Estoque, WhatsApp autom\u00e1tico' },
+        'equipe':       { preco: 94.90,  label: 'Equipe',              barbeiros: 'at\u00e9 3 barbeiros',    features: 'Tudo do Solo Pro + Gest\u00e3o de equipe, Permiss\u00f5es por barbeiro' },
+        'barbearia-pro':{ preco: null,   label: 'Barbearia+',          barbeiros: '+ de 3 barbeiros',        features: 'Plano personalizado \u2014 entre em contato para montar o seu' }
+    };
+
+    // &#9472;&#9472; Referral / Embaixador &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+    let referralEmbaixadorCodigo = null;
+    let referralDescontoPercent  = 0;
+
+    async function verificarReferralUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const slug   = params.get('ref') || '';
+        if (!slug) return;
+
+        try {
+            const r = await fetch('../../bancodedados/embaixadores/verificar_referral.php?slug=' + encodeURIComponent(slug));
+            const d = await r.json();
+            if (d.sucesso && d.encontrado) {
+                referralEmbaixadorCodigo = d.codigo_embaixador;
+                referralDescontoPercent  = d.desconto;
+
+                atualizarOpcoesPlano();
+                atualizarInfoPlano(planoSelect.value);
+                if (diaSelect.value) diaSelect.dispatchEvent(new Event('change'));
+
+                // Esconder campo de indicação manual e mostrar banner de embaixador
+                const secaoIndicacao = document.getElementById('indicacao').closest('.form-group');
+                secaoIndicacao.style.display = 'none';
+
+                const bannerRef = document.getElementById('banner-referral');
+                bannerRef.innerHTML = '<i class="fas fa-star" style="color:#d4a574;margin-right:6px"></i>'
+                    + d.mensagem;
+                bannerRef.style.display = 'flex';
+            }
+        } catch (e) { /* falha silenciosa */ }
+    }
+
+    verificarReferralUrl();
+    // &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
+
+    const planoInput = document.getElementById('planoTrialInput');
+    const planoSelect = document.getElementById('planoSelect');
+    const planInfoBox = document.getElementById('planInfoBox');
+
+    const barbeariaProBanner = document.getElementById('barbeariaProBanner');
+    const btnSubmit = document.getElementById('btnSubmit');
+
+    function atualizarInfoPlano(key) {
+        planoInput.value = key;
+        const info = PLANOS_INFO[key];
+        const isBarbeariaPro = (key === 'barbearia-pro');
+
+        // Banner / bloqueio de envio para Barbearia+
+        barbeariaProBanner.style.display = isBarbeariaPro ? 'block' : 'none';
+        btnSubmit.disabled = isBarbeariaPro;
+        btnSubmit.style.opacity = isBarbeariaPro ? '0.4' : '';
+        btnSubmit.style.cursor  = isBarbeariaPro ? 'not-allowed' : '';
+
+        if (info && !isBarbeariaPro) {
+            const desconto = referralDescontoPercent || 0;
+            const valorFinal = info.preco * (1 - desconto / 100);
+            let precoHtml = 'R$\u00a0' + valorFinal.toFixed(2).replace('.', ',') + '/m\u00eas';
+            if (desconto > 0) {
+                precoHtml = '<span style="text-decoration:line-through;opacity:0.5;font-size:0.9em">R$\u00a0'
+                    + info.preco.toFixed(2).replace('.', ',')
+                    + '</span> <strong style="color:#4ade80">R$\u00a0'
+                    + valorFinal.toFixed(2).replace('.', ',')
+                    + '/m\u00eas (-' + desconto + '%)</strong>';
+            }
+            planInfoBox.innerHTML = '&#10024; <strong>Inclui:</strong> ' + info.features + ' &mdash; ' + precoHtml;
+            planInfoBox.classList.add('show');
+        } else {
+            planInfoBox.classList.remove('show');
+        }
+    }
+
+    function atualizarOpcoesPlano() {
+        const desconto = referralDescontoPercent || 0;
+        Array.from(planoSelect.options).forEach(function(opt) {
+            const key = opt.value;
+            const info = PLANOS_INFO[key];
+            if (!info) return;
+            if (key === 'barbearia-pro') {
+                opt.textContent = 'Barbearia+ \u2014 Plano Personalizado (+ de 3 barbeiros)';
+                return;
+            }
+            const valorFinal = info.preco * (1 - desconto / 100);
+            let txt = info.label + ' \u2014 R$\u00a0' + valorFinal.toFixed(2).replace('.', ',') + '/m\u00eas (' + info.barbeiros + ')';
+            if (desconto > 0) txt += ' [-' + desconto + '%]';
+            opt.textContent = txt;
+        });
+    }
+
+    // Aplicar plano via URL
+    const urlPlano = new URLSearchParams(window.location.search).get('plano');
+    if (urlPlano && PLANOS_INFO[urlPlano]) {
+        planoSelect.value = urlPlano;
+    }
+    // Se o plano vindo da URL for barbearia-pro, redirecionar direto ao WhatsApp
+    if (urlPlano === 'barbearia-pro') {
+        window.location.href = 'https://wa.me/5562994057005?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20plano%20Barbearia%2B!';
+    }
+    atualizarInfoPlano(planoSelect.value);
+
+    planoSelect.addEventListener('change', function() {
+        atualizarInfoPlano(this.value);
+        if (diaSelect.value) diaSelect.dispatchEvent(new Event('change'));
+    });
+
+    // Dia vencimento
+    const diaSelect = document.getElementById('diaVencimento');
+    for (let d = 1; d <= 28; d++) {
+        const o = document.createElement('option');
+        o.value = d; o.textContent = 'Dia ' + d;
+        diaSelect.appendChild(o);
+    }
+    diaSelect.addEventListener('change', function() {
+        const dia = parseInt(this.value);
+        const box = document.getElementById('previewVencimento');
+        if (!dia) { box.classList.remove('show'); return; }
+
+        const msPerDay = 86400000;
+        const hoje     = new Date();
+        const hojeMs   = Date.UTC(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+
+        // 1ª cobrança: sempre cadastro + 7 dias (independente do dia_vencimento)
+        const primeiraMs   = hojeMs + 7 * msPerDay;
+        const primeiraDate = new Date(primeiraMs);
+        const fmt1 = primeiraDate.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+
+        // 2ª cobrança: próxima ocorrência do dia escolhido APÓS a 1ª cobrança
+        let ano2 = primeiraDate.getUTCFullYear();
+        let mes2 = primeiraDate.getUTCMonth(); // 0-based
+        let seg2Ms = Date.UTC(ano2, mes2, dia);
+        if (seg2Ms <= primeiraMs) {
+            seg2Ms = mes2 === 11
+                ? Date.UTC(ano2 + 1, 0, dia)
+                : Date.UTC(ano2, mes2 + 1, dia);
+        }
+        const seg2Date = new Date(seg2Ms);
+        const fmt2 = seg2Date.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+
+        // Preço com desconto
+        const info  = PLANOS_INFO[planoSelect.value];
+        // Barbearia+ não tem preço fixo — ocultar preview de cobrança
+        if (!info || info.preco === null) { box.classList.remove('show'); return; }
+        const preco = info.preco;
+        const desc  = referralDescontoPercent || 0;
+        const valorBase = Math.round(preco * (1 - desc / 100) * 100) / 100;
+        const fmt = function(v) { return 'R$\u00a0' + v.toFixed(2).replace('.', ','); };
+
+        // Montar HTML do preview
+        const trialFmt = new Date(hojeMs + 7 * msPerDay).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+        let html =
+            '<table style="width:100%;border-collapse:collapse;font-size:.79rem;line-height:1.65">' +
+            '<tr><td style="color:#6b7280;width:14px;padding-bottom:.2rem">\uD83C\uDF81</td>' +
+            '<td><strong style="color:#d4a574">7 dias gr&aacute;tis</strong> &mdash; at&eacute; ' + trialFmt + ', sem cobran&ccedil;a</td></tr>' +
+            '<tr><td style="color:#6b7280;padding-bottom:.2rem">&#128197;</td>' +
+            '<td><strong>1&ordf; cobran&ccedil;a:</strong> ' + fmt1 + ' &mdash; ' + fmt(valorBase) + ' (valor cheio)</td></tr>' +
+            '<tr><td style="color:#6b7280;padding-bottom:.2rem">&#128197;</td><td>' +
+            '<strong>2&ordf; cobran&ccedil;a:</strong> ' + fmt2 + ' &mdash; ' + fmt(valorBase) +
+            '</td></tr>' +
+            '<tr><td style="color:#6b7280">\uD83D\uDD04</td>' +
+            '<td>Todo dia <strong>' + dia + '</strong>: ' + fmt(valorBase) + '/m&ecirc;s</td></tr>' +
+            '</table>';
+
+        box.innerHTML = html;
+        box.classList.add('show');
+    });
+
+    // Photo upload (circular crop)
+    let croppedBlob = null;
+    document.getElementById('photoInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file || !file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const s = Math.min(img.width, img.height);
+                canvas.width = canvas.height = 400;
+                canvas.getContext('2d').drawImage(img, (img.width-s)/2, (img.height-s)/2, s, s, 0, 0, 400, 400);
+                canvas.toBlob(b => {
+                    croppedBlob = b;
+                    document.getElementById('avatarCircle').innerHTML = '<img src="' + canvas.toDataURL() + '" alt="Foto">';
+                }, 'image/jpeg', 0.9);
+            };
+            img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // Masks
+    document.getElementById('cpf').addEventListener('input', function(e) {
+        let v = e.target.value.replace(/\D/g,'').slice(0,11);
+        if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4');
+        else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d+)/,'$1.$2.$3');
+        else if (v.length > 3) v = v.replace(/(\d{3})(\d+)/,'$1.$2');
+        e.target.value = v;
+    });
+    document.getElementById('telefone').addEventListener('input', function(e) {
+        let v = e.target.value.replace(/\D/g,'').slice(0,11);
+        if (v.length > 10) v = v.replace(/(\d{2})(\d{5})(\d{4})/,'($1) $2-$3');
+        else if (v.length > 6) v = v.replace(/(\d{2})(\d{4})(\d+)/,'($1) $2-$3');
+        else if (v.length > 2) v = v.replace(/(\d{2})(\d+)/,'($1) $2');
+        e.target.value = v;
+    });
+
+    document.getElementById('enderecoCep').addEventListener('input', function(e) {
+        let v = e.target.value.replace(/\D/g,'').slice(0,8);
+        if (v.length > 5) v = v.replace(/(\d{5})(\d+)/, '$1-$2');
+        e.target.value = v;
+    });
+
+    document.getElementById('enderecoEstado').addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/[^a-zA-Z]/g, '').toUpperCase().slice(0, 2);
+    });
+
+    document.getElementById('enderecoCep').addEventListener('blur', async function() {
+        const cepLimpo = this.value.replace(/\D/g, '');
+        if (cepLimpo.length !== 8) return;
+
+        try {
+            const r = await fetch('https://viacep.com.br/ws/' + cepLimpo + '/json/');
+            const d = await r.json();
+            if (d && !d.erro) {
+                if (!document.getElementById('enderecoLogradouro').value) document.getElementById('enderecoLogradouro').value = d.logradouro || '';
+                if (!document.getElementById('enderecoBairro').value) document.getElementById('enderecoBairro').value = d.bairro || '';
+                if (!document.getElementById('enderecoCidade').value) document.getElementById('enderecoCidade').value = d.localidade || '';
+                if (!document.getElementById('enderecoEstado').value) document.getElementById('enderecoEstado').value = (d.uf || '').toUpperCase();
+            }
+        } catch (e) {
+            // Falha de CEP nao impede o cadastro manual.
+        }
+    });
+
+    // Indicacao
+    document.getElementById('indicacao').addEventListener('blur', async function() {
+        const contato = this.value.trim();
+        document.getElementById('iconOk').classList.remove('show');
+        document.getElementById('iconErro').classList.remove('show');
+        document.getElementById('feedbackIndicacao').className = 'indicacao-feedback';
+        if (!contato) return;
+        try {
+            const r = await fetch('../../bancodedados/usuarios/verificar_indicacao.php?contato=' + encodeURIComponent(contato));
+            const d = await r.json();
+            if (d.sucesso && d.encontrado) {
+                document.getElementById('iconOk').classList.add('show');
+                const fb = document.getElementById('feedbackIndicacao');
+                fb.className = 'indicacao-feedback ok';
+                fb.textContent = '\u2714 Barbeiro ' + d.primeiro_nome + ' encontrado!';
+            } else {
+                document.getElementById('iconErro').classList.add('show');
+                const fb = document.getElementById('feedbackIndicacao');
+                fb.className = 'indicacao-feedback erro';
+                fb.textContent = '\u26a0 Barbeiro n\u00e3o encontrado com este contato.';
+            }
+        } catch(e) {}
+    });
+
+    // Mensagens
+    function showMsg(text, type) {
+        const el = document.getElementById('msgContainer');
+        document.getElementById('msgText').textContent = text;
+        document.getElementById('msgIcon').className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+        el.className = 'msg show ' + type;
+        el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+        if (type === 'error') setTimeout(() => el.classList.remove('show'), 6000);
+    }
+
+    // CPF
+    function validarCPF(cpf) {
+        cpf = cpf.replace(/\D/g,'');
+        if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+        let s=0,r;
+        for(let i=1;i<=9;i++) s+=parseInt(cpf[i-1])*(11-i);
+        r=(s*10)%11; if(r===10||r===11)r=0; if(r!==parseInt(cpf[9]))return false;
+        s=0;
+        for(let i=1;i<=10;i++) s+=parseInt(cpf[i-1])*(12-i);
+        r=(s*10)%11; if(r===10||r===11)r=0; return r===parseInt(cpf[10]);
+    }
+
+    // Submit
+    document.getElementById('barbeiroForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const nome = document.getElementById('nome').value.trim();
+        const cpf  = document.getElementById('cpf').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const tel  = document.getElementById('telefone').value.trim();
+        const senha = document.getElementById('senha').value;
+        const conf  = document.getElementById('confirmarSenha').value;
+        const dia   = parseInt(diaSelect.value);
+        const ind   = document.getElementById('indicacao').value.trim();
+        const enderecoCep = document.getElementById('enderecoCep').value.trim();
+        const enderecoLogradouro = document.getElementById('enderecoLogradouro').value.trim();
+        const enderecoNumero = document.getElementById('enderecoNumero').value.trim();
+        const enderecoComplemento = document.getElementById('enderecoComplemento').value.trim();
+        const enderecoBairro = document.getElementById('enderecoBairro').value.trim();
+        const enderecoCidade = document.getElementById('enderecoCidade').value.trim();
+        const enderecoEstado = document.getElementById('enderecoEstado').value.trim().toUpperCase();
+
+        if (!nome||!cpf||!email||!tel||!senha||!conf) { showMsg('Preencha todos os campos obrigat\u00f3rios.','error'); return; }
+        if (!enderecoCep || !enderecoLogradouro || !enderecoNumero || !enderecoBairro || !enderecoCidade || !enderecoEstado) { showMsg('Preencha todos os campos obrigat\u00f3rios do endere\u00e7o.','error'); return; }
+        if (enderecoCep.replace(/\D/g, '').length !== 8) { showMsg('CEP inv\u00e1lido.','error'); return; }
+        if (!/^[A-Z]{2}$/.test(enderecoEstado)) { showMsg('UF inv\u00e1lida. Informe 2 letras, ex: GO.','error'); return; }
+        if (senha.length < 6) { showMsg('A senha deve ter pelo menos 6 caracteres.','error'); return; }
+        if (senha !== conf) { showMsg('As senhas n\u00e3o coincidem.','error'); return; }
+        if (!validarCPF(cpf)) { showMsg('CPF inv\u00e1lido.','error'); return; }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showMsg('E-mail inv\u00e1lido.','error'); return; }
+        if (!dia||dia<1||dia>28) { showMsg('Selecione o dia de vencimento da mensalidade.','error'); diaSelect.focus(); return; }
+        if (!document.getElementById('aceiteTermos').checked) { showMsg('Voce precisa aceitar os Termos de Uso e a Politica de Privacidade para continuar.','error'); return; }
+
+        const btn = document.getElementById('btnSubmit');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Criando conta...';
+
+        const fd = new FormData();
+        fd.append('nome', nome); fd.append('cpf', cpf);
+        fd.append('email', email); fd.append('telefone', tel);
+        fd.append('senha', senha); fd.append('confirmarSenha', conf);
+        fd.append('plano_trial', planoInput.value);
+        fd.append('dia_vencimento', dia);
+        fd.append('endereco_cep', enderecoCep);
+        fd.append('endereco_logradouro', enderecoLogradouro);
+        fd.append('endereco_numero', enderecoNumero);
+        fd.append('endereco_complemento', enderecoComplemento);
+        fd.append('endereco_bairro', enderecoBairro);
+        fd.append('endereco_cidade', enderecoCidade);
+        fd.append('endereco_estado', enderecoEstado);
+        fd.append('aceita_termos', '1');
+        fd.append('aceita_privacidade', '1');
+        fd.append('aceita_marketing', document.getElementById('aceiteMarketing').checked ? '1' : '0');
+        fd.append('versao_termos', '2026.05');
+        fd.append('versao_privacidade', '2026.05');
+        if (ind) fd.append('indicacao', ind);
+        // Referral de embaixador (via link)
+        if (referralEmbaixadorCodigo) {
+            fd.append('codigo_embaixador', referralEmbaixadorCodigo);
+            fd.append('desconto_embaixador', referralDescontoPercent);
+        }
+        if (croppedBlob) fd.append('foto', croppedBlob, 'foto.jpg');
+
+        try {
+            const res = await fetch('../../bancodedados/usuarios/cadastro_usuario.php', { method:'POST', body:fd });
+            const txt = await res.text();
+            let data;
+            try { data = JSON.parse(txt); } catch { throw new Error('Resposta inv\u00e1lida'); }
+            if (data.sucesso) {
+                showMsg('Conta criada com sucesso! Redirecionando...', 'success');
+                setTimeout(() => window.location.href = '../../login.html', 2000);
+            } else {
+                showMsg(data.mensagem || 'Erro ao criar conta.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-user-plus"></i> Criar Conta';
+            }
+        } catch(err) {
+            showMsg('Erro ao conectar com o servidor. Tente novamente.', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-user-plus"></i> Criar Conta';
+        }
+    });
+
+    document.getElementById('btnCancelar').addEventListener('click', function() {
+        if (confirm('Cancelar cadastro? Os dados ser\u00e3o perdidos.')) window.location.href = '../../login.html';
+    });
+    </script>
+        <script>
+            window.MB_LEGAL_BASE_PATH = '../../';
+        </script>
+        <script src="../../assets/lgpd.js"></script>
+</body>
+</html>

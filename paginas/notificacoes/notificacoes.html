@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificações</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="../tema-claro.css" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1a1a1a;
+            color: #e8e8e8;
+            min-height: 100vh;
+        }
+
+        .page-container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 1.25rem 1rem;
+        }
+
+        /* Header */
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-header-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f87171;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .page-header h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #e8e8e8;
+        }
+
+        .page-header p {
+            font-size: 0.78rem;
+            color: #666;
+            margin-top: 0.15rem;
+        }
+
+        /* Minha barbearia card */
+        .minha-barbearia-card {
+            background: rgba(16, 185, 129, 0.07);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 14px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+        }
+
+        .minha-barbearia-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(16, 185, 129, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4ade80;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .minha-barbearia-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .minha-barbearia-info strong {
+            display: block;
+            font-size: 0.88rem;
+            color: #4ade80;
+            font-weight: 600;
+        }
+
+        .minha-barbearia-info span {
+            font-size: 0.77rem;
+            color: #4ade80;
+            opacity: 0.8;
+        }
+
+        .btn-sair-barbearia {
+            padding: 0.45rem 0.875rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: 8px;
+            color: #f87171;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-sair-barbearia:hover {
+            background: rgba(239, 68, 68, 0.18);
+        }
+
+        /* Convites */
+        .section-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .convite-card {
+            background: rgba(25, 25, 28, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            transition: border-color 0.2s;
+        }
+
+        .convite-card:hover {
+            border-color: rgba(255, 255, 255, 0.14);
+        }
+
+        .convite-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.875rem;
+            margin-bottom: 0.875rem;
+        }
+
+        .convite-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e8e8e8;
+            font-size: 0.85rem;
+            font-weight: 600;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .convite-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .convite-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .convite-barbearia {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #e8e8e8;
+            margin-bottom: 0.2rem;
+        }
+
+        .convite-dono {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .convite-data {
+            font-size: 0.72rem;
+            color: #555;
+            margin-top: 0.25rem;
+        }
+
+        .convite-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.65rem;
+            background: rgba(212, 165, 116, 0.1);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #d4a574;
+            margin-top: 0.35rem;
+        }
+
+        .convite-acoes {
+            display: flex;
+            gap: 0.65rem;
+        }
+
+        .btn-aceitar {
+            flex: 1;
+            padding: 0.65rem;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 10px;
+            color: #4ade80;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-aceitar:hover:not(:disabled) {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-recusar {
+            flex: 1;
+            padding: 0.65rem;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 10px;
+            color: #f87171;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-recusar:hover:not(:disabled) {
+            background: rgba(239, 68, 68, 0.14);
+        }
+
+        .btn-aceitar:disabled,
+        .btn-recusar:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Empty / loading */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #555;
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 0.875rem;
+            display: block;
+            color: #333;
+        }
+
+        .empty-state p {
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: #555;
+            font-size: 0.875rem;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: rgba(25, 25, 28, 0.97);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: transform 0.3s;
+            z-index: 9999;
+            white-space: nowrap;
+            max-width: 90vw;
+            white-space: normal;
+            text-align: center;
+        }
+
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.success { border-color: rgba(16,185,129,.35); color: #4ade80; }
+        .toast.error   { border-color: rgba(239,68,68,.35);  color: #f87171; }
+
+        /* Modal de confirmação de saída */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal {
+            background: rgba(25,25,28,0.98);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 1.75rem;
+            max-width: 380px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #e8e8e8;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .modal-title i { color: #f87171; }
+
+        .modal-msg {
+            font-size: 0.875rem;
+            color: #999;
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+        }
+
+        .modal-btns {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 0.65rem 1.25rem;
+            border-radius: 9px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .modal-btn-cancel {
+            background: rgba(45,45,50,0.9);
+            color: #e8e8e8;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .modal-btn-cancel:hover { background: rgba(255,255,255,0.1); }
+
+        .modal-btn-confirm {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+        }
+
+        .modal-btn-confirm:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(239,68,68,.35); }
+        .modal-btn-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        @media (max-width: 480px) {
+            .page-container { padding: 1rem 0.875rem; }
+        }
+
+        /* ===== Notificações do Sistema ===== */
+        .sistema-card {
+            background: rgba(25,25,28,0.85);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-left: 3px solid #a78bfa;
+            border-radius: 14px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            transition: border-color 0.2s;
+            position: relative;
+        }
+        .sistema-card:hover { border-left-color: #c4b5fd; }
+        .sistema-card.lida {
+            opacity: 0.6;
+            border-left-color: rgba(255,255,255,0.15);
+        }
+        .sistema-card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.6rem;
+        }
+        .sistema-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: rgba(167,139,250,0.12);
+            border: 1px solid rgba(167,139,250,0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.9rem; color: #a78bfa; flex-shrink: 0;
+        }
+        .sistema-icon.tipo-cobranca { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.2); color: #fbbf24; }
+        .sistema-icon.tipo-sucesso  { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.2); color: #34d399; }
+        .sistema-titulo {
+            font-size: 0.9rem; font-weight: 700; color: #e8e8e8;
+            flex: 1; line-height: 1.3;
+        }
+        .sistema-badge-novo {
+            display: inline-flex; align-items: center;
+            background: rgba(167,139,250,0.15);
+            border: 1px solid rgba(167,139,250,0.25);
+            border-radius: 20px;
+            font-size: 0.65rem; font-weight: 700;
+            color: #c4b5fd; padding: 0.1rem 0.5rem;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            flex-shrink: 0;
+        }
+        .sistema-mensagem {
+            font-size: 0.82rem; color: #9ca3af;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            margin-bottom: 0.75rem;
+        }
+        .sistema-footer {
+            display: flex; align-items: center;
+            justify-content: space-between; gap: 0.5rem;
+        }
+        .sistema-data { font-size: 0.72rem; color: #555; }
+        .btn-marcar-lida {
+            padding: 0.35rem 0.8rem;
+            background: rgba(167,139,250,0.08);
+            border: 1px solid rgba(167,139,250,0.2);
+            border-radius: 8px;
+            color: #a78bfa;
+            font-size: 0.75rem; font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex; align-items: center; gap: 0.35rem;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-marcar-lida:hover { background: rgba(167,139,250,0.16); }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+
+        <div class="page-header">
+            <div class="page-header-icon">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div>
+                <h1>Notifica&ccedil;&otilde;es</h1>
+                <p>Convites de barbearias para entrar na equipe</p>
+            </div>
+        </div>
+
+        <!-- Notificações do sistema -->
+        <div id="listaSistema" style="display:none">
+            <div class="section-label" style="margin-top:.25rem">Notifica&ccedil;&otilde;es do Sistema</div>
+            <div id="listaSistemaCards"></div>
+        </div>
+
+        <!-- Card: minha barbearia atual -->
+        <div id="minhaBarbeariaCard" style="display:none"></div>
+
+        <!-- Convites pendentes -->
+        <div class="section-label" id="sectionLabel" style="display:none">Convites Recebidos</div>
+        <div id="listaConvites">
+            <div class="loading-state">
+                <i class="fas fa-spinner fa-spin" style="font-size:1.5rem;margin-bottom:0.5rem;display:block;color:#444"></i>
+                Carregando notifica&ccedil;&otilde;es...
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal: confirmar saída da barbearia -->
+    <div class="modal-overlay" id="modalSair">
+        <div class="modal">
+            <div class="modal-title"><i class="fas fa-sign-out-alt"></i> Sair da Barbearia</div>
+            <p class="modal-msg">Tem certeza que deseja sair da barbearia? Você perderá acesso à equipe e precisará de um novo convite para voltar.</p>
+            <div class="modal-btns">
+                <button class="modal-btn modal-btn-cancel" onclick="fecharModalSair()">Cancelar</button>
+                <button class="modal-btn modal-btn-confirm" id="btnConfirmarSair" onclick="confirmarSair()">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const BASE_NOTIF = '../../bancodedados/notificacoes/';
+        const BASE_BARB  = '../../bancodedados/barbearia/';
+
+        document.addEventListener('DOMContentLoaded', carregarNotificacoes);
+
+        async function carregarNotificacoes() {
+            const lista = document.getElementById('listaConvites');
+            try {
+                const r = await fetch(BASE_NOTIF + 'listar_notificacoes.php');
+                const d = await r.json();
+
+                if (!d.sucesso) {
+                    lista.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Erro ao carregar notificações.</p></div>';
+                    return;
+                }
+
+                // Renderizar notificações do sistema
+                if (d.notif_sistema && d.notif_sistema.length > 0) {
+                    document.getElementById('listaSistema').style.display = 'block';
+                    document.getElementById('listaSistemaCards').innerHTML =
+                        d.notif_sistema.map(n => renderSistema(n)).join('');
+                }
+
+                // Mostrar barbearia atual se vinculado
+                const mbCard = document.getElementById('minhaBarbeariaCard');
+                if (d.em_barbearia && d.minha_barbearia) {
+                    mbCard.style.display = 'block';
+                    mbCard.innerHTML = `
+                        <div class="minha-barbearia-card">
+                            <div class="minha-barbearia-icon"><i class="fas fa-store"></i></div>
+                            <div class="minha-barbearia-info">
+                                <strong>${escapeHtml(d.minha_barbearia)}</strong>
+                                <span>Você faz parte desta equipe</span>
+                            </div>
+                            <button class="btn-sair-barbearia" onclick="abrirModalSair()">
+                                <i class="fas fa-sign-out-alt"></i> Sair
+                            </button>
+                        </div>
+                    `;
+                }
+
+                if (d.notificacoes.length === 0) {
+                    lista.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-bell-slash"></i>
+                            <p>Nenhum convite pendente no momento.<br>Quando um dono de barbearia te convidar para a equipe, o convite aparecerá aqui.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                document.getElementById('sectionLabel').style.display = 'block';
+                lista.innerHTML = d.notificacoes.map(c => renderConvite(c)).join('');
+
+            } catch(e) {
+                lista.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Erro ao conectar com o servidor.</p></div>';
+            }
+        }
+
+        function renderSistema(n) {
+            const iconeMap = {
+                'cobranca_boas_vindas': { cls: 'tipo-cobranca', icon: 'fa-calendar-alt' },
+                'aviso':   { cls: '',             icon: 'fa-exclamation-triangle' },
+                'sucesso': { cls: 'tipo-sucesso',  icon: 'fa-check-circle' },
+                'info':    { cls: '',             icon: 'fa-info-circle' },
+            };
+            const ic = iconeMap[n.tipo] || iconeMap['info'];
+            const lidaCls = n.lida ? ' lida' : '';
+            const badgeNovo = n.lida ? '' : '<span class="sistema-badge-novo">Novo</span>';
+            const btnLida  = n.lida ? '' :
+                `<button class="btn-marcar-lida" onclick="marcarLida(${n.codigo}, this)">
+                    <i class="fas fa-check"></i> Marcar como lida
+                </button>`;
+            // Escapar a mensagem para exibição segura
+            const mensagemSegura = escapeHtml(n.mensagem);
+            return `
+                <div class="sistema-card${lidaCls}" id="sistema-${n.codigo}">
+                    <div class="sistema-card-header">
+                        <div class="sistema-icon ${ic.cls}"><i class="fas ${ic.icon}"></i></div>
+                        <div class="sistema-titulo">${escapeHtml(n.titulo)}</div>
+                        ${badgeNovo}
+                    </div>
+                    <div class="sistema-mensagem">${mensagemSegura}</div>
+                    <div class="sistema-footer">
+                        <div class="sistema-data"><i class="fas fa-clock" style="margin-right:3px"></i>${escapeHtml(n.data_formatada)}</div>
+                        ${btnLida}
+                    </div>
+                </div>
+            `;
+        }
+
+        async function marcarLida(codigo, btn) {
+            if (btn) btn.disabled = true;
+            try {
+                const r = await fetch(BASE_NOTIF + 'marcar_lida.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codigo })
+                });
+                const d = await r.json();
+                if (d.sucesso) {
+                    const card = document.getElementById('sistema-' + codigo);
+                    if (card) {
+                        card.classList.add('lida');
+                        const badgeNovo = card.querySelector('.sistema-badge-novo');
+                        if (badgeNovo) badgeNovo.remove();
+                        if (btn) btn.remove();
+                    }
+                    atualizarBadgeParent();
+                }
+            } catch(e) {
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        function renderConvite(c) {
+            const iniciais = c.nome_dono.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            const avatarHtml = c.foto_dono
+                ? `<div class="convite-avatar"><img src="../../${escapeHtml(c.foto_dono)}" alt="${escapeHtml(c.nome_dono)}" onerror="this.parentElement.innerHTML='${iniciais}'"></div>`
+                : `<div class="convite-avatar">${iniciais}</div>`;
+
+            return `
+                <div class="convite-card" id="convite-${c.codigo}">
+                    <div class="convite-top">
+                        ${avatarHtml}
+                        <div class="convite-body">
+                            <div class="convite-barbearia">${escapeHtml(c.nome_barbearia)}</div>
+                            <div class="convite-dono">Convite de <strong>${escapeHtml(c.nome_dono)}</strong></div>
+                            <div class="convite-data"><i class="fas fa-clock" style="margin-right:3px"></i>${escapeHtml(c.data_formatada)}</div>
+                            <div class="convite-badge"><i class="fas fa-gift"></i> Gratuito — incluso no plano do dono</div>
+                        </div>
+                    </div>
+                    <div class="convite-acoes">
+                        <button class="btn-aceitar" id="btnAceitar-${c.codigo}" onclick="responder(${c.codigo}, 'aceitar')">
+                            <i class="fas fa-check"></i> Aceitar Convite
+                        </button>
+                        <button class="btn-recusar" id="btnRecusar-${c.codigo}" onclick="responder(${c.codigo}, 'recusar')">
+                            <i class="fas fa-times"></i> Recusar
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function responder(codigoConvite, resposta) {
+            const btnA = document.getElementById(`btnAceitar-${codigoConvite}`);
+            const btnR = document.getElementById(`btnRecusar-${codigoConvite}`);
+            if (btnA) btnA.disabled = true;
+            if (btnR) btnR.disabled = true;
+            if (btnA) btnA.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            try {
+                const r = await fetch(BASE_NOTIF + 'responder_convite.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codigo_convite: codigoConvite, resposta })
+                });
+                const d = await r.json();
+
+                showToast(d.mensagem, d.sucesso ? 'success' : 'error');
+
+                if (d.sucesso) {
+                    // Remover o card com animação
+                    const card = document.getElementById(`convite-${codigoConvite}`);
+                    if (card) {
+                        card.style.transition = 'opacity 0.35s, transform 0.35s';
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.96)';
+                        setTimeout(() => {
+                            card.remove();
+                            verificarVazio();
+                        }, 350);
+                    }
+
+                    // Atualizar badge do parent (home.php)
+                    atualizarBadgeParent();
+
+                    // Se aceitou, atualizar card da barbearia
+                    if (d.aceito) setTimeout(carregarNotificacoes, 800);
+                } else {
+                    if (btnA) { btnA.disabled = false; btnA.innerHTML = '<i class="fas fa-check"></i> Aceitar Convite'; }
+                    if (btnR) { btnR.disabled = false; btnR.innerHTML = '<i class="fas fa-times"></i> Recusar'; }
+                }
+            } catch(e) {
+                showToast('Erro ao conectar com o servidor.', 'error');
+                if (btnA) { btnA.disabled = false; btnA.innerHTML = '<i class="fas fa-check"></i> Aceitar Convite'; }
+                if (btnR) { btnR.disabled = false; btnR.innerHTML = '<i class="fas fa-times"></i> Recusar'; }
+            }
+        }
+
+        function verificarVazio() {
+            const lista = document.getElementById('listaConvites');
+            if (!lista.querySelector('.convite-card')) {
+                document.getElementById('sectionLabel').style.display = 'none';
+                lista.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-check-circle" style="color:#4ade80"></i>
+                        <p>Todos os convites foram respondidos.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function atualizarBadgeParent() {
+            try {
+                if (window.parent && window.parent.atualizarBadgeNotificacoes) {
+                    // Busca o total atualizado e passa para o parent
+                    fetch(BASE_NOTIF + 'contar_notificacoes.php')
+                        .then(r => r.json())
+                        .then(d => { if (d.sucesso) window.parent.atualizarBadgeNotificacoes(d.total); })
+                        .catch(() => {});
+                }
+            } catch(e) {}
+        }
+
+        // Sair da barbearia
+        function abrirModalSair() { document.getElementById('modalSair').classList.add('show'); }
+        function fecharModalSair() { document.getElementById('modalSair').classList.remove('show'); }
+
+        async function confirmarSair() {
+            const btn = document.getElementById('btnConfirmarSair');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            try {
+                const r = await fetch(BASE_BARB + 'sair_barbearia.php', { method: 'POST' });
+                const d = await r.json();
+                showToast(d.mensagem, d.sucesso ? 'success' : 'error');
+                fecharModalSair();
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Sair';
+                if (d.sucesso) setTimeout(carregarNotificacoes, 600);
+            } catch(e) {
+                showToast('Erro ao conectar com o servidor.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Sair';
+                fecharModalSair();
+            }
+        }
+
+        function showToast(msg, tipo) {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.className = 'toast ' + (tipo || 'info') + ' show';
+            setTimeout(() => el.classList.remove('show'), 3500);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+    </script>
+</body>
+</html>

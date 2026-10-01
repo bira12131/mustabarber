@@ -1,0 +1,3231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1512">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Gest&atilde;o de Hor&aacute;rios - NexusGerencia</title>
+    <!-- Vers&atilde;o: 2.0 - Bloqueio Permanente e Cores Ativo/Inativo + Mobile App Style -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="../tema-claro.css" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            color: #e8e8e8;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: rgba(25, 25, 28, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            margin-bottom: 1rem;
+            box-shadow: none;
+        }
+
+        .card:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .card-header {
+            background: rgba(40, 40, 48, 0.9);
+            color: #e8e8e8;
+            border-radius: 14px 14px 0 0 !important;
+            font-weight: 600;
+            padding: 0.875rem 1.25rem;
+            font-size: 0.9rem;
+            letter-spacing: 0.01em;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .nav-tabs {
+            border-bottom: none;
+            background: rgba(25, 25, 28, 0.8);
+            border-radius: 12px;
+            padding: 0.35rem;
+            gap: 0.25rem;
+            display: flex;
+            margin-bottom: 1rem !important;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            color: #888;
+            font-weight: 600;
+            padding: 0.75rem 1.25rem;
+            border-radius: 10px;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            flex: 1;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(135deg, #2a2a38, #1e1e2e);
+            color: #e8e8e8;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .nav-tabs .nav-link:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.06);
+            color: #c8c8c8;
+            border-radius: 10px;
+        }
+
+        .horario-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 0.75rem;
+        }
+
+        .horario-item {
+            padding: 14px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .horario-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.66rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-top: 4px;
+            opacity: 0.95;
+        }
+
+        .horario-acao-hint {
+            font-size: 0.66rem;
+            margin-top: 4px;
+            opacity: 0.88;
+        }
+
+        .horario-item:hover {
+            transform: scale(1.04);
+        }
+
+        .horario-disponivel {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            border-color: #059669;
+        }
+
+        .horario-disponivel:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .horario-bloqueado {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+            border-color: #dc2626;
+        }
+
+        .horario-bloqueado:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .horario-almoco {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #fff;
+            border-color: #d97706;
+            cursor: not-allowed;
+        }
+
+        .horario-almoco:hover {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: none;
+        }
+
+        .horario-agendado {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+            border-color: #2563eb;
+            cursor: not-allowed;
+        }
+
+        .horario-item.selecionado {
+            border-color: #e8e8e8;
+            border-width: 3px;
+            box-shadow: 0 0 15px rgba(212, 165, 116, 0.6);
+            position: relative;
+            transform: scale(1.05);
+        }
+
+        .horario-item.selecionado::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #d4a574;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(212, 165, 116, 0.8);
+        }
+
+        /* ============================================
+           ESTILOS RESPONSIVOS - MOBILE FIRST
+           ============================================ */
+        
+        /* Estilos para Mobile */
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+                background: #1a1a1a;
+                overflow-x: hidden;
+            }
+
+            .container {
+                padding: 0 8px;
+                max-width: 100%;
+            }
+
+            .container.mb-5 {
+                padding-top: 8px !important;
+                margin-bottom: 1rem !important;
+            }
+
+            /* Tabs mobile */
+            .nav-tabs {
+                position: sticky;
+                top: 0;
+                background: rgba(20, 20, 24, 0.98);
+                backdrop-filter: blur(12px);
+                border-radius: 0;
+                padding: 0.5rem 0.5rem;
+                z-index: 100;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+                margin-bottom: 0.625rem !important;
+                gap: 0.375rem;
+            }
+
+            .nav-tabs .nav-link {
+                flex: 1;
+                padding: 0.45rem 0.35rem;
+                font-size: 0.78rem;
+                border-radius: 8px;
+                gap: 0.25rem;
+                font-weight: 600;
+            }
+
+            .nav-tabs .nav-link i {
+                font-size: 0.9rem;
+            }
+
+            /* Cards mobile - sem border-radius nas laterais para efeito app */
+            .card {
+                border-radius: 12px;
+                margin-bottom: 0.625rem;
+            }
+
+            .card-body {
+                padding: 0.875rem;
+            }
+
+            .card-header {
+                padding: 0.75rem 0.875rem;
+                font-size: 0.85rem;
+            }
+
+            /* Data selector mobile */
+            .data-selector .row {
+                margin: 0;
+            }
+
+            .data-selector .col-8,
+            .data-selector .col-4 {
+                padding: 0 4px;
+            }
+
+            .data-selector .col-8:first-child {
+                padding-left: 0;
+            }
+
+            .data-selector .col-4:last-child {
+                padding-right: 0;
+            }
+
+            /* Grid de hor�rios mobile */
+            .horario-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 5px;
+                padding: 0;
+            }
+
+            .horario-item {
+                padding: 0.5rem 0.3rem;
+                font-size: 0.78rem;
+                border-radius: 9px;
+                min-height: 42px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .horario-item strong {
+                font-size: 0.84rem;
+            }
+
+            .horario-item small {
+                font-size: 0.62rem;
+                margin-top: 0.1rem;
+            }
+
+            /* Bot�es mobile */
+            .btn {
+                font-size: 0.82rem;
+                padding: 0.55rem 0.7rem;
+                border-radius: 9px;
+                font-weight: 600;
+            }
+
+            /* Alinhar altura campo data e bot�o sele��o */
+            #data-selecionada,
+            .btn-modo-selecao {
+                height: 40px;
+                min-height: 40px;
+                padding-top: 0;
+                padding-bottom: 0;
+                display: flex;
+                align-items: center;
+            }
+
+            /* Legenda mobile compacta */
+            .legenda {
+                flex-wrap: wrap;
+                gap: 8px;
+                padding: 0.625rem 0.75rem;
+                background: rgba(30, 30, 38, 0.8);
+                border: 1px solid rgba(255,255,255,0.08);
+                border-radius: 10px;
+                margin: 0 0 0.75rem 0;
+            }
+
+            .legenda-item {
+                font-size: 0.82rem;
+                padding: 0;
+            }
+
+            .resumo-status-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 7px;
+            }
+
+            .resumo-status-card {
+                padding: 0.62rem 0.65rem;
+                min-height: 66px;
+            }
+
+            .resumo-status-card .valor {
+                font-size: 1rem;
+            }
+
+            .filtros-horarios {
+                gap: 6px;
+            }
+
+            .btn-filtro {
+                font-size: 0.73rem;
+                padding: 0.38rem 0.7rem;
+            }
+
+            .resumo-uso {
+                font-size: 0.77rem;
+                padding: 0.55rem 0.7rem;
+            }
+
+            .legenda-cor {
+                width: 18px;
+                height: 18px;
+                border-radius: 4px;
+            }
+
+            /* Configura��es mobile */
+            .config-dia {
+                padding: 0.875rem;
+                border-radius: 12px;
+                margin-bottom: 0.625rem;
+            }
+
+            .config-dia h6 {
+                font-size: 0.95rem;
+                margin-bottom: 0;
+            }
+
+            .config-dia .btn-sm {
+                padding: 0.45rem 0.7rem;
+                font-size: 0.78rem;
+                white-space: nowrap;
+            }
+
+            .config-dia .d-flex {
+                margin-bottom: 0.625rem;
+            }
+
+            .config-dia .form-check {
+                padding: 0.75rem;
+                background: rgba(255,255,255,0.04);
+                border-radius: 8px;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                display: flex;
+                align-items: flex-start;
+                gap: 0.75rem;
+                width: 100%;
+            }
+
+            .config-dia .form-check-input {
+                width: 20px;
+                height: 20px;
+                min-width: 20px;
+                flex-shrink: 0;
+                margin: 0;
+            }
+
+            .config-dia .form-check-label {
+                line-height: 1.5;
+                color: #e8e8e8;
+                margin: 0;
+                flex: 1;
+            }
+
+            .config-dia .form-check-label small {
+                font-size: 0.82rem;
+            }
+
+            .config-dia .row {
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                gap: 0;
+            }
+
+            .config-dia .col-md-2,
+            .config-dia .col-md-3,
+            .config-dia .col-md-4 {
+                width: 100%;
+                padding: 0;
+                margin-bottom: 0.625rem;
+            }
+
+            .config-dia .row.mt-3 {
+                width: 100%;
+                margin: 0.625rem 0 0 0 !important;
+            }
+
+            .config-dia .row.mt-3 .col-12 {
+                width: 100%;
+                padding: 0 !important;
+            }
+
+            .form-control,
+            .form-select {
+                font-size: 0.95rem;
+                padding: 0.55rem 0.75rem;
+                border-radius: 10px;
+                height: 44px;
+                min-height: 44px;
+            }
+
+            .form-switch {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: rgba(255, 255, 255, 0.06);
+                margin-bottom: 0;
+                border-radius: 10px;
+            }
+
+            .form-switch .form-check-input {
+                width: 50px;
+                height: 28px;
+                margin: 0;
+                flex-shrink: 0;
+            }
+
+            .form-label {
+                font-size: 0.88rem;
+                font-weight: 600;
+                margin-bottom: 0.3rem;
+            }
+
+            /* Bot�es de configura��o mobile */
+            .btn-container-config {
+                display: flex;
+                gap: 0.5rem;
+                padding: 0.75rem 0;
+                background: transparent;
+                border-radius: 12px;
+                margin: 0.75rem 0 0;
+            }
+
+            .btn-container-config .btn {
+                flex: 1;
+                margin: 0 !important;
+                font-size: 0.82rem;
+                padding: 0.7rem 0.5rem;
+                white-space: nowrap;
+            }
+
+            .btn-container-config .btn i {
+                font-size: 0.85rem;
+                margin-right: 0.2rem !important;
+            }
+
+            /* Modais mobile - bottom sheet */
+            .modal-overlay {
+                padding: 0;
+                align-items: flex-end;
+            }
+
+            .modal-custom {
+                max-width: 100%;
+                width: 100%;
+                margin: 0;
+                border-radius: 20px 20px 0 0;
+                max-height: 90vh;
+                overflow-y: auto;
+                animation: slideUpModal 0.3s ease;
+                display: flex;
+                flex-direction: column;
+            }
+
+            @keyframes slideUpModal {
+                from { transform: translateY(100%); }
+                to { transform: translateY(0); }
+            }
+
+            .modal-header-custom {
+                padding: 1.25rem 1rem 0.875rem;
+                position: sticky;
+                top: 0;
+                background: rgba(26, 24, 22, 0.98);
+                z-index: 10;
+                border-radius: 20px 20px 0 0;
+            }
+
+            .modal-header-custom::before {
+                content: '';
+                position: absolute;
+                top: 8px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 36px;
+                height: 4px;
+                background: rgba(255, 255, 255, 0.25);
+                border-radius: 2px;
+            }
+
+            .modal-title {
+                font-size: 1.1rem;
+                margin-top: 0.4rem;
+            }
+
+            .modal-body-custom {
+                padding: 1rem;
+                flex: 1;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .modal-footer-custom {
+                padding: 0.875rem 1rem;
+                gap: 0.625rem;
+                position: sticky;
+                bottom: 0;
+                background: rgba(26, 24, 22, 0.98);
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .modal-footer-custom .btn {
+                flex: 1;
+                padding: 0.875rem;
+                font-size: 0.95rem;
+            }
+
+            .alert {
+                margin: 0 0 0.625rem;
+                padding: 0.7rem 0.875rem;
+                border-radius: 10px;
+                font-size: 0.875rem;
+            }
+
+            textarea.form-control {
+                min-height: 90px;
+                font-size: 0.9rem;
+            }
+
+            button, .btn, .horario-item, .nav-link, .form-check-input {
+                -webkit-tap-highlight-color: rgba(255, 255, 255, 0.15);
+                touch-action: manipulation;
+            }
+
+            .nav-tabs { transform: translateZ(0); will-change: transform; }
+        }
+
+        .btn-container-config {
+            display: flex;
+            gap: 0.625rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        /* Modo sele&#65533;&#65533;o ativo em mobile */
+        .modo-selecao-ativo .horario-item:not(.horario-agendado) {
+            cursor: pointer;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        /* Modal de Confirma&#65533;&#65533;o */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(26, 26, 26, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .modal-custom {
+            background: rgba(26, 24, 22, 0.98);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(26, 26, 26, 0.5);
+            animation: slideUp 0.3s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseSuccess {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        #modalSucesso .bi-check-circle-fill {
+            animation: pulseSuccess 0.6s ease-in-out;
+        }
+
+        #modalErro .bi-exclamation-triangle-fill {
+            animation: pulseSuccess 0.6s ease-in-out;
+        }
+
+        .modal-header-custom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e8e8e8;
+            display: flex;
+            align-items: center;
+        }
+
+        .modal-title i {
+            font-size: 1.8rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #e8e8e8;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #ef4444;
+            transform: rotate(90deg);
+        }
+
+        .modal-body-custom {
+            color: #e8e8e8;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .modal-footer-custom {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .modal-footer-custom .btn {
+            flex: 1;
+        }
+
+        .config-dia {
+            background: rgba(30, 30, 38, 0.8);
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-left: 3px solid rgba(99, 102, 241, 0.5);
+            transition: all 0.2s ease;
+        }
+
+        .config-dia h6 {
+            color: #e8e8e8;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+        .config-dia .d-flex {
+            display: flex !important;
+        }
+
+        .config-dia .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .config-save-status {
+            font-size: 0.7rem;
+            padding: 0.18rem 0.55rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
+            color: #888;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .config-save-status.is-saving {
+            background: rgba(245,158,11,0.15);
+            border-color: rgba(245,158,11,0.4);
+            color: #f59e0b;
+        }
+
+        .config-save-status.is-saved {
+            background: rgba(16,185,129,0.15);
+            border-color: rgba(16,185,129,0.4);
+            color: #10b981;
+        }
+
+        .config-save-status.is-error {
+            background: rgba(239,68,68,0.15);
+            border-color: rgba(239,68,68,0.4);
+            color: #ef4444;
+        }
+
+        /* Checkbox aplicar para todos - Desktop */
+        .config-dia .form-check {
+            padding: 1rem;
+            background: rgba(212, 165, 116, 0.08);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 0.75rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .config-dia .form-check-input {
+            width: 22px;
+            height: 22px;
+            min-width: 22px;
+            flex-shrink: 0;
+            margin: 0;
+        }
+
+        .config-dia .form-check-label {
+            line-height: 1.6;
+            color: #e8e8e8;
+            margin: 0;
+            flex: 1;
+        }
+
+        .config-dia .form-check-label small {
+            font-size: 0.9rem;
+        }
+
+        /* Estilos para switch toggle */
+        .form-check-input {
+            background: rgba(45, 37, 32, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 3em;
+            height: 1.5em;
+            cursor: pointer;
+        }
+
+        /* Switch ATIVO - verde */
+        .form-check-input:checked {
+            background: linear-gradient(135deg, #10b981, #059669) !important;
+            border-color: #10b981 !important;
+        }
+
+        /* Switch INATIVO - vermelho */
+        .form-check-input:not(:checked) {
+            background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+            border-color: #ef4444 !important;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2a2a38, #1a1a26);
+            border: 1px solid rgba(255,255,255,0.14);
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            color: #fff;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #3a3a50, #2a2a38);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .btn-secondary {
+            background: rgba(40, 40, 55, 0.8);
+            color: #e8e8e8;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(55, 55, 75, 0.9);
+            border-color: rgba(255,255,255,0.25);
+            color: #fff;
+        }
+
+        .btn-light {
+            background: rgba(245, 241, 237, 0.1);
+            color: #e8e8e8;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-light:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #e8e8e8;
+        }
+
+        .form-control, .form-select {
+            background: rgba(30, 30, 40, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #e8e8e8;
+            border-radius: 10px;
+            padding: 0.6rem 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(40, 40, 55, 0.9);
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.15);
+            color: #e8e8e8;
+        }
+
+        .form-control::placeholder {
+            color: #e8e8e8;
+        }
+
+        #paralisacao .paralisacao-form-grid {
+            row-gap: 0.9rem;
+        }
+
+        #paralisacao .paralisacao-form-grid .form-control {
+            min-height: 48px;
+        }
+
+        .form-label {
+            color: #e8e8e8;
+            font-weight: 500;
+        }
+
+        .form-check-input {
+            background: rgba(45, 37, 32, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .form-check-input:checked {
+            background: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+            border-color: #e8e8e8;
+        }
+
+        .form-check-label {
+            color: #e8e8e8;
+        }
+
+        /* Estilos espec&#65533;ficos para checkboxes nos modais */
+        .modal-body-custom .form-check {
+            padding: 1.25rem;
+            background: rgba(212, 165, 116, 0.12);
+            border-radius: 10px;
+            border: 2px solid rgba(150, 150, 170, 0.4);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 0;
+        }
+
+        .modal-body-custom .form-check-input {
+            width: 22px;
+            height: 22px;
+            min-width: 22px;
+            margin-top: 2px;
+            margin-left: 0;
+            cursor: pointer;
+            flex-shrink: 0;
+            background: rgba(45, 45, 50, 0.8);
+            border: 2px solid #d4a574;
+        }
+
+        .modal-body-custom .form-check-input:checked {
+            background: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+            border-color: #e8e8e8;
+        }
+
+        .modal-body-custom .form-check-label {
+            cursor: pointer;
+            margin: 0;
+            padding: 0;
+            flex: 1;
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .modal-body-custom .form-check-label strong {
+            color: #e8e8e8;
+            display: block;
+            margin-bottom: 0.75rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+            line-height: 1.4;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .modal-body-custom .form-check-label small {
+            color: #e5ddd5;
+            display: block;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            font-weight: 400;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: 1px solid;
+            padding: 1rem 1.5rem;
+            animation: slideDown 0.3s ease;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: rgba(245, 158, 11, 0.3);
+            color: #f59e0b;
+        }
+
+        .alert-info {
+            background: rgba(212, 165, 116, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #e8e8e8;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .legenda {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding: 0.75rem 1rem;
+            background: rgba(30, 30, 38, 0.8);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            margin-bottom: 0.875rem;
+        }
+
+        .legenda-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #e8e8e8;
+        }
+
+        .legenda-cor {
+            width: 22px;
+            height: 22px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .resumo-status-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 0.875rem;
+        }
+
+        .resumo-status-card {
+            background: rgba(30, 30, 38, 0.8);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 0.7rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-height: 72px;
+        }
+
+        .resumo-status-card .rotulo {
+            font-size: 0.72rem;
+            color: #c9c9d1;
+            letter-spacing: 0.02em;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .resumo-status-card .valor {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.2;
+        }
+
+        .resumo-status-card.total {
+            border-left: 3px solid rgba(255,255,255,0.35);
+        }
+
+        .resumo-status-card.disponivel {
+            border-left: 3px solid #10b981;
+        }
+
+        .resumo-status-card.bloqueado {
+            border-left: 3px solid #ef4444;
+        }
+
+        .resumo-status-card.agendado {
+            border-left: 3px solid #3b82f6;
+        }
+
+        .filtros-horarios {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 0.875rem;
+        }
+
+        .btn-filtro {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: #e8e8e8;
+            border-radius: 999px;
+            padding: 0.42rem 0.78rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-filtro:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.24);
+        }
+
+        .btn-filtro.active {
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        }
+
+        .btn-filtro[data-filtro="todos"].active {
+            background: linear-gradient(135deg, #4b5563, #374151);
+        }
+
+        .btn-filtro[data-filtro="disponivel"].active {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .btn-filtro[data-filtro="bloqueado"].active {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .btn-filtro[data-filtro="agendado"].active {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .resumo-uso {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            border-radius: 10px;
+            color: #f6d7a3;
+            font-size: 0.82rem;
+            padding: 0.65rem 0.85rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .paralisacao-item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 1rem 1.1rem;
+            background: rgba(30,30,38,0.8);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 0.6rem;
+        }
+
+        .paralisacao-item-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .paralisacao-item-head {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.2rem;
+        }
+
+        .paralisacao-periodo {
+            font-weight: 700;
+            color: #e8e8e8;
+            font-size: 0.95rem;
+        }
+
+        .paralisacao-periodo i {
+            color: #888;
+        }
+
+        .paralisacao-motivo {
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+        }
+
+        .paralisacao-criado {
+            color: #666;
+            font-size: 0.78rem;
+            margin-top: 0.25rem;
+        }
+
+        .paralisacao-acoes {
+            flex-shrink: 0;
+        }
+
+        .paralisacao-badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+
+        .paralisacao-badge.fechado {
+            background: rgba(239,68,68,0.15);
+            border-color: rgba(239,68,68,0.4);
+            color: #ef4444;
+        }
+
+        .paralisacao-badge.agendado {
+            background: rgba(245,158,11,0.15);
+            border-color: rgba(245,158,11,0.4);
+            color: #f59e0b;
+        }
+
+        .paralisacao-badge.cancelado {
+            background: rgba(16,185,129,0.12);
+            border-color: rgba(16,185,129,0.3);
+            color: #10b981;
+        }
+
+        .btn-reabrir-paralisacao {
+            background: rgba(16,185,129,0.15);
+            border: 1px solid rgba(16,185,129,0.4);
+            color: #10b981;
+            padding: 0.35rem 0.85rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            color: #e8e8e8;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner-border {
+            color: #e8e8e8;
+        }
+
+        .info-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+
+        .badge-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: #e8e8e8;
+        }
+
+        .badge.bg-primary {
+            background: linear-gradient(135deg, #4a4a4a, #2a2a2a) !important;
+        }
+
+        .data-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 0.625rem;
+            padding: 0;
+            background: transparent;
+            margin-bottom: 0.875rem;
+            border-radius: 0;
+        }
+
+        .btn-modo-selecao {
+            padding: 0.75rem 1rem;
+            background: rgba(45, 45, 55, 0.8);
+            color: #e8e8e8;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            height: 100%;
+        }
+
+        .btn-modo-selecao:hover {
+            background: rgba(60, 60, 75, 0.9);
+            border-color: rgba(255,255,255,0.25);
+        }
+
+        .btn-modo-selecao.active {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-color: #d97706;
+            color: #fff;
+        }
+
+        .modal-content {
+            background: rgba(26, 24, 22, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #e8e8e8;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .modal-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-close {
+            filter: brightness(0) invert(1);
+        }
+
+        .btn-close-white {
+            filter: brightness(0) invert(1);
+        }
+
+        .container {
+            max-width: 1400px;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+        }
+
+        .card-body {
+            padding: 1.25rem;
+        }
+
+        @media (min-width: 769px) {
+            .horario-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+                gap: 10px;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            .horario-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .resumo-status-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 7px !important;
+            }
+
+            .resumo-status-card {
+                padding: 0.56rem 0.62rem !important;
+                min-height: 60px !important;
+            }
+
+            .resumo-status-card .rotulo {
+                font-size: 0.66rem;
+                gap: 4px;
+            }
+
+            .resumo-status-card .valor {
+                font-size: 0.98rem !important;
+            }
+
+            .filtros-horarios {
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 2px;
+                gap: 6px;
+            }
+
+            .btn-filtro {
+                flex: 0 0 auto;
+                font-size: 0.72rem;
+                padding: 0.34rem 0.66rem;
+            }
+
+            .resumo-uso {
+                font-size: 0.76rem;
+                line-height: 1.45;
+                padding: 0.52rem 0.68rem;
+            }
+
+            .paralisacao-item {
+                gap: 0.5rem;
+                padding: 0.68rem 0.72rem;
+                border-radius: 10px;
+                margin-bottom: 0.5rem;
+            }
+
+            .paralisacao-item-head {
+                gap: 0.45rem;
+                margin-bottom: 0.15rem;
+            }
+
+            .paralisacao-periodo {
+                font-size: 0.82rem;
+            }
+
+            .paralisacao-badge {
+                font-size: 0.67rem;
+                padding: 0.15rem 0.45rem;
+                border-radius: 16px;
+            }
+
+            .paralisacao-motivo {
+                font-size: 0.76rem;
+                margin-top: 0.2rem;
+                line-height: 1.35;
+            }
+
+            .paralisacao-criado {
+                font-size: 0.7rem;
+                margin-top: 0.18rem;
+            }
+
+            .btn-reabrir-paralisacao {
+                font-size: 0.7rem;
+                padding: 0.25rem 0.5rem;
+                border-radius: 7px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mb-5" style="padding-top: 10px;">
+        <!-- Mensagem de feedback -->
+        <div id="mensagem-container"></div>
+
+        <!-- Tabs de navega&#65533;&#65533;o -->
+        <ul class="nav nav-tabs mb-4" id="horariosTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="bloqueios-tab" data-bs-toggle="tab" data-bs-target="#bloqueios" type="button" role="tab">
+                    <i class="bi bi-calendar-x"></i>
+                    <span class="nav-text d-none d-md-inline ms-2">Gerenciar Bloqueios</span>
+                    <span class="nav-text d-md-none">Bloqueios</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="paralisacao-tab" data-bs-toggle="tab" data-bs-target="#paralisacao" type="button" role="tab">
+                    <i class="bi bi-calendar-minus"></i>
+                    <span class="nav-text d-none d-md-inline ms-2">Fechamento de Agenda</span>
+                    <span class="nav-text d-md-none">Fechamento</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="configuracoes-tab" data-bs-toggle="tab" data-bs-target="#configuracoes" type="button" role="tab">
+                    <i class="bi bi-gear"></i>
+                    <span class="nav-text d-none d-md-inline ms-2">Configura&ccedil;&otilde;es de Hor&aacute;rio</span>
+                    <span class="nav-text d-md-none">Configura&ccedil;&otilde;es</span>
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="horariosTabContent">
+            <!-- Tab de Bloqueios -->
+            <div class="tab-pane fade show active" id="bloqueios" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-calendar-check me-2"></i>Selecione uma Data
+                    </div>
+                    <div class="card-body">
+                        <div class="data-selector">
+                            <div class="row align-items-end g-2">
+                                <div class="col-8 col-md-6">
+                                    <label class="form-label fw-bold">Data:</label>
+                                    <input type="date" id="data-selecionada" class="form-control" value="">
+                                </div>
+                                <div class="col-4 col-md-3">
+                                    <label class="form-label d-none d-md-block">&nbsp;</label>
+                                    <button class="btn btn-modo-selecao w-100" onclick="toggleModoSelecao()" id="btn-modo-selecao">
+                                        <i class="bi bi-check-square me-1"></i><span class="d-none d-sm-inline">Modo </span>Sele&ccedil;&atilde;o
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Legenda -->
+                        <div class="legenda">
+                            <div class="legenda-item">
+                                <div class="legenda-cor" style="background: linear-gradient(135deg, #10b981, #059669);"></div>
+                                <span>Dispon&iacute;vel</span>
+                            </div>
+                            <div class="legenda-item">
+                                <div class="legenda-cor" style="background: linear-gradient(135deg, #ef4444, #dc2626);"></div>
+                                <span>Bloqueado</span>
+                            </div>
+                            <div class="legenda-item">
+                                <div class="legenda-cor" style="background: linear-gradient(135deg, #3b82f6, #2563eb);"></div>
+                                <span>Agendado</span>
+                            </div>
+                        </div>
+
+                        <div class="resumo-status-grid" id="resumo-status-grid">
+                            <div class="resumo-status-card total">
+                                <span class="rotulo"><i class="bi bi-grid-3x3-gap"></i>Total</span>
+                                <span class="valor" id="resumo-total">0</span>
+                            </div>
+                            <div class="resumo-status-card disponivel">
+                                <span class="rotulo"><i class="bi bi-check-circle"></i>Dispon&iacute;veis</span>
+                                <span class="valor" id="resumo-disponivel">0</span>
+                            </div>
+                            <div class="resumo-status-card bloqueado">
+                                <span class="rotulo"><i class="bi bi-lock"></i>Bloqueados</span>
+                                <span class="valor" id="resumo-bloqueado">0</span>
+                            </div>
+                            <div class="resumo-status-card agendado">
+                                <span class="rotulo"><i class="bi bi-calendar-check"></i>Agendados</span>
+                                <span class="valor" id="resumo-agendado">0</span>
+                            </div>
+                        </div>
+
+                        <div class="filtros-horarios" id="filtros-horarios">
+                            <button class="btn-filtro active" data-filtro="todos" onclick="aplicarFiltroHorarios('todos')">Todos</button>
+                            <button class="btn-filtro" data-filtro="disponivel" onclick="aplicarFiltroHorarios('disponivel')">Dispon&iacute;veis</button>
+                            <button class="btn-filtro" data-filtro="bloqueado" onclick="aplicarFiltroHorarios('bloqueado')">Bloqueados</button>
+                            <button class="btn-filtro" data-filtro="agendado" onclick="aplicarFiltroHorarios('agendado')">Agendados</button>
+                        </div>
+
+                        <div class="resumo-uso" id="resumo-uso">
+                            Toque em um hor&aacute;rio para bloquear ou desbloquear. Use Modo Sele&ccedil;&atilde;o para a&ccedil;&otilde;es em massa.
+                        </div>
+
+                        <!-- Loading -->
+                        <div class="loading" id="loading-horarios">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                            <p class="mt-2">Carregando hor&aacute;rios...</p>
+                        </div>
+
+                        <!-- Grid de hor&#65533;rios -->
+                        <div id="horarios-container">
+                            <!-- Hor\u00e1rios ser\u00e3o carregados aqui automaticamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab de Fechamento de Agenda -->
+            <div class="tab-pane fade" id="paralisacao" role="tabpanel">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <i class="bi bi-calendar-minus me-2"></i>Fechar Agenda por Per&iacute;odo
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning mb-3">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Ao fechar a agenda por per&iacute;odo, os clientes n&atilde;o poder&atilde;o agendar hor&aacute;rios nas datas bloqueadas. Apenas datas ap&oacute;s o fim da paralisa&ccedil;&atilde;o ficar&atilde;o dispon&iacute;veis.
+                        </div>
+                        <div class="row g-3 paralisacao-form-grid">
+                            <div class="col-12">
+                                <label class="form-label">Data de In&iacute;cio <span style="color:#ef4444">*</span></label>
+                                <input type="date" class="form-control" id="paral-data-inicio">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Data de Fim <span style="color:#888; font-size:0.8rem;">(opcional)</span></label>
+                                <input type="date" class="form-control" id="paral-data-fim" placeholder="Deixe vazio para indeterminado">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Motivo <span style="color:#888; font-size:0.8rem;">(opcional)</span></label>
+                                <input type="text" class="form-control" id="paral-motivo" placeholder="Ex: F&eacute;rias, reforma, evento..." maxlength="500">
+                            </div>
+                        </div>
+                        <div class="btn-container-config mt-3">
+                            <button type="button" class="btn btn-primary" onclick="abrirModalConfirmarParalisacao()">
+                                <i class="bi bi-lock me-2"></i>Fechar Agenda
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Paralisa��es ativas e hist�ricas -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-list-ul me-2"></i>Fechamentos Registrados</span>
+                        <button class="btn btn-secondary btn-sm" onclick="carregarParalisacoes()" style="padding:0.3rem 0.7rem;font-size:0.8rem;">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="loading" id="loading-paralisacoes">
+                            <div class="spinner-border" role="status"></div>
+                            <p class="mt-2">Carregando...</p>
+                        </div>
+                        <div id="paralisacoes-container">
+                            <p style="color:#888; text-align:center; padding:1rem;">Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab de Configura&#65533;&#65533;es -->
+            <div class="tab-pane fade" id="configuracoes" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="bi bi-clock me-2"></i>Configurar Hor&aacute;rios de Atendimento
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>Configure seus hor&aacute;rios de atendimento para cada dia da semana. Os hor&aacute;rios ser&atilde;o gerados automaticamente com base no intervalo definido.
+                        </div>
+
+                        <!-- Loading -->
+                        <div class="loading" id="loading-config">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                            <p class="mt-2">Carregando configura&ccedil;&otilde;es...</p>
+                        </div>
+
+                        <!-- Formul&#65533;rio de configura&#65533;&#65533;es -->
+                        <div id="config-container"></div>
+
+                        <!-- Configura��es s�o salvas automaticamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirma\u00e7\u00e3o - Fechar Agenda (Paralisa\u00e7\u00e3o) -->
+    <div class="modal-overlay" id="modalConfirmarParalisacao">
+        <div class="modal-custom">
+            <div class="modal-header-custom">
+                <h2 class="modal-title"><i class="bi bi-calendar-minus me-2" style="color:#f59e0b;"></i>Fechar Agenda</h2>
+                <button class="modal-close" onclick="fecharModalConfirmarParalisacao()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body-custom">
+                <p style="margin-bottom:1rem; line-height:1.7;" id="paral-confirm-texto">
+                    Tem certeza que deseja fechar a agenda?
+                </p>
+                <div class="alert alert-warning" style="font-size:0.9rem;">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    Os clientes n&atilde;o conseguir&atilde;o agendar hor&aacute;rios durante esse per&iacute;odo. Voc&ecirc; pode cancelar o fechamento a qualquer momento.
+                </div>
+            </div>
+            <div class="modal-footer-custom">
+                <button type="button" class="btn btn-secondary" onclick="fecharModalConfirmarParalisacao()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn" id="btn-confirmar-paralisacao" style="background:linear-gradient(135deg,#f59e0b,#d97706);border:1px solid #d97706;color:#fff;font-weight:600;flex:1;" onclick="confirmarParalisacao()">
+                    <i class="bi bi-lock me-2"></i>Confirmar Fechamento
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirma\u00e7\u00e3o - Cancelar Paralisa\u00e7\u00e3o -->
+    <div class="modal-overlay" id="modalCancelarParalisacao">
+        <div class="modal-custom">
+            <div class="modal-header-custom">
+                <h2 class="modal-title"><i class="bi bi-calendar-check me-2" style="color:#10b981;"></i>Reabrir Agenda</h2>
+                <button class="modal-close" onclick="fecharModalCancelarParalisacao()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body-custom">
+                <p style="margin-bottom:1rem; line-height:1.7;">
+                    Tem certeza que deseja cancelar esse fechamento e reabrir a agenda para os clientes?
+                </p>
+            </div>
+            <div class="modal-footer-custom">
+                <button type="button" class="btn btn-secondary" onclick="fecharModalCancelarParalisacao()">
+                    N&atilde;o
+                </button>
+                <button type="button" class="btn" style="background:linear-gradient(135deg,#10b981,#059669);border:1px solid #059669;color:#fff;font-weight:600;flex:1;" onclick="confirmarCancelarParalisacao()">
+                    <i class="bi bi-unlock me-2"></i>Sim, Reabrir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirma\u00e7\u00e3o - Bloquear Hor\u00e1rio -->
+    <div class="modal-overlay" id="modalBloquear">
+        <div class="modal-custom">
+            <div class="modal-header-custom">
+                <h2 class="modal-title">Bloquear Hor&aacute;rio</h2>
+                <button class="modal-close" onclick="fecharModalBloquear()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body-custom">
+                <p style="margin-bottom: 1rem;">Hor&aacute;rio selecionado: <strong id="horario-selecionado-texto" style="color: #e8e8e8;"></strong></p>
+                <div class="mb-3">
+                    <label class="form-label">Motivo (opcional):</label>
+                    <textarea class="form-control" id="motivo-bloqueio" rows="3" placeholder="Descreva o motivo do bloqueio..."></textarea>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="bloquear-todos-dias" value="">
+                        <label class="form-check-label" for="bloquear-todos-dias">
+                            <strong>Bloquear este hor&aacute;rio em todos os dias futuros</strong>
+                            <small>Esta op&ccedil;&atilde;o ir&aacute; bloquear o hor&aacute;rio selecionado em todas as datas futuras, independente do dia da semana.</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer-custom">
+                <button type="button" class="btn btn-secondary" onclick="fecharModalBloquear()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" onclick="confirmarBloqueio()">
+                    <i class="bi bi-lock me-2"></i>Bloquear
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirma\u00e7\u00e3o - Desbloquear Hor\u00e1rio -->
+    <div class="modal-overlay" id="modalDesbloquear">
+        <div class="modal-custom">
+            <div class="modal-header-custom">
+                <h2 class="modal-title">Confirmar Desbloqueio</h2>
+                <button class="modal-close" onclick="fecharModalDesbloquear()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body-custom">
+                <p style="margin-bottom: 1rem;">Tem certeza que deseja desbloquear o hor&aacute;rio <strong id="horario-desbloquear-texto" style="color: #e8e8e8;"></strong>? O hor&aacute;rio ficar&aacute; dispon&iacute;vel para agendamento.</p>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="desbloquear-todos-dias" value="">
+                        <label class="form-check-label" for="desbloquear-todos-dias">
+                            <strong>Desbloquear este hor&aacute;rio em todos os dias futuros</strong>
+                            <small>Esta op&ccedil;&atilde;o ir&aacute; desbloquear o hor&aacute;rio selecionado em todas as datas futuras, independente do dia da semana.</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer-custom">
+                <button type="button" class="btn btn-secondary" onclick="fecharModalDesbloquear()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" onclick="confirmarDesbloquear()">
+                    <i class="bi bi-unlock me-2"></i>Desbloquear
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Sucesso -->
+    <div class="modal-overlay" id="modalSucesso">
+        <div class="modal-custom">
+            <div class="modal-header-custom">
+                <h2 class="modal-title">
+                    <i class="bi bi-check-circle-fill me-2" style="color: #10b981;"></i>
+                    <span id="modal-sucesso-titulo">Sucesso!</span>
+                </h2>
+                <button class="modal-close" onclick="fecharModalSucesso()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body-custom">
+                <p id="modal-sucesso-mensagem" style="text-align: center; font-size: 1.05rem; margin: 0;">
+                    Opera&#65533;&#65533;o realizada com sucesso!
+                </p>
+            </div>
+            <div class="modal-footer-custom">
+                <button type="button" class="btn btn-primary w-100" onclick="fecharModalSucesso()">
+                    <i class="bi bi-check-lg me-2"></i>OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Erro -->
+    <div class="modal-overlay" id="modalErro">
+        <div class="modal-custom">
+            <div class="modal-header-custom">
+                <h2 class="modal-title">
+                    <i class="bi bi-exclamation-triangle-fill me-2" style="color: #ef4444;"></i>
+                    <span id="modal-erro-titulo">Erro</span>
+                </h2>
+                <button class="modal-close" onclick="fecharModalErro()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body-custom">
+                <p id="modal-erro-mensagem" style="text-align: center; font-size: 1.05rem; margin: 0;">
+                    Ocorreu um erro ao processar a opera&#65533;&#65533;o.
+                </p>
+            </div>
+            <div class="modal-footer-custom">
+                <button type="button" class="btn btn-secondary w-100" onclick="fecharModalErro()">
+                    <i class="bi bi-x-lg me-2"></i>Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para a&#65533;&#65533;o em massa -->
+    <div class="modal fade" id="modalAcaoMassa" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-lightning me-2"></i>A&ccedil;&atilde;o em Massa</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Ative o "Modo Sele&ccedil;&atilde;o" e toque nos hor&aacute;rios desejados, depois escolha a a&ccedil;&atilde;o.
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">A&ccedil;&atilde;o:</label>
+                        <select class="form-select" id="acao-massa-tipo">
+                            <option value="bloquear">Bloquear Hor&aacute;rios Selecionados</option>
+                            <option value="desbloquear">Desbloquear Hor&aacute;rios Selecionados</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="motivo-massa-container">
+                        <label class="form-label">Motivo (opcional):</label>
+                        <textarea class="form-control" id="motivo-massa" rows="3"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Hor&aacute;rios Selecionados:</label>
+                        <div id="horarios-selecionados-lista" class="alert alert-info">
+                            Nenhum hor&aacute;rio selecionado
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmarAcaoMassa()">
+                        <i class="bi bi-check-circle me-2"></i>Executar A&ccedil;&atilde;o
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // === VERS\u00c3O 2.0: Bloqueio Permanente + Cores Ativo/Inativo ===
+        console.log('%c[GESTAO-HORARIOS v2.0] Carregado com sucesso!', 'background: #d4a574; color: white; padding: 5px; border-radius: 3px;');
+        
+        // Vari&#65533;veis globais
+        let horarioSelecionadoAtual = null;
+        let horariosSelecionadosMultiplos = [];
+        let horariosDoDia = [];
+        let filtroStatusAtual = 'todos';
+        let modalAcaoMassa;
+        let modoSelecaoAtivo = false;
+        const autoSaveTimers = {};
+        let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        // Inicializa&#65533;&#65533;o
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar modal de a\u00e7\u00e3o em massa (Bootstrap)
+            modalAcaoMassa = new bootstrap.Modal(document.getElementById('modalAcaoMassa'));
+
+            // Definir data atual
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('data-selecionada').value = hoje;
+
+            // Adicionar listener para carregar hor&#65533;rios automaticamente ao selecionar data
+            const inputData = document.getElementById('data-selecionada');
+            if (inputData) {
+                inputData.addEventListener('change', function() {
+                    if (this.value) {
+                        carregarHorarios();
+                    }
+                });
+            }
+
+            // Carregar hor\u00e1rios automaticamente ap\u00f3s um pequeno delay
+            setTimeout(() => {
+                carregarHorarios();
+            }, 100);
+
+            // Carregar configura&#65533;&#65533;es ao abrir a tab
+            document.getElementById('configuracoes-tab').addEventListener('click', function() {
+                carregarConfiguracoes();
+            });
+
+            // Atualizar motivo em massa conforme tipo de a&#65533;&#65533;o
+            document.getElementById('acao-massa-tipo').addEventListener('change', function() {
+                const motivoContainer = document.getElementById('motivo-massa-container');
+                if (this.value === 'bloquear') {
+                    motivoContainer.style.display = 'block';
+                } else {
+                    motivoContainer.style.display = 'none';
+                }
+            });
+
+            // Fechar modais ao clicar fora deles
+            window.onclick = function(event) {
+                if (event.target.classList.contains('modal-overlay')) {
+                    // Identificar qual modal est&#65533; aberto e fech&#65533;-lo
+                    if (event.target.id === 'modalSucesso') {
+                        fecharModalSucesso();
+                    } else if (event.target.id === 'modalErro') {
+                        fecharModalErro();
+                    } else if (event.target.id === 'modalBloquear') {
+                        fecharModalBloquear();
+                    } else if (event.target.id === 'modalDesbloquear') {
+                        fecharModalDesbloquear();
+                    } else if (event.target.id === 'modalConfirmarParalisacao') {
+                        fecharModalConfirmarParalisacao();
+                    } else if (event.target.id === 'modalCancelarParalisacao') {
+                        fecharModalCancelarParalisacao();
+                    }
+                }
+            };
+        });
+
+        function decodeHtmlEntities(texto) {
+            const area = document.createElement('textarea');
+            area.innerHTML = texto == null ? '' : String(texto);
+            return area.value;
+        }
+
+        function escapeHtml(texto) {
+            return String(texto)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function normalizarMensagem(texto) {
+            return decodeHtmlEntities(texto || '');
+        }
+
+        // Fun&#65533;&#65533;o para exibir mensagens
+        function mostrarMensagem(mensagem, tipo = 'info', duracao = 5000) {
+            const container = document.getElementById('mensagem-container');
+            const alertDiv = document.createElement('div');
+            const mensagemNormalizada = normalizarMensagem(mensagem);
+            alertDiv.className = `alert alert-${tipo} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                <i class="bi bi-${tipo === 'success' ? 'check-circle' : tipo === 'danger' ? 'x-circle' : tipo === 'warning' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                <span class="mensagem-texto"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            alertDiv.querySelector('.mensagem-texto').textContent = mensagemNormalizada;
+            container.appendChild(alertDiv);
+
+            if (duracao > 0) {
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, duracao);
+            }
+        }
+
+        // Carregar hor&#65533;rios do dia
+        async function carregarHorarios() {
+            const data = document.getElementById('data-selecionada').value;
+            if (!data) {
+                mostrarMensagem('Por favor, selecione uma data', 'warning');
+                return;
+            }
+
+            const loading = document.getElementById('loading-horarios');
+            const container = document.getElementById('horarios-container');
+            
+            loading.classList.add('show');
+            container.innerHTML = '';
+            horariosSelecionadosMultiplos = [];
+            horariosDoDia = [];
+            modoSelecaoAtivo = false;
+            ocultarBotaoAcao();
+
+            // Resetar bot�o modo sele��o
+            const btnModo = document.getElementById('btn-modo-selecao');
+            if (btnModo) {
+                btnModo.classList.remove('active');
+                btnModo.innerHTML = '<i class="bi bi-check-square me-1"></i><span class="d-none d-sm-inline">Modo </span>Sele&ccedil;&atilde;o';
+            }
+
+            try {
+                const response = await fetch(`../../bancodedados/horarios/buscar_horarios_dia.php?data=${data}`);
+                const result = await response.json();
+
+                loading.classList.remove('show');
+
+                if (result.sucesso) {
+                    horariosDoDia = Array.isArray(result.horarios) ? result.horarios : [];
+                    atualizarResumoHorarios(horariosDoDia);
+
+                    if (result.horarios.length === 0) {
+                        container.innerHTML = `
+                            <div class="alert alert-warning mb-3">
+                                <i class="bi bi-exclamation-triangle me-2"></i>${escapeHtml(normalizarMensagem(result.mensagem || 'Nenhum hor&aacute;rio configurado para este dia.'))}
+                            </div>
+                            <div class="alert alert-info">
+                                <h6 class="alert-heading mb-2"><i class="bi bi-info-circle me-2"></i>Como configurar seus hor&aacute;rios?</h6>
+                                <p class="mb-2">Para resolver isso &eacute; simples:</p>
+                                <ol class="mb-2 ps-3">
+                                    <li>Clique na aba <strong>Configura&ccedil;&otilde;es</strong> acima</li>
+                                    <li>Defina os dias em que <strong>n&atilde;o</strong> ir&aacute; trabalhar, caso houver</li>
+                                    <li>Informe o <strong>in&iacute;cio e fim</strong> do seu expediente</li>
+                                    <li>Os campos s&atilde;o <strong>salvos automaticamente</strong> ao alterar</li>
+                                </ol>
+                                <p class="mb-0">Pronto! Sua configura&ccedil;&atilde;o ser&aacute; criada e poder&aacute; ser alterada a qualquer momento.</p>
+                            </div>
+                        `;
+                        atualizarResumoUso();
+                        return;
+                    }
+
+                    renderizarHorariosFiltrados();
+                    mostrarMensagem(`${result.horarios.length} hor&aacute;rio(s) carregado(s) para ${formatarData(data)}`, 'success', 3000);
+                } else {
+                    container.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="bi bi-x-circle me-2"></i>${escapeHtml(normalizarMensagem(result.mensagem))}
+                        </div>
+                    `;
+                    atualizarResumoHorarios([]);
+                    atualizarResumoUso();
+                    mostrarMensagem(result.mensagem, 'danger');
+                }
+            } catch (error) {
+                loading.classList.remove('show');
+                container.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-x-circle me-2"></i>Erro ao carregar hor&aacute;rios. Tente novamente.
+                    </div>
+                `;
+                atualizarResumoHorarios([]);
+                atualizarResumoUso();
+                mostrarMensagem('Erro ao carregar hor&aacute;rios: ' + error.message, 'danger');
+            }
+        }
+
+        function atualizarResumoHorarios(horarios) {
+            const totais = {
+                total: horarios.length,
+                disponivel: horarios.filter(h => h.status === 'disponivel').length,
+                bloqueado: horarios.filter(h => h.status === 'bloqueado').length,
+                agendado: horarios.filter(h => h.status === 'agendado').length
+            };
+
+            document.getElementById('resumo-total').textContent = totais.total;
+            document.getElementById('resumo-disponivel').textContent = totais.disponivel;
+            document.getElementById('resumo-bloqueado').textContent = totais.bloqueado;
+            document.getElementById('resumo-agendado').textContent = totais.agendado;
+        }
+
+        function aplicarFiltroHorarios(filtro) {
+            filtroStatusAtual = filtro;
+
+            document.querySelectorAll('.btn-filtro').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filtro === filtro);
+            });
+
+            renderizarHorariosFiltrados();
+        }
+
+        function atualizarResumoUso() {
+            const resumoUso = document.getElementById('resumo-uso');
+            if (!resumoUso) return;
+
+            const totalSelecionados = horariosSelecionadosMultiplos.length;
+            const filtroTexto = filtroStatusAtual === 'todos'
+                ? 'todos os status'
+                : `somente ${filtroStatusAtual}`;
+
+            if (modoSelecaoAtivo) {
+                resumoUso.innerHTML = `<i class="bi bi-check2-square me-1"></i>Modo Sele&ccedil;&atilde;o ativo: ${totalSelecionados} hor&aacute;rio(s) marcado(s). Filtro atual: ${filtroTexto}.`;
+                return;
+            }
+
+            resumoUso.innerHTML = '<i class="bi bi-info-circle me-1"></i>Toque em um hor&aacute;rio para bloquear ou desbloquear. Use Modo Sele&ccedil;&atilde;o para a&ccedil;&otilde;es em massa.';
+        }
+
+        function renderizarHorariosFiltrados() {
+            const container = document.getElementById('horarios-container');
+            const horariosFiltrados = filtroStatusAtual === 'todos'
+                ? horariosDoDia
+                : horariosDoDia.filter(h => h.status === filtroStatusAtual);
+
+            if (!horariosFiltrados.length) {
+                container.innerHTML = `
+                    <div class="alert alert-info">
+                        <i class="bi bi-funnel me-2"></i>Nenhum hor&aacute;rio encontrado para o filtro selecionado.
+                    </div>
+                `;
+                atualizarResumoUso();
+                return;
+            }
+
+            let html = '<div class="horario-grid">';
+            horariosFiltrados.forEach(horario => {
+                const statusClass = `horario-${horario.status}`;
+                const ehAlmoco = horario.status === 'bloqueado' && horario.motivo_bloqueio === 'almoco';
+                const statusRotulo = horario.status === 'disponivel'
+                    ? '<i class="bi bi-check-circle"></i> Dispon&iacute;vel'
+                    : horario.status === 'bloqueado'
+                        ? (ehAlmoco ? '<i class="bi bi-cup-hot"></i> Almo&ccedil;o' : '<i class="bi bi-lock"></i> Bloqueado')
+                        : '<i class="bi bi-calendar-check"></i> Agendado';
+
+                const acaoHint = horario.status === 'disponivel'
+                    ? 'Toque para bloquear'
+                    : horario.status === 'bloqueado'
+                        ? (ehAlmoco ? 'Hor&aacute;rio de almo&ccedil;o' : 'Toque para desbloquear')
+                        : 'Hor&aacute;rio reservado';
+
+                const infoCliente = horario.info && horario.info.cliente_nome
+                    ? `<small>${escapeHtml(horario.info.cliente_nome)}</small>`
+                    : '';
+
+                const ariaDisabled = (horario.status === 'agendado' || ehAlmoco) ? 'aria-disabled="true"' : '';
+                const onClickAttr = ehAlmoco ? '' : `onclick="selecionarHorario('${horario.horario}', '${horario.status}', event)"`;
+
+                html += `
+                    <div class="horario-item ${statusClass}${ehAlmoco ? ' horario-almoco' : ''}"
+                         data-horario="${horario.horario}"
+                         data-status="${horario.status}"
+                         ${onClickAttr}
+                         ${ariaDisabled}>
+                        <strong>${horario.horario}</strong>
+                        <span class="horario-status-badge">${statusRotulo}</span>
+                        <span class="horario-acao-hint">${acaoHint}</span>
+                        ${infoCliente}
+                    </div>
+                `;
+            });
+            html += '</div>';
+
+            container.innerHTML = html;
+            atualizarResumoUso();
+        }
+
+        // Ativar/Desativar modo sele&#65533;&#65533;o
+        function toggleModoSelecao() {
+            modoSelecaoAtivo = !modoSelecaoAtivo;
+            const btn = document.getElementById('btn-modo-selecao');
+            const container = document.getElementById('horarios-container');
+
+            if (modoSelecaoAtivo) {
+                btn.classList.add('active');
+                btn.innerHTML = '<i class="bi bi-x-square me-1"></i>Cancelar';
+                container.classList.add('modo-selecao-ativo');
+                mostrarMensagem('Modo de sele&ccedil;&atilde;o ativado. Toque nos hor&aacute;rios para selecionar.', 'info', 3000);
+                atualizarResumoUso();
+                
+                // Mostrar bot&#65533;o de a&#65533;&#65533;o se houver selecionados
+                if (horariosSelecionadosMultiplos.length > 0) {
+                    mostrarBotaoAcao();
+                }
+            } else {
+                btn.classList.remove('active');
+                btn.innerHTML = '<i class="bi bi-check-square me-1"></i><span class="d-none d-sm-inline">Modo </span>Sele&ccedil;&atilde;o';
+                container.classList.remove('modo-selecao-ativo');
+                
+                // Limpar sele&#65533;&#65533;es
+                document.querySelectorAll('.horario-item.selecionado').forEach(el => {
+                    el.classList.remove('selecionado');
+                });
+                horariosSelecionadosMultiplos = [];
+                ocultarBotaoAcao();
+                atualizarResumoUso();
+            }
+        }
+
+        // Mostrar bot&#65533;o flutuante de a&#65533;&#65533;o
+        function mostrarBotaoAcao() {
+            let btnAcao = document.getElementById('btn-acao-flutuante');
+            if (!btnAcao) {
+                btnAcao = document.createElement('div');
+                btnAcao.id = 'btn-acao-flutuante';
+                btnAcao.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    z-index: 1000;
+                    background: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+                    color: white;
+                    padding: 1rem 1.5rem;
+                    border-radius: 50px;
+                    box-shadow: 0 4px 12px rgba(150, 150, 170, 0.4);
+                    cursor: pointer;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    transition: all 0.3s;
+                `;
+                btnAcao.innerHTML = `
+                    <i class="bi bi-lightning-fill"></i>
+                    <span id="contador-selecionados">0</span> selecionado(s)
+                `;
+                btnAcao.onclick = aplicarAcaoEmMassa;
+                document.body.appendChild(btnAcao);
+            }
+            btnAcao.style.display = 'flex';
+            document.getElementById('contador-selecionados').textContent = horariosSelecionadosMultiplos.length;
+        }
+
+        // Ocultar bot&#65533;o flutuante
+        function ocultarBotaoAcao() {
+            const btnAcao = document.getElementById('btn-acao-flutuante');
+            if (btnAcao) {
+                btnAcao.style.display = 'none';
+            }
+        }
+
+        // Selecionar hor&#65533;rio
+        function selecionarHorario(horario, status, event) {
+            if (status === 'agendado') return;
+
+            // Se modo sele\u00e7\u00e3o ativo, sempre usar sele\u00e7\u00e3o m\u00faltipla
+            if (modoSelecaoAtivo) {
+                const elemento = event.currentTarget;
+                elemento.classList.toggle('selecionado');
+                
+                const index = horariosSelecionadosMultiplos.indexOf(horario);
+                if (index > -1) {
+                    horariosSelecionadosMultiplos.splice(index, 1);
+                } else {
+                    horariosSelecionadosMultiplos.push(horario);
+                }
+                
+                // Mostrar ou ocultar bot\u00e3o de a\u00e7\u00e3o
+                if (horariosSelecionadosMultiplos.length > 0) {
+                    mostrarBotaoAcao();
+                } else {
+                    ocultarBotaoAcao();
+                }
+                atualizarResumoUso();
+                return;
+            }
+
+            // Se Ctrl/Cmd pressionado, sele&#65533;&#65533;o m&#65533;ltipla
+            if (event.ctrlKey || event.metaKey) {
+                const elemento = event.currentTarget;
+                elemento.classList.toggle('selecionado');
+                
+                const index = horariosSelecionadosMultiplos.indexOf(horario);
+                if (index > -1) {
+                    horariosSelecionadosMultiplos.splice(index, 1);
+                } else {
+                    horariosSelecionadosMultiplos.push(horario);
+                }
+                atualizarResumoUso();
+            } else {
+                // Sele&#65533;&#65533;o &#65533;nica
+                if (status === 'disponivel') {
+                    horarioSelecionadoAtual = horario;
+                    document.getElementById('horario-selecionado-texto').textContent = horario;
+                    document.getElementById('motivo-bloqueio').value = '';
+                    abrirModalBloquear();
+                } else if (status === 'bloqueado') {
+                    abrirModalDesbloquear(horario);
+                }
+            }
+        }
+
+        // Auto-save: atualizar pill de status no card do dia
+        function atualizarStatusConfigDia(diaSemana, estado = 'idle', texto = 'Autom&aacute;tico') {
+            const el = document.getElementById(`config-status-${diaSemana}`);
+            if (!el) return;
+            el.className = 'config-save-status';
+            if (estado === 'saving') el.classList.add('is-saving');
+            else if (estado === 'saved') el.classList.add('is-saved');
+            else if (estado === 'error') el.classList.add('is-error');
+            el.innerHTML = texto;
+        }
+
+        // Auto-save: vincular eventos de campo
+        function vincularAutoSaveConfiguracoes() {
+            for (let dia = 0; dia <= 6; dia++) {
+                const campos = [
+                    { id: `ativo-${dia}` },
+                    { id: `inicio-${dia}` },
+                    { id: `fim-${dia}` },
+                    { id: `intervalo-${dia}` },
+                    { id: `almoco-ativo-${dia}` },
+                    { id: `almoco-inicio-${dia}` },
+                    { id: `almoco-fim-${dia}` },
+                    { id: `aplicar-todos-${dia}` }
+                ];
+                campos.forEach(({ id }) => {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    el.addEventListener('change', () => agendarAutoSaveConfiguracao(dia));
+                });
+            }
+        }
+
+        // Habilita/desabilita os campos de hor&aacute;rio de almo&ccedil;o conforme o switch
+        function toggleAlmocoInputs(diaSemana) {
+            const ativo = document.getElementById(`almoco-ativo-${diaSemana}`)?.checked;
+            const inicio = document.getElementById(`almoco-inicio-${diaSemana}`);
+            const fim = document.getElementById(`almoco-fim-${diaSemana}`);
+            if (inicio) inicio.disabled = !ativo;
+            if (fim) fim.disabled = !ativo;
+        }
+
+        // Auto-save: agendar com debounce
+        function agendarAutoSaveConfiguracao(diaSemana) {
+            clearTimeout(autoSaveTimers[diaSemana]);
+            atualizarStatusConfigDia(diaSemana, 'saving', '<i class="bi bi-clock-history"></i> Pendente');
+            autoSaveTimers[diaSemana] = setTimeout(() => autoSalvarDia(diaSemana), 600);
+        }
+
+        // Auto-save: salvar o dia via fetch
+        async function autoSalvarDia(diaSemana) {
+            const ativo = document.getElementById(`ativo-${diaSemana}`)?.checked;
+            const inicio = document.getElementById(`inicio-${diaSemana}`)?.value;
+            const fim = document.getElementById(`fim-${diaSemana}`)?.value;
+            const intervalo = document.getElementById(`intervalo-${diaSemana}`)?.value;
+            const aplicarTodos = document.getElementById(`aplicar-todos-${diaSemana}`)?.checked;
+            const almocoAtivo = document.getElementById(`almoco-ativo-${diaSemana}`)?.checked;
+            const almocoInicio = document.getElementById(`almoco-inicio-${diaSemana}`)?.value;
+            const almocoFim = document.getElementById(`almoco-fim-${diaSemana}`)?.value;
+
+            if (almocoAtivo && (!almocoInicio || !almocoFim || almocoInicio >= almocoFim)) {
+                atualizarStatusConfigDia(diaSemana, 'error', '<i class="bi bi-exclamation-circle"></i> Erro');
+                mostrarMensagem('Informe um in&iacute;cio de almo&ccedil;o anterior ao fim.', 'warning');
+                return;
+            }
+
+            const configuracoes = [];
+            const diasAfetados = [];
+
+            if (aplicarTodos) {
+                for (let dia = 0; dia <= 6; dia++) {
+                    const ativoOutro = dia === diaSemana ? ativo : document.getElementById(`ativo-${dia}`)?.checked;
+                    configuracoes.push({
+                        dia_semana: dia,
+                        horario_inicio: inicio,
+                        horario_fim: fim,
+                        intervalo_minutos: parseInt(intervalo),
+                        ativo: ativoOutro,
+                        almoco_ativo: !!almocoAtivo,
+                        almoco_inicio: almocoInicio,
+                        almoco_fim: almocoFim
+                    });
+                    diasAfetados.push(dia);
+                    atualizarStatusConfigDia(dia, 'saving', '<i class="bi bi-arrow-repeat"></i> Salvando');
+                }
+            } else {
+                configuracoes.push({
+                    dia_semana: diaSemana,
+                    horario_inicio: inicio,
+                    horario_fim: fim,
+                    intervalo_minutos: parseInt(intervalo),
+                    ativo: ativo,
+                    almoco_ativo: !!almocoAtivo,
+                    almoco_inicio: almocoInicio,
+                    almoco_fim: almocoFim
+                });
+                diasAfetados.push(diaSemana);
+                atualizarStatusConfigDia(diaSemana, 'saving', '<i class="bi bi-arrow-repeat"></i> Salvando');
+            }
+
+            try {
+                const response = await fetch('../../bancodedados/horarios/salvar_configuracoes.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ configuracoes })
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const result = JSON.parse(await response.text());
+
+                if (result.sucesso) {
+                    diasAfetados.forEach(dia => {
+                        atualizarStatusConfigDia(dia, 'saved', '<i class="bi bi-check2"></i> Salvo');
+                        const card = document.getElementById(`config-dia-${dia}`);
+                        if (card) {
+                            card.style.borderLeft = '3px solid #10b981';
+                            setTimeout(() => { card.style.borderLeft = '3px solid rgba(99,102,241,0.5)'; }, 1500);
+                        }
+                        setTimeout(() => atualizarStatusConfigDia(dia), 3000);
+                    });
+                    if (aplicarTodos) setTimeout(() => carregarConfiguracoes(), 400);
+                } else {
+                    diasAfetados.forEach(dia => atualizarStatusConfigDia(dia, 'error', '<i class="bi bi-exclamation-circle"></i> Erro'));
+                    mostrarMensagem(result.mensagem || 'Erro ao salvar', 'danger');
+                }
+            } catch (error) {
+                diasAfetados.forEach(dia => atualizarStatusConfigDia(dia, 'error', '<i class="bi bi-exclamation-circle"></i> Erro'));
+                mostrarMensagem('Erro ao salvar configura&ccedil;&atilde;o: ' + error.message, 'danger');
+            }
+        }
+
+        // Abrir modal de bloquear hor&#65533;rio
+        function abrirModalBloquear() {
+            document.getElementById('modalBloquear').classList.add('show');
+        }
+
+        // Fechar modal de bloquear hor&#65533;rio
+        function fecharModalBloquear() {
+            document.getElementById('modalBloquear').classList.remove('show');
+            document.getElementById('motivo-bloqueio').value = '';
+            document.getElementById('bloquear-todos-dias').checked = false;
+        }
+
+        // Abrir modal de desbloquear hor&#65533;rio
+        function abrirModalDesbloquear(horario) {
+            horarioSelecionadoAtual = horario;
+            document.getElementById('horario-desbloquear-texto').textContent = horario;
+            document.getElementById('modalDesbloquear').classList.add('show');
+        }
+
+        // Fechar modal de desbloquear hor&#65533;rio
+        function fecharModalDesbloquear() {
+            document.getElementById('modalDesbloquear').classList.remove('show');
+            document.getElementById('desbloquear-todos-dias').checked = false;
+        }
+
+        // Abrir modal de sucesso
+        function abrirModalSucesso(mensagem, titulo = 'Sucesso!') {
+            document.getElementById('modal-sucesso-titulo').textContent = normalizarMensagem(titulo);
+            document.getElementById('modal-sucesso-mensagem').textContent = normalizarMensagem(mensagem);
+            document.getElementById('modalSucesso').classList.add('show');
+        }
+
+        // Fechar modal de sucesso
+        function fecharModalSucesso() {
+            document.getElementById('modalSucesso').classList.remove('show');
+        }
+
+        // Abrir modal de erro
+        function abrirModalErro(mensagem, titulo = 'Erro') {
+            document.getElementById('modal-erro-titulo').textContent = normalizarMensagem(titulo);
+            document.getElementById('modal-erro-mensagem').textContent = normalizarMensagem(mensagem);
+            document.getElementById('modalErro').classList.add('show');
+        }
+
+        // Fechar modal de erro
+        function fecharModalErro() {
+            document.getElementById('modalErro').classList.remove('show');
+        }
+
+        // Confirmar desbloqueio
+        async function confirmarDesbloquear() {
+            const desbloquearTodosDias = document.getElementById('desbloquear-todos-dias').checked;
+            fecharModalDesbloquear();
+            await desbloquearHorario(horarioSelecionadoAtual, desbloquearTodosDias);
+        }
+
+        // Confirmar bloqueio
+        async function confirmarBloqueio() {
+            const data = document.getElementById('data-selecionada').value;
+            const motivo = document.getElementById('motivo-bloqueio').value;
+            const bloquearTodosDias = document.getElementById('bloquear-todos-dias').checked;
+
+            try {
+                const endpoint = bloquearTodosDias ? 
+                    '../../bancodedados/horarios/bloquear_horario_permanente.php' : 
+                    '../../bancodedados/horarios/bloquear_horario.php';
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        data: data,
+                        horario: horarioSelecionadoAtual,
+                        motivo: motivo || null,
+                        todos_dias: bloquearTodosDias
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.sucesso) {
+                    fecharModalBloquear();
+                    mostrarMensagem(result.mensagem, 'success');
+                    // Recarregar hor&#65533;rios para mostrar o bloqueio
+                    await carregarHorarios();
+                } else {
+                    mostrarMensagem(result.mensagem, 'danger');
+                }
+            } catch (error) {
+                mostrarMensagem('Erro ao bloquear hor&aacute;rio: ' + error.message, 'danger');
+            }
+        }
+
+        // Desbloquear hor&#65533;rio
+        async function desbloquearHorario(horario, desbloquearTodosDias = false) {
+            const data = document.getElementById('data-selecionada').value;
+
+            try {
+                const endpoint = desbloquearTodosDias ? 
+                    '../../bancodedados/horarios/desbloquear_horario_permanente.php' : 
+                    '../../bancodedados/horarios/desbloquear_horario.php';
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        data: data,
+                        horario: horario
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.sucesso) {
+                    mostrarMensagem(result.mensagem, 'success');
+                    carregarHorarios();
+                } else {
+                    mostrarMensagem(result.mensagem, 'danger');
+                }
+            } catch (error) {
+                mostrarMensagem('Erro ao desbloquear hor&aacute;rio: ' + error.message, 'danger');
+            }
+        }
+
+        // Abrir modal de a&#65533;&#65533;o em massa
+        function aplicarAcaoEmMassa() {
+            if (horariosSelecionadosMultiplos.length === 0) {
+                mostrarMensagem('Ative o modo de sele&ccedil;&atilde;o e toque nos hor&aacute;rios desejados', 'warning');
+                return;
+            }
+
+            const lista = document.getElementById('horarios-selecionados-lista');
+            lista.innerHTML = horariosSelecionadosMultiplos.map(h => `<span class="badge bg-primary me-2">${h}</span>`).join('');
+            
+            modalAcaoMassa.show();
+        }
+
+        // Confirmar a&#65533;&#65533;o em massa
+        async function confirmarAcaoMassa() {
+            const acao = document.getElementById('acao-massa-tipo').value;
+            const data = document.getElementById('data-selecionada').value;
+            const motivo = document.getElementById('motivo-massa').value;
+
+            if (horariosSelecionadosMultiplos.length === 0) {
+                mostrarMensagem('Nenhum hor&aacute;rio selecionado', 'warning');
+                return;
+            }
+
+            try {
+                if (acao === 'bloquear') {
+                    const response = await fetch('../../bancodedados/horarios/bloquear_multiplos.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            data: data,
+                            horarios: horariosSelecionadosMultiplos,
+                            motivo: motivo || null
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.sucesso) {
+                        mostrarMensagem(result.mensagem, 'success');
+                        modalAcaoMassa.hide();
+                        horariosSelecionadosMultiplos = [];
+                        carregarHorarios();
+                    } else {
+                        mostrarMensagem(result.mensagem, 'danger');
+                    }
+                } else {
+                    // Desbloquear m&#65533;ltiplos
+                    let sucessos = 0;
+                    let erros = 0;
+
+                    for (const horario of horariosSelecionadosMultiplos) {
+                        try {
+                            const response = await fetch('../../bancodedados/horarios/desbloquear_horario.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    data: data,
+                                    horario: horario
+                                })
+                            });
+
+                            const result = await response.json();
+                            if (result.sucesso) {
+                                sucessos++;
+                            } else {
+                                erros++;
+                            }
+                        } catch (error) {
+                            erros++;
+                        }
+                    }
+
+                    mostrarMensagem(`${sucessos} hor&aacute;rio(s) desbloqueado(s) com sucesso. ${erros > 0 ? erros + ' erro(s).' : ''}`, sucessos > 0 ? 'success' : 'warning');
+                    modalAcaoMassa.hide();
+                    horariosSelecionadosMultiplos = [];
+                    carregarHorarios();
+                }
+            } catch (error) {
+                mostrarMensagem('Erro ao executar a&ccedil;&atilde;o em massa: ' + error.message, 'danger');
+            }
+        }
+
+        // Carregar configura&#65533;&#65533;es
+        async function carregarConfiguracoes() {
+            const loading = document.getElementById('loading-config');
+            const container = document.getElementById('config-container');
+            
+            loading.classList.add('show');
+            container.innerHTML = '';
+
+            try {
+                const response = await fetch('../../bancodedados/horarios/buscar_configuracoes.php');
+                const result = await response.json();
+
+                loading.classList.remove('show');
+
+                if (result.sucesso) {
+                    const diasSemana = [
+                        { numero: 0, nome: 'Domingo', abrev: 'Dom' },
+                        { numero: 1, nome: 'Segunda-feira', abrev: 'Seg' },
+                        { numero: 2, nome: 'Ter&ccedil;a-feira', abrev: 'Ter' },
+                        { numero: 3, nome: 'Quarta-feira', abrev: 'Qua' },
+                        { numero: 4, nome: 'Quinta-feira', abrev: 'Qui' },
+                        { numero: 5, nome: 'Sexta-feira', abrev: 'Sex' },
+                        { numero: 6, nome: 'S&aacute;bado', abrev: 'S&aacute;b' }
+                    ];
+
+                    let html = '';
+                    diasSemana.forEach(dia => {
+                        const configs = result.configuracoes || [];
+                        const config = configs.find(c => c.dia_semana == dia.numero) || {};
+                        
+                        // Debug do carregamento
+                        if (dia.numero === 0) {
+                            console.log('Config Domingo:', config);
+                            console.log('Intervalo minutos:', config.intervalo_minutos, 'Tipo:', typeof config.intervalo_minutos);
+                        }
+                        
+                        // Converte corretamente o valor do banco (1/0, "1"/"0", true/false)
+                        let ativo = true; // padr&#65533;o se n&#65533;o houver configura&#65533;&#65533;o
+                        if (config.ativo !== undefined && config.ativo !== null) {
+                            // Converte para string e compara, ou verifica se &#65533; n&#65533;mero/boolean
+                            ativo = (String(config.ativo) === '1' || config.ativo === 1 || config.ativo === true || config.ativo === 't');
+                        }
+                        
+                        // Converte intervalo_minutos para n&#65533;mero para compara&#65533;&#65533;o correta
+                        const intervaloMinutos = config.intervalo_minutos ? parseInt(config.intervalo_minutos) : 15;
+
+                        // Converte configura&ccedil;&atilde;o de almo&ccedil;o
+                        let almocoAtivo = false;
+                        if (config.almoco_ativo !== undefined && config.almoco_ativo !== null) {
+                            almocoAtivo = (String(config.almoco_ativo) === '1' || config.almoco_ativo === 1 || config.almoco_ativo === true || config.almoco_ativo === 't');
+                        }
+                        const almocoInicio = (config.almoco_inicio || '12:00').substring(0, 5);
+                        const almocoFim = (config.almoco_fim || '13:00').substring(0, 5);
+                        
+                        html += `
+                            <div class="config-dia" id="config-dia-${dia.numero}">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="mb-0"><i class="bi bi-calendar-day me-2"></i>${dia.nome}</h6>
+                                    <span class="config-save-status" id="config-status-${dia.numero}">Autom&aacute;tico</span>
+                                </div>
+                                <div class="row align-items-end">
+                                    <div class="col-md-3">
+                                        <label class="form-label">Status:</label>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="ativo-${dia.numero}" ${ativo ? 'checked' : ''} onchange="atualizarCorConfigDia(${dia.numero})">
+                                            <label class="form-check-label" for="ativo-${dia.numero}">Ativo</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">In&iacute;cio:</label>
+                                        <input type="time" class="form-control" id="inicio-${dia.numero}" value="${config.horario_inicio || '08:00'}">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Fim:</label>
+                                        <input type="time" class="form-control" id="fim-${dia.numero}" value="${config.horario_fim || '18:00'}">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Intervalo (minutos):</label>
+                                        <select class="form-select" id="intervalo-${dia.numero}">
+                                            <option value="5" ${intervaloMinutos == 5 ? 'selected' : ''}>5 minutos</option>
+                                            <option value="10" ${intervaloMinutos == 10 ? 'selected' : ''}>10 minutos</option>
+                                            <option value="15" ${intervaloMinutos == 15 ? 'selected' : ''}>15 minutos</option>
+                                            <option value="20" ${intervaloMinutos == 20 ? 'selected' : ''}>20 minutos</option>
+                                            <option value="25" ${intervaloMinutos == 25 ? 'selected' : ''}>25 minutos</option>
+                                            <option value="30" ${intervaloMinutos == 30 ? 'selected' : ''}>30 minutos</option>
+                                            <option value="35" ${intervaloMinutos == 35 ? 'selected' : ''}>35 minutos</option>
+                                            <option value="40" ${intervaloMinutos == 40 ? 'selected' : ''}>40 minutos</option>
+                                            <option value="45" ${intervaloMinutos == 45 ? 'selected' : ''}>45 minutos</option>
+                                            <option value="60" ${intervaloMinutos == 60 ? 'selected' : ''}>60 minutos</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-3 align-items-end">
+                                    <div class="col-md-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="almoco-ativo-${dia.numero}" ${almocoAtivo ? 'checked' : ''} onchange="toggleAlmocoInputs(${dia.numero})">
+                                            <label class="form-check-label" for="almoco-ativo-${dia.numero}"><i class="bi bi-cup-hot me-1"></i>Hor&aacute;rio de almo&ccedil;o</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">In&iacute;cio do almo&ccedil;o:</label>
+                                        <input type="time" class="form-control" id="almoco-inicio-${dia.numero}" value="${almocoInicio}" ${almocoAtivo ? '' : 'disabled'}>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Fim do almo&ccedil;o:</label>
+                                        <input type="time" class="form-control" id="almoco-fim-${dia.numero}" value="${almocoFim}" ${almocoAtivo ? '' : 'disabled'}>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <small style="color: #b8b2a8;">Bloqueia agendamentos nesse intervalo</small>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="aplicar-todos-${dia.numero}">
+                                            <label class="form-check-label" for="aplicar-todos-${dia.numero}">
+                                                <small><i class="bi bi-arrow-repeat me-1"></i>Aplicar estes hor&aacute;rios (in&iacute;cio, fim, intervalo e almo&ccedil;o) para todos os dias</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    container.innerHTML = html;
+                    vincularAutoSaveConfiguracoes();
+                } else {
+                    container.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="bi bi-x-circle me-2"></i>${escapeHtml(normalizarMensagem(result.mensagem))}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                loading.classList.remove('show');
+                container.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-x-circle me-2"></i>Erro ao carregar configura&ccedil;&otilde;es. Tente novamente.
+                    </div>
+                `;
+                mostrarMensagem('Erro ao carregar configura&ccedil;&otilde;es: ' + error.message, 'danger');
+            }
+        }
+
+        // Salvar configura&#65533;&#65533;es
+        async function salvarConfiguracoes() {
+            const diasSemana = [0, 1, 2, 3, 4, 5, 6];
+            const configuracoes = [];
+
+            for (const dia of diasSemana) {
+                const ativo = document.getElementById(`ativo-${dia}`).checked;
+                const inicio = document.getElementById(`inicio-${dia}`).value;
+                const fim = document.getElementById(`fim-${dia}`).value;
+                const intervalo = document.getElementById(`intervalo-${dia}`).value;
+
+                configuracoes.push({
+                    dia_semana: dia,
+                    horario_inicio: inicio,
+                    horario_fim: fim,
+                    intervalo_minutos: parseInt(intervalo),
+                    ativo: ativo
+                });
+            }
+
+            const payload = { configuracoes: configuracoes };
+            console.log('Dados enviados:', JSON.stringify(payload, null, 2));
+
+            try {
+                const response = await fetch('../../bancodedados/horarios/salvar_configuracoes.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                // Verificar se a resposta &#65533; OK
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+
+                // Tentar ler o texto da resposta primeiro
+                const textoResposta = await response.text();
+                
+                // Log para debug (remover depois)
+                console.log('Resposta do servidor:', textoResposta);
+
+                // Tentar fazer parse do JSON
+                let result;
+                try {
+                    result = JSON.parse(textoResposta);
+                } catch (e) {
+                    console.error('Erro ao fazer parse do JSON:', e);
+                    console.error('Texto recebido:', textoResposta);
+                    throw new Error('Resposta inv&aacute;lida do servidor');
+                }
+
+                if (result.sucesso) {
+                    abrirModalSucesso(result.mensagem, 'Configura&ccedil;&otilde;es Salvas!');
+                } else {
+                    abrirModalErro(result.mensagem, 'Erro ao Salvar');
+                }
+            } catch (error) {
+                console.error('Erro completo:', error);
+                abrirModalErro('Erro ao salvar configura\u00e7\u00f5es: ' + error.message, 'Erro');
+            }
+        }
+
+        // Salvar configura\u00e7\u00e3o de um dia espec\u00edfico
+        async function salvarDiaIndividual(diaSemana) {
+            const ativo = document.getElementById(`ativo-${diaSemana}`).checked;
+            const inicio = document.getElementById(`inicio-${diaSemana}`).value;
+            const fim = document.getElementById(`fim-${diaSemana}`).value;
+            const intervalo = document.getElementById(`intervalo-${diaSemana}`).value;
+            const aplicarTodos = document.getElementById(`aplicar-todos-${diaSemana}`).checked;
+
+            const configuracoes = [];
+            
+            if (aplicarTodos) {
+                // Aplicar para todos os dias da semana (0 a 6)
+                for (let dia = 0; dia <= 6; dia++) {
+                    // Para outros dias, mant&#65533;m o status ativo atual deles
+                    const ativoOutroDia = dia === diaSemana ? ativo : document.getElementById(`ativo-${dia}`).checked;
+                    configuracoes.push({
+                        dia_semana: dia,
+                        horario_inicio: inicio,
+                        horario_fim: fim,
+                        intervalo_minutos: parseInt(intervalo),
+                        ativo: ativoOutroDia
+                    });
+                }
+            } else {
+                // Aplicar apenas para o dia atual
+                configuracoes.push({
+                    dia_semana: diaSemana,
+                    horario_inicio: inicio,
+                    horario_fim: fim,
+                    intervalo_minutos: parseInt(intervalo),
+                    ativo: ativo
+                });
+            }
+
+            const payload = { configuracoes: configuracoes };
+            console.log('Salvando dia individual:', JSON.stringify(payload, null, 2));
+
+            try {
+                const response = await fetch('../../bancodedados/horarios/salvar_configuracoes.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+
+                const textoResposta = await response.text();
+                console.log('Resposta do servidor:', textoResposta);
+
+                let result;
+                try {
+                    result = JSON.parse(textoResposta);
+                } catch (e) {
+                    console.error('Erro ao fazer parse do JSON:', e);
+                    throw new Error('Resposta inv\u00e1lida do servidor');
+                }
+
+                if (result.sucesso) {
+                    const aplicarTodos = document.getElementById(`aplicar-todos-${diaSemana}`).checked;
+                    
+                    if (aplicarTodos) {
+                        abrirModalSucesso('Configura&ccedil;&otilde;es de hor&aacute;rio aplicadas para todos os dias com sucesso!', 'Salvo!');
+                        
+                        // Feedback visual em todos os cards
+                        for (let dia = 0; dia <= 6; dia++) {
+                            const card = document.getElementById(`config-dia-${dia}`);
+                            if (card) {
+                                card.style.borderLeft = '4px solid #10b981';
+                                setTimeout(() => {
+                                    card.style.borderLeft = '4px solid rgba(255, 255, 255, 0.3)';
+                                }, 2000);
+                            }
+                        }
+                        
+                        // Recarregar configura\u00e7\u00f5es para mostrar os valores atualizados
+                        setTimeout(() => {
+                            carregarConfiguracoes();
+                        }, 500);
+                    } else {
+                        // Obter nome do dia
+                        const diasNomes = ['Domingo', 'Segunda-feira', 'Ter&ccedil;a-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'S&aacute;bado'];
+                        const nomeDia = diasNomes[diaSemana];
+                        
+                        abrirModalSucesso(`Configura&ccedil;&atilde;o de ${nomeDia} salva com sucesso!`, 'Salvo!');
+                        
+                        // Feedback visual no card
+                        const card = document.getElementById(`config-dia-${diaSemana}`);
+                        if (card) {
+                            card.style.borderLeft = '4px solid #10b981';
+                            setTimeout(() => {
+                                card.style.borderLeft = '4px solid rgba(255, 255, 255, 0.3)';
+                            }, 2000);
+                        }
+                    }
+                } else {
+                    abrirModalErro(result.mensagem, 'Erro ao Salvar');
+                }
+            } catch (error) {
+                console.error('Erro completo:', error);
+                abrirModalErro('Erro ao salvar configura\u00e7\u00e3o: ' + error.message, 'Erro');
+            }
+        }
+
+        // Atualizar cor de configura&#65533;&#65533;o de dia quando toggle &#65533; ativado/desativado
+        function atualizarCorConfigDia(diaSemana) {
+            // As cores do switch s&#65533;o aplicadas automaticamente pelo CSS :checked/:not(:checked)
+            // N&#65533;o &#65533; necess&#65533;rio fazer nada aqui, mas mantemos a fun&#65533;&#65533;o para compatibilidade
+        }
+
+        // Formatar data para exibi&#65533;&#65533;o
+        function formatarData(data) {
+            const partes = data.split('-');
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+
+        // Voltar para home
+        function voltarHome() {
+            window.location.href = '../home.php';
+        }
+
+        // =========================================================
+        //  PARALISA��O DE AGENDA
+        // =========================================================
+
+        let codigoParalisacaoSelecionada = null;
+
+        // Carregar paralisa��es ao abrir a tab
+        document.getElementById('paralisacao-tab').addEventListener('click', function() {
+            carregarParalisacoes();
+        });
+
+        // Fechar modais de paralisa��o ao clicar no overlay
+        document.getElementById('modalConfirmarParalisacao')?.addEventListener('click', function(e) {
+            if (e.target === this) fecharModalConfirmarParalisacao();
+        });
+        document.getElementById('modalCancelarParalisacao')?.addEventListener('click', function(e) {
+            if (e.target === this) fecharModalCancelarParalisacao();
+        });
+
+        function abrirModalConfirmarParalisacao() {
+            const dataInicio = document.getElementById('paral-data-inicio').value;
+            const dataFim    = document.getElementById('paral-data-fim').value;
+            const motivo     = document.getElementById('paral-motivo').value.trim();
+
+            if (!dataInicio) {
+                mostrarMensagem('Informe a data de in&iacute;cio do fechamento.', 'warning');
+                return;
+            }
+
+            const dataInicioFmt = formatarData(dataInicio);
+            const dataFimFmt = dataFim ? formatarData(dataFim) : null;
+            const periodoTexto = dataFimFmt
+                ? `de <strong>${dataInicioFmt}</strong> at&eacute; <strong>${dataFimFmt}</strong>`
+                : `a partir de <strong>${dataInicioFmt}</strong> por <strong>tempo indeterminado</strong>`;
+            const motivoTexto = motivo ? `<br>Motivo: <em>${motivo}</em>` : '';
+
+            document.getElementById('paral-confirm-texto').innerHTML =
+                `Voc&ecirc; ir&aacute; fechar a agenda ${periodoTexto}.${motivoTexto}`;
+
+            document.getElementById('modalConfirmarParalisacao').classList.add('show');
+        }
+
+        function fecharModalConfirmarParalisacao() {
+            document.getElementById('modalConfirmarParalisacao').classList.remove('show');
+        }
+
+        function fecharModalCancelarParalisacao() {
+            document.getElementById('modalCancelarParalisacao').classList.remove('show');
+            codigoParalisacaoSelecionada = null;
+        }
+
+        async function confirmarParalisacao() {
+            const dataInicio = document.getElementById('paral-data-inicio').value;
+            const dataFim    = document.getElementById('paral-data-fim').value;
+            const motivo     = document.getElementById('paral-motivo').value.trim();
+
+            fecharModalConfirmarParalisacao();
+
+            const btn = document.getElementById('btn-confirmar-paralisacao');
+            if (btn) btn.disabled = true;
+
+            try {
+                const response = await fetch('../../bancodedados/horarios/salvar_paralisacao.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        data_inicio: dataInicio,
+                        data_fim: dataFim || null,
+                        motivo: motivo || null
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.sucesso) {
+                    abrirModalSucesso(result.mensagem, 'Agenda Fechada!');
+                    // Limpar campos
+                    document.getElementById('paral-data-inicio').value = '';
+                    document.getElementById('paral-data-fim').value = '';
+                    document.getElementById('paral-motivo').value = '';
+                    // Recarregar lista
+                    carregarParalisacoes();
+                } else {
+                    abrirModalErro(result.mensagem, 'Erro ao Fechar Agenda');
+                }
+            } catch (error) {
+                abrirModalErro('Erro ao fechar agenda: ' + error.message, 'Erro');
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        async function carregarParalisacoes() {
+            const loading   = document.getElementById('loading-paralisacoes');
+            const container = document.getElementById('paralisacoes-container');
+
+            loading.classList.add('show');
+            container.innerHTML = '';
+
+            try {
+                const response = await fetch('../../bancodedados/horarios/buscar_paralisacoes.php');
+                const result   = await response.json();
+
+                loading.classList.remove('show');
+
+                if (!result.sucesso) {
+                    container.innerHTML = `<div class="alert alert-danger"><i class="bi bi-x-circle me-2"></i>${escapeHtml(normalizarMensagem(result.mensagem))}</div>`;
+                    return;
+                }
+
+                const lista = result.paralisacoes;
+
+                if (!lista || lista.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align:center;padding:2rem;color:#888;">
+                            <i class="bi bi-calendar-check" style="font-size:2.5rem;opacity:0.4;display:block;margin-bottom:0.75rem;"></i>
+                            Nenhum fechamento registrado
+                        </div>`;
+                    return;
+                }
+
+                const hoje = new Date().toISOString().split('T')[0];
+
+                let html = '';
+                lista.forEach(p => {
+                    const dataInicioFmt = formatarData(p.data_inicio);
+                    const dataFimFmt    = p.data_fim ? formatarData(p.data_fim) : null;
+                    const periodoTexto  = dataFimFmt ? `${dataInicioFmt} &rarr; ${dataFimFmt}` : `${dataInicioFmt} &rarr; Indeterminado`;
+
+                    // Determinar se est� ativa agora (data_inicio <= hoje e (data_fim == null ou data_fim >= hoje))
+                    const estaAtivaNow = p.ativa == true || p.ativa == 't' || p.ativa == 1 || p.ativa === 'true';
+                    const emVigencia   = estaAtivaNow && p.data_inicio <= hoje && (p.data_fim === null || p.data_fim >= hoje);
+
+                    const badgeHtml = estaAtivaNow
+                        ? (emVigencia
+                            ? `<span class="paralisacao-badge fechado">
+                                <i class="bi bi-lock-fill me-1"></i>Fechado
+                               </span>`
+                            : `<span class="paralisacao-badge agendado">
+                                <i class="bi bi-clock me-1"></i>Agendado
+                               </span>`)
+                        : `<span class="paralisacao-badge cancelado">
+                                <i class="bi bi-check2 me-1"></i>Cancelado
+                           </span>`;
+
+                    const motivoHtml = p.motivo
+                        ? `<div class="paralisacao-motivo"><i class="bi bi-chat-left-text me-1"></i>${p.motivo}</div>`
+                        : '';
+
+                    const btnCancelar = estaAtivaNow
+                        ? `<button class="btn btn-sm btn-reabrir-paralisacao" onclick="solicitarCancelarParalisacao(${p.codigo})" title="Reabrir agenda">
+                               <i class="bi bi-unlock me-1"></i>Reabrir
+                           </button>`
+                        : '';
+
+                    html += `
+                        <div class="paralisacao-item" style="
+                                    border-left:3px solid ${estaAtivaNow ? (emVigencia ? '#ef4444' : '#f59e0b') : 'rgba(255,255,255,0.1)'};">
+                            <div class="paralisacao-item-main">
+                                <div class="paralisacao-item-head">
+                                    <span class="paralisacao-periodo">
+                                        <i class="bi bi-calendar-range me-1"></i>${periodoTexto}
+                                    </span>
+                                    ${badgeHtml}
+                                </div>
+                                ${motivoHtml}
+                                <div class="paralisacao-criado">Criado em ${formatarDataHora(p.data_criacao)}</div>
+                            </div>
+                            <div class="paralisacao-acoes">${btnCancelar}</div>
+                        </div>`;
+                });
+
+                container.innerHTML = html;
+
+            } catch (error) {
+                loading.classList.remove('show');
+                container.innerHTML = `<div class="alert alert-danger"><i class="bi bi-x-circle me-2"></i>Erro ao carregar fechamentos. Tente novamente.</div>`;
+            }
+        }
+
+        function solicitarCancelarParalisacao(codigo) {
+            codigoParalisacaoSelecionada = codigo;
+            document.getElementById('modalCancelarParalisacao').classList.add('show');
+        }
+
+        async function confirmarCancelarParalisacao() {
+            const codigoParalisacao = codigoParalisacaoSelecionada;
+            fecharModalCancelarParalisacao();
+
+            try {
+                const response = await fetch('../../bancodedados/horarios/cancelar_paralisacao.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codigo: codigoParalisacao })
+                });
+
+                const result = await response.json();
+
+                if (result.sucesso) {
+                    abrirModalSucesso(result.mensagem, 'Agenda Reaberta!');
+                    carregarParalisacoes();
+                } else {
+                    abrirModalErro(result.mensagem, 'Erro');
+                }
+            } catch (error) {
+                abrirModalErro('Erro ao reabrir agenda: ' + error.message, 'Erro');
+            }
+        }
+
+        function formatarDataHora(dataStr) {
+            if (!dataStr) return '-';
+            const d = new Date(dataStr);
+            if (isNaN(d.getTime())) return dataStr;
+            return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // =========================================================
+        //  FIM PARALISA��O
+        // =========================================================
+
+        // Fechar modais ao clicar fora deles
+        document.getElementById('modalBloquear')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                fecharModalBloquear();
+            }
+        });
+
+        document.getElementById('modalDesbloquear')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                fecharModalDesbloquear();
+            }
+        });
+    </script>
+    
+    <script>
+        // Aplicar tema salvo ao carregar p?gina
+        (function() {
+            const temaSalvo = localStorage.getItem('tema');
+            if (temaSalvo === 'claro') {
+                document.body.classList.add('tema-claro');
+            }
+        })();
+        
+        // Observar mudan?as no tema
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === 'class') {
+                    // Tema foi alterado
+                    const temaAtual = document.body.classList.contains('tema-claro') ? 'claro' : 'escuro';
+                    console.log('Tema alterado para:', temaAtual);
+                }
+            });
+        });
+        
+        // Iniciar observa??o
+        observer.observe(document.body, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+    </script>
+</body>
+</html>
+
+

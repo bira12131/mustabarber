@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Gestao - MustaBarber</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="../tema-claro.css" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #151518;
+            color: #e8e8e8;
+            padding: 12px;
+        }
+
+        .header {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .header h1 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header p {
+            font-size: 0.78rem;
+            color: rgba(232,232,232,0.62);
+        }
+
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .kpi {
+            background: rgba(25,25,28,0.95);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 0.8rem;
+        }
+
+        .kpi-label {
+            font-size: 0.72rem;
+            color: rgba(232,232,232,0.65);
+            margin-bottom: 0.22rem;
+        }
+
+        .kpi-valor {
+            font-size: 1.12rem;
+            font-weight: 700;
+            color: #f0f0f0;
+        }
+
+        .bloco {
+            margin-bottom: 12px;
+            background: rgba(25,25,28,0.95);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 0.85rem;
+        }
+
+        .bloco h2 {
+            font-size: 0.9rem;
+            margin-bottom: 0.72rem;
+            font-weight: 700;
+        }
+
+        .grafico-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .grafico-linha {
+            display: grid;
+            grid-template-columns: 84px 1fr auto;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .grafico-label {
+            font-size: 0.72rem;
+            color: rgba(232,232,232,0.72);
+        }
+
+        .grafico-barra {
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            overflow: hidden;
+        }
+
+        .grafico-barra-fill {
+            height: 100%;
+            border-radius: 999px;
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        .grafico-valor {
+            font-size: 0.72rem;
+            color: #d6d6d6;
+            min-width: 58px;
+            text-align: right;
+        }
+
+        .comissao-tabela {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comissao-tabela th,
+        .comissao-tabela td {
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding: 0.45rem 0.3rem;
+            font-size: 0.72rem;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .comissao-tabela th {
+            color: rgba(232,232,232,0.72);
+            font-weight: 600;
+        }
+
+        .comissao-input {
+            width: 72px;
+            border: 1px solid rgba(255,255,255,0.16);
+            background: rgba(0,0,0,0.22);
+            color: #f2f2f2;
+            border-radius: 8px;
+            padding: 0.32rem 0.36rem;
+            font-size: 0.72rem;
+        }
+
+        .acoes {
+            margin-top: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-salvar {
+            border: 0;
+            border-radius: 10px;
+            padding: 0.68rem 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, #10b981, #059669);
+            cursor: pointer;
+        }
+
+        .btn-salvar:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .msg {
+            font-size: 0.72rem;
+            color: rgba(232,232,232,0.72);
+        }
+
+        .empty {
+            text-align: center;
+            color: rgba(232,232,232,0.45);
+            font-size: 0.8rem;
+            padding: 1rem 0;
+        }
+
+        @media (min-width: 900px) {
+            .kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1><i class="fas fa-chart-line"></i> Painel de Gestao do Estabelecimento</h1>
+            <p>Visao completa de atendimento, lucro e repasse da equipe</p>
+        </div>
+    </div>
+
+    <div class="kpis">
+        <div class="kpi">
+            <div class="kpi-label">Taxa de conclusao (mes)</div>
+            <div class="kpi-valor" id="kpiTaxaConclusao">0%</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-label">Atendimentos concluidos</div>
+            <div class="kpi-valor" id="kpiAtendConcluidos">0</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-label">Lucro servicos (mes)</div>
+            <div class="kpi-valor" id="kpiLucroServicos">R$ 0,00</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-label">Lucro produtos (mes)</div>
+            <div class="kpi-valor" id="kpiLucroProdutos">R$ 0,00</div>
+        </div>
+    </div>
+
+    <div class="bloco">
+        <h2>Indice de atendimentos no mes</h2>
+        <div class="grafico-lista" id="graficoAtendimentoStatus"></div>
+    </div>
+
+    <div class="bloco">
+        <h2>Historico de receita (6 meses)</h2>
+        <div class="grafico-lista" id="graficoHistoricoReceitas"></div>
+    </div>
+
+    <div class="bloco">
+        <h2>Comissao por funcionario</h2>
+        <div id="comissoesContainer" class="empty">Carregando comissoes...</div>
+        <div class="acoes">
+            <button class="btn-salvar" id="btnSalvarComissoes" onclick="salvarComissoes()">Salvar percentuais</button>
+            <span class="msg" id="msgComissoes"></span>
+        </div>
+    </div>
+
+    <script>
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(valor || 0));
+        }
+
+        function escaparHtml(texto) {
+            return String(texto || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function renderizarGraficoBarras(containerId, linhas, formatadorValor) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            if (!linhas || linhas.length === 0) {
+                container.innerHTML = '<div class="empty">Sem dados para exibir</div>';
+                return;
+            }
+
+            const maior = Math.max(...linhas.map(l => Number(l.valor) || 0), 1);
+            container.innerHTML = linhas.map(linha => {
+                const percentual = Math.max(2, Math.round(((Number(linha.valor) || 0) / maior) * 100));
+                const valorFmt = formatadorValor ? formatadorValor(Number(linha.valor) || 0) : String(Number(linha.valor) || 0);
+                return `
+                    <div class="grafico-linha">
+                        <span class="grafico-label">${escaparHtml(linha.label)}</span>
+                        <div class="grafico-barra">
+                            <div class="grafico-barra-fill" style="width:${percentual}%; background:${linha.cor || '#10b981'}"></div>
+                        </div>
+                        <span class="grafico-valor">${escaparHtml(valorFmt)}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderizarComissoes(lista) {
+            const container = document.getElementById('comissoesContainer');
+            const botao = document.getElementById('btnSalvarComissoes');
+            if (!container || !botao) return;
+
+            if (!lista || lista.length === 0) {
+                container.innerHTML = '<div class="empty">Nenhum funcionario encontrado para comissao.</div>';
+                botao.style.display = 'none';
+                return;
+            }
+
+            botao.style.display = 'inline-flex';
+            container.innerHTML = `
+                <table class="comissao-tabela">
+                    <thead>
+                        <tr>
+                            <th>Funcionario</th>
+                            <th>% Serv.</th>
+                            <th>% Prod.</th>
+                            <th>Repasse est.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${lista.map(item => `
+                            <tr>
+                                <td>
+                                    <div>${escaparHtml(item.nome_funcionario)}</div>
+                                    <div style="opacity:.7; font-size:.68rem;">Serv: ${formatarMoeda(item.receita_servicos_mes)} | Prod: ${formatarMoeda(item.receita_produtos_mes)}</div>
+                                </td>
+                                <td>
+                                    <input class="comissao-input" type="number" min="0" max="100" step="0.1"
+                                        data-comissao-codigo="${Number(item.codigo_funcionario)}"
+                                        data-comissao-tipo="servicos"
+                                        value="${Number(item.percentual_servicos).toFixed(1)}">
+                                </td>
+                                <td>
+                                    <input class="comissao-input" type="number" min="0" max="100" step="0.1"
+                                        data-comissao-codigo="${Number(item.codigo_funcionario)}"
+                                        data-comissao-tipo="produtos"
+                                        value="${Number(item.percentual_produtos).toFixed(1)}">
+                                </td>
+                                <td>${formatarMoeda(item.repasse_estimado_mes || 0)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function coletarComissoesTela() {
+            const mapa = new Map();
+            document.querySelectorAll('input[data-comissao-codigo]').forEach(input => {
+                const codigo = Number(input.getAttribute('data-comissao-codigo'));
+                const tipo = input.getAttribute('data-comissao-tipo');
+                const valor = Number(input.value || 0);
+
+                if (!mapa.has(codigo)) {
+                    mapa.set(codigo, {
+                        codigo_funcionario: codigo,
+                        percentual_servicos: 0,
+                        percentual_produtos: 0
+                    });
+                }
+
+                const item = mapa.get(codigo);
+                if (tipo === 'servicos') item.percentual_servicos = valor;
+                if (tipo === 'produtos') item.percentual_produtos = valor;
+            });
+
+            return Array.from(mapa.values());
+        }
+
+        async function salvarComissoes() {
+            const btn = document.getElementById('btnSalvarComissoes');
+            const msg = document.getElementById('msgComissoes');
+            if (!btn || !msg) return;
+
+            const comissoes = coletarComissoesTela();
+            if (comissoes.length === 0) return;
+
+            const invalido = comissoes.some(item =>
+                item.percentual_servicos < 0 || item.percentual_servicos > 100 ||
+                item.percentual_produtos < 0 || item.percentual_produtos > 100
+            );
+            if (invalido) {
+                msg.textContent = 'Percentuais devem estar entre 0 e 100.';
+                return;
+            }
+
+            btn.disabled = true;
+            msg.textContent = 'Salvando...';
+
+            try {
+                const resp = await fetch('../../bancodedados/dashboard/salvar_comissoes_funcionarios.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ comissoes })
+                });
+                const data = await resp.json();
+                if (!data.sucesso) {
+                    msg.textContent = data.mensagem || 'Nao foi possivel salvar as comissoes.';
+                    return;
+                }
+
+                msg.textContent = 'Comissoes salvas com sucesso.';
+                await carregarPainelGestao();
+            } catch (error) {
+                msg.textContent = 'Erro de conexao ao salvar comissoes.';
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function carregarPainelGestao() {
+            try {
+                const msg = document.getElementById('msgComissoes');
+                const response = await fetch('../../bancodedados/dashboard/obter_dados_dashboard.php');
+                const dados = await response.json();
+                if (!dados.sucesso) {
+                    if (msg) msg.textContent = dados.mensagem || 'Nao foi possivel carregar os dados do painel.';
+                    const container = document.getElementById('comissoesContainer');
+                    if (container) container.innerHTML = '<div class="empty">Nao foi possivel carregar os dados.</div>';
+                    return;
+                }
+
+                if (msg) msg.textContent = '';
+
+                if (dados.atendimento) {
+                    const elTaxa = document.getElementById('kpiTaxaConclusao');
+                    if (elTaxa) elTaxa.textContent = `${Number(dados.atendimento.taxa_conclusao_mes || 0).toFixed(1)}%`;
+
+                    const elConcluidos = document.getElementById('kpiAtendConcluidos');
+                    if (elConcluidos) elConcluidos.textContent = Number(dados.atendimento.concluidos_mes || 0).toString();
+
+                    renderizarGraficoBarras('graficoAtendimentoStatus', [
+                        { label: 'Concluidos', valor: dados.atendimento.concluidos_mes || 0, cor: '#10b981' },
+                        { label: 'Pendentes', valor: dados.atendimento.pendentes_mes || 0, cor: '#f59e0b' },
+                        { label: 'Cancelados', valor: dados.atendimento.cancelados_mes || 0, cor: '#ef4444' },
+                        { label: 'Faltas', valor: dados.atendimento.faltas_mes || 0, cor: '#6b7280' }
+                    ], valor => `${valor}`);
+                }
+
+                if (dados.financeiro_gestao) {
+                    const elServ = document.getElementById('kpiLucroServicos');
+                    if (elServ) elServ.textContent = formatarMoeda(dados.financeiro_gestao.receita_servicos_mes || 0);
+
+                    const elProd = document.getElementById('kpiLucroProdutos');
+                    if (elProd) elProd.textContent = formatarMoeda(dados.financeiro_gestao.receita_produtos_mes || 0);
+                }
+
+                if (Array.isArray(dados.historico_mensal)) {
+                    const linhasHistorico = dados.historico_mensal.map(item => ({
+                        label: item.label,
+                        valor: Number(item.receita_servicos || 0) + Number(item.receita_produtos || 0),
+                        cor: '#3b82f6'
+                    }));
+                    renderizarGraficoBarras('graficoHistoricoReceitas', linhasHistorico, valor => formatarMoeda(valor));
+                }
+
+                renderizarComissoes(dados.comissoes_funcionarios || []);
+            } catch (error) {
+                console.error('Erro ao carregar painel de gestao:', error);
+                const msg = document.getElementById('msgComissoes');
+                if (msg) msg.textContent = 'Erro de conexao ao carregar o painel.';
+            }
+        }
+
+        carregarPainelGestao();
+        setInterval(carregarPainelGestao, 30000);
+
+        (function aplicarTema() {
+            const temaSalvo = localStorage.getItem('tema');
+            if (temaSalvo === 'claro') {
+                document.body.classList.add('tema-claro');
+            }
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+CREATE TABLE produtosvenda (
+    Codigo SERIAL PRIMARY KEY,
+    CodProd INT NOT NULL,
+    Qtd INT NOT NULL,
+    ValorUnitario DECIMAL(10, 2) NOT NULL,
+    CodBarbeiro INT NOT NULL,
+    DtNow TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

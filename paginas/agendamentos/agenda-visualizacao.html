@@ -1,0 +1,2100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Agenda visual do barbeiro com foco em praticidade no mobile">
+    <title>Agenda Visual - MustaBarber</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../tema-claro.css" rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #121315;
+            --bg-soft: #1b1d21;
+            --bg-card: #23262c;
+            --line: rgba(255, 255, 255, 0.12);
+            --line-soft: rgba(255, 255, 255, 0.08);
+            --text: #f3f5f7;
+            --muted: #97a1ad;
+            --ok: #1cc891;
+            --ok-soft: rgba(28, 200, 145, 0.18);
+            --warn: #f59f0a;
+            --warn-soft: rgba(245, 159, 10, 0.2);
+            --free: #4f8cff;
+            --free-soft: rgba(79, 140, 255, 0.14);
+            --danger: #ef5350;
+            --danger-soft: rgba(239, 83, 80, 0.2);
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 10px;
+            --shadow: 0 14px 32px rgba(0, 0, 0, 0.28);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            color: var(--text);
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 12% 0%, rgba(28, 200, 145, 0.16), transparent 30%),
+                radial-gradient(circle at 92% 4%, rgba(79, 140, 255, 0.14), transparent 28%),
+                var(--bg);
+            padding: 12px;
+        }
+
+        .agenda-page {
+            max-width: 1160px;
+            margin: 0 auto;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            background: linear-gradient(180deg, rgba(36, 39, 45, 0.9), rgba(24, 26, 31, 0.94));
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .agenda-header {
+            padding: 14px;
+            border-bottom: 1px solid var(--line-soft);
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(8px);
+            background: rgba(20, 22, 27, 0.88);
+            z-index: 30;
+        }
+
+        .agenda-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .agenda-day-info {
+            min-width: 0;
+        }
+
+        .agenda-day-label {
+            color: var(--muted);
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .agenda-day-date {
+            font-size: 1.45rem;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-top: 2px;
+        }
+
+        .agenda-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text);
+            cursor: pointer;
+            transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+        }
+
+        .icon-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-1px);
+            border-color: rgba(28, 200, 145, 0.55);
+            background: rgba(28, 200, 145, 0.08);
+        }
+
+        .search-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 8, 12, 0.72);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 120;
+        }
+
+        .search-modal-overlay.show {
+            display: flex;
+        }
+
+        .search-modal {
+            width: min(560px, 100%);
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: linear-gradient(180deg, rgba(30, 33, 40, 0.98), rgba(22, 25, 31, 0.98));
+            box-shadow: 0 22px 44px rgba(0, 0, 0, 0.42);
+            overflow: hidden;
+        }
+
+        .search-modal-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--line-soft);
+        }
+
+        .search-modal-title {
+            font-size: 1.02rem;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-modal-close {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .search-modal-body {
+            padding: 14px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+        }
+
+        .search-input {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text);
+            padding: 11px 12px;
+            font: inherit;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: rgba(16, 185, 129, 0.55);
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.16);
+        }
+
+        .search-submit {
+            border-radius: 12px;
+            border: 1px solid rgba(79, 140, 255, 0.45);
+            background: rgba(79, 140, 255, 0.2);
+            color: #d8e6ff;
+            min-width: 44px;
+            cursor: pointer;
+        }
+
+        .search-hint {
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .search-results {
+            display: grid;
+            gap: 8px;
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        .confirm-modal-text {
+            margin: 0;
+            color: #d9e0e8;
+            font-size: 0.94rem;
+            line-height: 1.55;
+        }
+
+        .confirm-modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .confirm-btn {
+            border-radius: 11px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
+            padding: 9px 13px;
+            font-size: 0.84rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .confirm-btn.primary {
+            border-color: rgba(16, 185, 129, 0.45);
+            background: rgba(16, 185, 129, 0.22);
+            color: #dbfff3;
+        }
+
+        .search-result-item {
+            width: 100%;
+            text-align: left;
+            border-radius: 12px;
+            border: 1px solid var(--line-soft);
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text);
+            padding: 10px 11px;
+            cursor: pointer;
+            display: grid;
+            gap: 3px;
+        }
+
+        .search-result-item:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.09);
+        }
+
+        .search-result-line {
+            font-size: 0.76rem;
+            color: #c9f5e8;
+            font-weight: 700;
+        }
+
+        .search-result-title {
+            font-size: 0.93rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .search-result-subtitle {
+            font-size: 0.8rem;
+            color: var(--muted);
+            line-height: 1.25;
+        }
+
+        .week-nav {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 6px;
+        }
+
+        .week-day {
+            border: 1px solid transparent;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            color: var(--text);
+            padding: 8px 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .week-day small {
+            display: block;
+            font-size: 0.68rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-weight: 700;
+        }
+
+        .week-day strong {
+            display: block;
+            font-size: 1.05rem;
+            margin-top: 3px;
+            font-weight: 800;
+        }
+
+        .week-day:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--line);
+        }
+
+        .week-day.active {
+            background: linear-gradient(135deg, rgba(28, 200, 145, 0.85), rgba(18, 161, 116, 0.95));
+            border-color: rgba(28, 200, 145, 0.8);
+            color: #09100d;
+        }
+
+        .week-day.active small {
+            color: rgba(9, 16, 13, 0.75);
+        }
+
+        .agenda-main {
+            padding: 12px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .agenda-meta-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.16);
+            color: #b8ffea;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55);
+            animation: pulse 1.8s infinite;
+        }
+
+        .last-update {
+            color: var(--muted);
+            font-size: 0.74rem;
+            font-weight: 700;
+        }
+
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .metric-card {
+            border-radius: var(--radius-md);
+            border: 1px solid var(--line-soft);
+            background: linear-gradient(180deg, rgba(33, 36, 42, 0.96), rgba(26, 28, 33, 0.96));
+            padding: 10px;
+        }
+
+        .metric-value {
+            font-size: 1.48rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .metric-card[data-kind='money'] .metric-value {
+            color: var(--ok);
+        }
+
+        .metric-label {
+            font-size: 0.78rem;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .next-card {
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            background: linear-gradient(180deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.08));
+            padding: 10px;
+            display: grid;
+            gap: 4px;
+        }
+
+        .next-label {
+            font-size: 0.72rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: #9be7d0;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .next-title {
+            font-size: 0.98rem;
+            font-weight: 800;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .next-subtitle {
+            font-size: 0.82rem;
+            color: #d2f2e8;
+            line-height: 1.35;
+        }
+
+        .period-filter {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 2px 1px 2px 0;
+            scrollbar-width: thin;
+        }
+
+        .period-btn {
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--muted);
+            padding: 7px 12px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.18s ease;
+        }
+
+        .period-btn.active {
+            background: rgba(79, 140, 255, 0.2);
+            border-color: rgba(79, 140, 255, 0.5);
+            color: #dce8ff;
+        }
+
+        .timeline {
+            border: 1px solid var(--line);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .timeline-row {
+            display: grid;
+            grid-template-columns: 58px 1fr;
+            gap: 10px;
+            padding: 8px;
+            border-bottom: 1px solid var(--line-soft);
+            animation: rowIn 0.26s ease both;
+        }
+
+        .timeline-row:last-child {
+            border-bottom: 0;
+        }
+
+        .time-col {
+            text-align: center;
+            padding-top: 6px;
+        }
+
+        .time-main {
+            font-weight: 800;
+            font-size: 1.04rem;
+            line-height: 1;
+        }
+
+        .time-duration {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .item-card {
+            border-radius: 11px;
+            border: 1px solid var(--line-soft);
+            background: linear-gradient(180deg, rgba(41, 44, 51, 0.95), rgba(33, 36, 42, 0.95));
+            padding: 9px 10px;
+            min-height: 76px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 3px;
+        }
+
+        .timeline-row.appointment-row {
+            cursor: pointer;
+        }
+
+        .timeline-row.appointment-row:hover .item-card {
+            border-color: rgba(79, 140, 255, 0.55);
+            box-shadow: 0 0 0 1px rgba(79, 140, 255, 0.15);
+        }
+
+        .item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .item-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .btn-inline-action {
+            border: 1px solid rgba(245, 159, 10, 0.45);
+            background: rgba(245, 159, 10, 0.12);
+            color: #ffd898;
+            border-radius: 999px;
+            padding: 2px 8px;
+            font-size: 0.67rem;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+        }
+
+        .btn-inline-action:hover {
+            background: rgba(245, 159, 10, 0.22);
+            border-color: rgba(245, 159, 10, 0.65);
+        }
+
+        .client-name {
+            font-size: 1rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .service-line {
+            font-size: 0.86rem;
+            color: #cfd6de;
+            line-height: 1.24;
+        }
+
+        .service-price {
+            color: var(--ok);
+            font-weight: 700;
+        }
+
+        .meta-line {
+            color: var(--muted);
+            font-size: 0.76rem;
+            font-weight: 600;
+            margin-top: 1px;
+        }
+
+        .status-pill {
+            border-radius: 999px;
+            padding: 3px 8px;
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            border: 1px solid transparent;
+            flex-shrink: 0;
+        }
+
+        .status-pill.in-progress {
+            color: #eef5ff;
+            background: rgba(79, 140, 255, 0.25);
+            border-color: rgba(79, 140, 255, 0.6);
+        }
+
+        .status-pill.new {
+            color: #fff2dc;
+            background: var(--warn-soft);
+            border-color: rgba(245, 159, 10, 0.5);
+        }
+
+        .status-pill.done {
+            color: #dbfff3;
+            background: var(--ok-soft);
+            border-color: rgba(28, 200, 145, 0.52);
+        }
+
+        .status-pill.confirmed {
+            color: #dce8ff;
+            background: rgba(79, 140, 255, 0.2);
+            border-color: rgba(79, 140, 255, 0.55);
+        }
+
+        .status-pill.pending {
+            color: #fff2dc;
+            background: var(--warn-soft);
+            border-color: rgba(245, 159, 10, 0.5);
+        }
+
+        .status-pill.canceled {
+            color: #ffd8d7;
+            background: var(--danger-soft);
+            border-color: rgba(239, 83, 80, 0.5);
+        }
+
+        .status-pill.no-show {
+            color: #f1dfff;
+            background: rgba(158, 107, 255, 0.24);
+            border-color: rgba(158, 107, 255, 0.55);
+        }
+
+        .item-card.is-canceled {
+            border-color: rgba(239, 83, 80, 0.45);
+            background: linear-gradient(180deg, rgba(239, 83, 80, 0.14), rgba(33, 36, 42, 0.92));
+        }
+
+        .item-card.is-canceled .service-line,
+        .item-card.is-canceled .meta-line,
+        .item-card.is-canceled .client-name {
+            color: #ffd9d8;
+        }
+
+        .item-card.is-done {
+            border-color: rgba(16, 185, 129, 0.45);
+            background: linear-gradient(180deg, rgba(16, 185, 129, 0.14), rgba(33, 36, 42, 0.92));
+        }
+
+        .item-card.is-in-progress {
+            border-color: rgba(79, 140, 255, 0.5);
+            background: linear-gradient(180deg, rgba(79, 140, 255, 0.15), rgba(33, 36, 42, 0.92));
+        }
+
+        .item-card.free {
+            border-style: dashed;
+            border-color: rgba(79, 140, 255, 0.4);
+            background: linear-gradient(180deg, rgba(79, 140, 255, 0.1), rgba(79, 140, 255, 0.05));
+            align-items: center;
+            text-align: center;
+            justify-content: center;
+            min-height: 62px;
+        }
+
+        .timeline-row.free-row {
+            cursor: pointer;
+        }
+
+        .timeline-row.free-row:hover .item-card.free {
+            border-color: rgba(79, 140, 255, 0.7);
+            box-shadow: 0 0 0 1px rgba(79, 140, 255, 0.2);
+        }
+
+        .free-label {
+            color: #cfe0ff;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .item-card.block {
+            border-color: rgba(255, 255, 255, 0.06);
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            min-height: 62px;
+        }
+
+        .item-card.block .service-line {
+            color: #e8d2a8;
+            font-weight: 700;
+        }
+
+        .item-card.block.almoco {
+            border-color: rgba(245, 158, 11, 0.25);
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.03));
+        }
+
+        .item-card.block.almoco .service-line {
+            color: #f59e0b;
+        }
+
+        .timeline-empty {
+            padding: 22px 14px;
+            color: var(--muted);
+            text-align: center;
+            font-weight: 600;
+            border-top: 1px solid var(--line-soft);
+        }
+
+        @keyframes rowIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55);
+            }
+            70% {
+                box-shadow: 0 0 0 7px rgba(16, 185, 129, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        @media (min-width: 900px) {
+            body {
+                padding: 18px;
+            }
+
+            .agenda-header {
+                padding: 16px;
+            }
+
+            .agenda-main {
+                padding: 16px;
+                gap: 12px;
+            }
+
+            .agenda-meta-row {
+                flex-wrap: nowrap;
+            }
+
+            .agenda-day-date {
+                font-size: 1.72rem;
+            }
+
+            .week-day {
+                padding: 10px 4px;
+            }
+
+            .metrics-row {
+                gap: 10px;
+            }
+
+            .metric-card {
+                padding: 12px;
+            }
+
+            .timeline-row {
+                grid-template-columns: 80px 1fr;
+                padding: 10px;
+            }
+
+            .item-card {
+                min-height: 82px;
+                padding: 11px 12px;
+            }
+
+            .client-name {
+                font-size: 1.07rem;
+            }
+
+            .service-line {
+                font-size: 0.91rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="agenda-page">
+        <header class="agenda-header">
+            <div class="agenda-title-row">
+                <div class="agenda-day-info">
+                    <div class="agenda-day-label" id="agendaDayLabel">Segunda-feira</div>
+                    <h1 class="agenda-day-date" id="agendaDayDate">12 de Maio</h1>
+                </div>
+                <div class="agenda-actions">
+                    <button class="icon-btn" id="btnPrevWeek" aria-label="Semana anterior" title="Semana anterior">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="icon-btn" id="btnToday" aria-label="Voltar para hoje" title="Hoje">
+                        <i class="fas fa-calendar-day"></i>
+                    </button>
+                    <button class="icon-btn" id="btnNextWeek" aria-label="Proxima semana" title="Proxima semana">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button class="icon-btn" id="btnSearch" aria-label="Buscar horario ou cliente">
+                        <i class="fas fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            </div>
+            <nav class="week-nav" id="weekNav"></nav>
+        </header>
+
+        <section class="agenda-main">
+            <div class="agenda-meta-row">
+                <div class="live-badge">
+                    <span class="live-dot"></span>
+                    Tempo real
+                </div>
+                <div class="last-update" id="lastUpdate">Aguardando atualizacao...</div>
+            </div>
+
+            <div class="metrics-row">
+                <article class="metric-card" data-kind="count">
+                    <div class="metric-value" id="metricAppointments">0</div>
+                    <div class="metric-label">Agendamentos</div>
+                </article>
+                <article class="metric-card" data-kind="money">
+                    <div class="metric-value" id="metricRevenue">R$ 0,00</div>
+                    <div class="metric-label">Valor previsto</div>
+                </article>
+                <article class="metric-card" data-kind="slots">
+                    <div class="metric-value" id="metricFree">0</div>
+                    <div class="metric-label">Horarios vagos</div>
+                </article>
+            </div>
+
+            <article class="next-card" id="nextAppointmentCard">
+                <div class="next-label"><i class="fas fa-bolt"></i> Proximo agendamento</div>
+                <div class="next-title" id="nextAppointmentTitle">Nenhum proximo agendamento</div>
+                <div class="next-subtitle" id="nextAppointmentSubtitle">Selecione um dia para visualizar os dados em tempo real.</div>
+            </article>
+
+            <div class="period-filter" role="tablist" aria-label="Filtrar parte da agenda">
+                <button class="period-btn active" data-period="all">Dia todo</button>
+                <button class="period-btn" data-period="morning">Manha</button>
+                <button class="period-btn" data-period="afternoon">Tarde</button>
+                <button class="period-btn" data-period="night">Noite</button>
+            </div>
+
+            <section class="timeline" id="timeline"></section>
+        </section>
+    </main>
+
+    <div class="search-modal-overlay" id="searchModal" aria-hidden="true">
+        <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="searchModalTitle">
+            <div class="search-modal-head">
+                <h2 class="search-modal-title" id="searchModalTitle">
+                    <i class="fas fa-magnifying-glass"></i>
+                    Buscar na Agenda
+                </h2>
+                <button class="search-modal-close" id="searchClose" aria-label="Fechar busca">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-modal-body">
+                <form class="search-form" id="searchForm">
+                    <input
+                        class="search-input"
+                        id="searchInput"
+                        type="text"
+                        placeholder="Digite horario (ex: 14:00) ou nome do cliente"
+                        autocomplete="off"
+                    >
+                    <button class="search-submit" type="submit" aria-label="Buscar">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+                <div class="search-hint">Dica: você pode buscar por "09:30", "carlos" ou parte do nome.</div>
+                <div class="search-results" id="searchResults"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="search-modal-overlay" id="confirmNewAppointmentModal" aria-hidden="true">
+        <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="confirmNewAppointmentTitle">
+            <div class="search-modal-head">
+                <h2 class="search-modal-title" id="confirmNewAppointmentTitle">
+                    <i class="fas fa-calendar-plus"></i>
+                    Novo Agendamento
+                </h2>
+                <button class="search-modal-close" id="confirmNewAppointmentClose" aria-label="Fechar confirmacao">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-modal-body">
+                <p class="confirm-modal-text" id="confirmNewAppointmentText">Deseja criar novo agendamento?</p>
+                <div class="confirm-modal-actions">
+                    <button class="confirm-btn" type="button" id="confirmNewAppointmentCancel">Cancelar</button>
+                    <button class="confirm-btn primary" type="button" id="confirmNewAppointmentProceed">Criar Agendamento</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="search-modal-overlay" id="rescheduleModal" aria-hidden="true">
+        <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="rescheduleModalTitle">
+            <div class="search-modal-head">
+                <h2 class="search-modal-title" id="rescheduleModalTitle">
+                    <i class="fas fa-clock"></i>
+                    Alterar Horario
+                </h2>
+                <button class="search-modal-close" id="rescheduleModalClose" aria-label="Fechar alteracao de horario">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-modal-body">
+                <p class="confirm-modal-text" id="rescheduleModalInfo">Selecione nova data e novo horario.</p>
+
+                <div>
+                    <label for="rescheduleDateInput" class="search-hint" style="display:block;margin-bottom:6px;">Nova data</label>
+                    <input class="search-input" id="rescheduleDateInput" type="date">
+                </div>
+
+                <div>
+                    <div class="search-hint" style="margin-bottom:6px;">Novo horario</div>
+                    <div id="rescheduleSlots" class="search-results"></div>
+                    <div class="search-hint" id="rescheduleSlotsHint" style="display:none;"></div>
+                </div>
+
+                <div class="confirm-modal-actions">
+                    <button class="confirm-btn" type="button" id="rescheduleCancel">Cancelar</button>
+                    <button class="confirm-btn primary" type="button" id="rescheduleConfirm" disabled>Confirmar Alteracao</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="search-modal-overlay" id="rescheduleOccupiedModal" aria-hidden="true">
+        <div class="search-modal" role="dialog" aria-modal="true" aria-labelledby="rescheduleOccupiedTitle">
+            <div class="search-modal-head">
+                <h2 class="search-modal-title" id="rescheduleOccupiedTitle">
+                    <i class="fas fa-triangle-exclamation"></i>
+                    Horario Ocupado
+                </h2>
+                <button class="search-modal-close" id="rescheduleOccupiedClose" aria-label="Fechar confirmacao">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-modal-body">
+                <p class="confirm-modal-text" id="rescheduleOccupiedText">Ja existe agendamento neste horario.</p>
+                <div class="confirm-modal-actions">
+                    <button class="confirm-btn" type="button" id="rescheduleOccupiedCancel">Cancelar</button>
+                    <button class="confirm-btn primary" type="button" id="rescheduleOccupiedProceed">Sim, agendar mesmo assim</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const WEEKDAY_SHORT = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB'];
+        const WEEKDAY_FULL = ['Domingo', 'Segunda-feira', 'Terca-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sabado'];
+
+        const dom = {
+            weekNav: document.getElementById('weekNav'),
+            agendaDayLabel: document.getElementById('agendaDayLabel'),
+            agendaDayDate: document.getElementById('agendaDayDate'),
+            btnPrevWeek: document.getElementById('btnPrevWeek'),
+            btnToday: document.getElementById('btnToday'),
+            btnNextWeek: document.getElementById('btnNextWeek'),
+            metricAppointments: document.getElementById('metricAppointments'),
+            metricRevenue: document.getElementById('metricRevenue'),
+            metricFree: document.getElementById('metricFree'),
+            timeline: document.getElementById('timeline'),
+            lastUpdate: document.getElementById('lastUpdate'),
+            nextAppointmentTitle: document.getElementById('nextAppointmentTitle'),
+            nextAppointmentSubtitle: document.getElementById('nextAppointmentSubtitle'),
+            searchModal: document.getElementById('searchModal'),
+            searchClose: document.getElementById('searchClose'),
+            searchForm: document.getElementById('searchForm'),
+            searchInput: document.getElementById('searchInput'),
+            searchResults: document.getElementById('searchResults'),
+            confirmNewAppointmentModal: document.getElementById('confirmNewAppointmentModal'),
+            confirmNewAppointmentClose: document.getElementById('confirmNewAppointmentClose'),
+            confirmNewAppointmentCancel: document.getElementById('confirmNewAppointmentCancel'),
+            confirmNewAppointmentProceed: document.getElementById('confirmNewAppointmentProceed'),
+            confirmNewAppointmentText: document.getElementById('confirmNewAppointmentText'),
+            rescheduleModal: document.getElementById('rescheduleModal'),
+            rescheduleModalClose: document.getElementById('rescheduleModalClose'),
+            rescheduleModalInfo: document.getElementById('rescheduleModalInfo'),
+            rescheduleDateInput: document.getElementById('rescheduleDateInput'),
+            rescheduleSlots: document.getElementById('rescheduleSlots'),
+            rescheduleSlotsHint: document.getElementById('rescheduleSlotsHint'),
+            rescheduleCancel: document.getElementById('rescheduleCancel'),
+            rescheduleConfirm: document.getElementById('rescheduleConfirm'),
+            rescheduleOccupiedModal: document.getElementById('rescheduleOccupiedModal'),
+            rescheduleOccupiedText: document.getElementById('rescheduleOccupiedText'),
+            rescheduleOccupiedClose: document.getElementById('rescheduleOccupiedClose'),
+            rescheduleOccupiedCancel: document.getElementById('rescheduleOccupiedCancel'),
+            rescheduleOccupiedProceed: document.getElementById('rescheduleOccupiedProceed')
+        };
+
+        const state = {
+            selectedDate: toIsoDate(new Date()),
+            selectedPeriod: 'all',
+            weekDays: [],
+            appointmentsByDate: new Map(),
+            freeSlotsByDate: new Map(),
+            blockedByDate: new Map(),
+            renderedItemsByDate: new Map(),
+            refreshHandle: null,
+            refreshIntervalMs: 30000,
+            codBarbeiro: new URLSearchParams(window.location.search).get('cod_barbeiro') || '',
+            pendingFreeSlot: null,
+            pendingRescheduleAppointment: null,
+            pendingRescheduleTime: '',
+            pendingRescheduleOcupado: false,
+            pendingRescheduleOcupanteNome: '',
+            rescheduleRequestSeq: 0,
+            modalLockCount: 0
+        };
+
+        function lockBodyScroll() {
+            state.modalLockCount += 1;
+            document.body.style.overflow = 'hidden';
+            document.body.style.touchAction = 'none';
+        }
+
+        function unlockBodyScroll() {
+            state.modalLockCount = Math.max(0, state.modalLockCount - 1);
+            if (state.modalLockCount === 0) {
+                document.body.style.overflow = '';
+                document.body.style.touchAction = '';
+            }
+        }
+
+        function pad(value) {
+            return String(value).padStart(2, '0');
+        }
+
+        function toIsoDate(date) {
+            return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+        }
+
+        function normalizeIsoDate(value) {
+            const raw = String(value || '').trim();
+            const match = raw.match(/^(\d{4}-\d{2}-\d{2})/);
+            return match ? match[1] : '';
+        }
+
+        function fromIsoDate(isoDate) {
+            const [year, month, day] = isoDate.split('-').map(Number);
+            return new Date(year, month - 1, day);
+        }
+
+        function formatDateLabel(isoDate) {
+            const date = fromIsoDate(isoDate);
+            return `${date.getDate()} de ${date.toLocaleDateString('pt-BR', { month: 'long' })}`;
+        }
+
+        function addDaysToIsoDate(isoDate, days) {
+            const date = fromIsoDate(isoDate);
+            date.setDate(date.getDate() + days);
+            return toIsoDate(date);
+        }
+
+        function formatTime(timeValue) {
+            return String(timeValue || '').slice(0, 5);
+        }
+
+        function timeToMinutes(timeValue) {
+            const [hour, minute] = formatTime(timeValue).split(':').map(Number);
+            return (hour * 60) + minute;
+        }
+
+        function formatBRL(value) {
+            return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`;
+        }
+
+        function normalizeStatusName(statusName) {
+            return String(statusName || '')
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/\s+/g, '_');
+        }
+
+        function mapStatus(statusCode, statusName) {
+            const mapByCode = {
+                1: { key: 'pending', label: 'Pendente', className: 'pending', active: true },
+                2: { key: 'confirmed', label: 'Confirmado', className: 'confirmed', active: true },
+                3: { key: 'in-progress', label: 'Agora', className: 'in-progress', active: true },
+                4: { key: 'done', label: 'Concluido', className: 'done', active: false },
+                5: { key: 'canceled', label: 'Cancelado', className: 'canceled', active: false },
+                6: { key: 'no-show', label: 'Falta', className: 'no-show', active: false }
+            };
+
+            const byCode = mapByCode[Number(statusCode)];
+            if (byCode) return byCode;
+
+            const normalized = normalizeStatusName(statusName);
+            if (normalized === 'cancelado') return mapByCode[5];
+            if (normalized === 'concluido') return mapByCode[4];
+            if (normalized === 'em_atendimento') return mapByCode[3];
+            if (normalized === 'confirmado') return mapByCode[2];
+            if (normalized === 'falta') return mapByCode[6];
+            return mapByCode[1];
+        }
+
+        function normalizeSearchTerm(value) {
+            return String(value || '')
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .trim();
+        }
+
+        function buildWeekDays(anchorDate) {
+            const anchor = fromIsoDate(anchorDate);
+            const sunday = new Date(anchor);
+            sunday.setDate(anchor.getDate() - anchor.getDay());
+
+            const days = [];
+            for (let index = 0; index < 7; index += 1) {
+                const current = new Date(sunday);
+                current.setDate(sunday.getDate() + index);
+                const iso = toIsoDate(current);
+                days.push({
+                    id: iso,
+                    short: WEEKDAY_SHORT[current.getDay()],
+                    day: pad(current.getDate()),
+                    weekday: WEEKDAY_FULL[current.getDay()],
+                    dateLabel: formatDateLabel(iso)
+                });
+            }
+            return days;
+        }
+
+        function periodMatch(timeValue, period) {
+            if (period === 'all') return true;
+            const hour = parseInt(formatTime(timeValue).split(':')[0], 10);
+            if (period === 'morning') return hour < 12;
+            if (period === 'afternoon') return hour >= 12 && hour < 18;
+            return hour >= 18;
+        }
+
+        function setLastUpdate() {
+            const now = new Date();
+            dom.lastUpdate.textContent = `Atualizado as ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+        }
+
+        function setWeekControlsLoading(isLoading) {
+            [dom.btnPrevWeek, dom.btnToday, dom.btnNextWeek].forEach((button) => {
+                if (!button) return;
+                button.disabled = isLoading;
+            });
+        }
+
+        function renderWeekNav() {
+            dom.weekNav.innerHTML = '';
+
+            state.weekDays.forEach((day) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = `week-day ${day.id === state.selectedDate ? 'active' : ''}`;
+                button.innerHTML = `<small>${day.short}</small><strong>${day.day}</strong>`;
+                button.setAttribute('aria-label', `${day.weekday} ${day.dateLabel}`);
+                button.addEventListener('click', async () => {
+                    state.selectedDate = day.id;
+                    await ensureDayLoaded(day.id);
+                    renderAgenda();
+                });
+                dom.weekNav.appendChild(button);
+            });
+        }
+
+        function updateDayHeader() {
+            const day = state.weekDays.find((item) => item.id === state.selectedDate);
+            if (!day) return;
+            dom.agendaDayLabel.textContent = day.weekday;
+            dom.agendaDayDate.textContent = day.dateLabel;
+        }
+
+        function calculateMetrics(appointments, freeSlots) {
+            const totalAppointments = appointments.filter((item) => item.status.key !== 'canceled').length;
+            const projectedRevenue = appointments
+                .filter((item) => item.status.key !== 'canceled' && item.status.key !== 'no-show')
+                .reduce((sum, item) => sum + Number(item.price || 0), 0);
+
+            return {
+                totalAppointments,
+                projectedRevenue,
+                freeSlots: freeSlots.length
+            };
+        }
+
+        function getCardExtraClass(statusKey) {
+            if (statusKey === 'canceled') return 'is-canceled';
+            if (statusKey === 'done') return 'is-done';
+            if (statusKey === 'in-progress') return 'is-in-progress';
+            return '';
+        }
+
+        function getDayDateTime(isoDate, timeValue) {
+            const [year, month, day] = isoDate.split('-').map(Number);
+            const [hour, minute] = formatTime(timeValue).split(':').map(Number);
+            return new Date(year, month - 1, day, hour, minute, 0, 0);
+        }
+
+        function updateNextAppointment(appointments) {
+            const now = new Date();
+            const isSelectedToday = state.selectedDate === toIsoDate(now);
+            const ordered = [...appointments]
+                .sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+
+            const next = ordered.find((item) => {
+                if (!item.status.active) return false;
+                if (!isSelectedToday) return true;
+                const dateTime = getDayDateTime(state.selectedDate, item.time);
+                return dateTime >= now;
+            });
+
+            if (!next) {
+                dom.nextAppointmentTitle.textContent = 'Nenhum proximo agendamento ativo';
+                dom.nextAppointmentSubtitle.textContent = 'Nao ha atendimentos pendentes para este dia.';
+                return;
+            }
+
+            dom.nextAppointmentTitle.innerHTML = `${next.time} - ${next.client} <span class="status-pill ${next.status.className}">${next.status.label}</span>`;
+            dom.nextAppointmentSubtitle.textContent = `${next.service} • ${formatBRL(next.price)}${next.phone ? ` • ${next.phone}` : ''}`;
+        }
+
+        function buildTimelineItems(appointments, freeSlots, blockedSlots) {
+            const occupiedTimes = new Set(appointments.map((item) => item.time));
+
+            const freeItems = freeSlots
+                .filter((item) => !occupiedTimes.has(item.time))
+                .map((item) => ({
+                    type: 'free',
+                    time: item.time,
+                    duration: item.duration || 30
+                }));
+
+            const blockItems = blockedSlots
+                .filter((item) => !occupiedTimes.has(item.time))
+                .map((item) => ({
+                    type: 'block',
+                    time: item.time,
+                    duration: item.duration || 30,
+                    label: item.label || 'Horario bloqueado',
+                    reason: item.reason || 'manual'
+                }));
+
+            const appointmentItems = appointments
+                .filter((item) => item.status.key !== 'canceled')
+                .map((item) => ({
+                type: 'appointment',
+                ...item
+            }));
+
+            return [...appointmentItems, ...freeItems, ...blockItems]
+                .sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+        }
+
+        function renderTimeline(items) {
+            dom.timeline.innerHTML = '';
+
+            const filtered = items.filter((item) => periodMatch(item.time, state.selectedPeriod));
+            state.renderedItemsByDate.set(state.selectedDate, filtered);
+
+            if (filtered.length === 0) {
+                dom.timeline.innerHTML = '<div class="timeline-empty">Nenhum horario encontrado para este periodo.</div>';
+                return;
+            }
+
+            filtered.forEach((item, index) => {
+                const row = document.createElement('article');
+                row.className = 'timeline-row';
+                row.style.animationDelay = `${index * 0.025}s`;
+
+                if (item.type === 'appointment') {
+                    const extraClass = getCardExtraClass(item.status.key);
+                    row.innerHTML = `
+                        <div class="time-col">
+                            <div class="time-main">${item.time}</div>
+                            <div class="time-duration">${item.duration} min</div>
+                        </div>
+                        <div class="item-card ${extraClass}">
+                            <div class="item-header">
+                                <div class="client-name">${item.client}</div>
+                                <div class="item-actions">
+                                    <button type="button" class="btn-inline-action" data-action="remarcar" title="Alterar horário deste atendimento">Remarcar</button>
+                                    <span class="status-pill ${item.status.className}">${item.status.label}</span>
+                                </div>
+                            </div>
+                            <div class="service-line">${item.service} <span class="service-price">${formatBRL(item.price)}</span></div>
+                            <div class="meta-line">${item.phone ? `<i class="fa-solid fa-phone"></i> ${item.phone}` : item.note || '&nbsp;'}</div>
+                        </div>
+                    `;
+                    row.classList.add('appointment-row');
+                    row.tabIndex = 0;
+                    row.setAttribute('role', 'button');
+                    row.setAttribute('aria-label', `Abrir detalhes de ${item.client} as ${item.time}`);
+                    row.dataset.itemType = 'appointment';
+                    row.dataset.code = item.code || '';
+                    row.dataset.search = `${normalizeSearchTerm(item.time)}|${normalizeSearchTerm(item.client)}`;
+
+                    const btnRemarcar = row.querySelector('[data-action="remarcar"]');
+                    if (btnRemarcar) {
+                        btnRemarcar.addEventListener('click', (event) => {
+                            event.stopPropagation();
+                            openRescheduleModal(item);
+                        });
+                    }
+
+                    row.addEventListener('click', () => {
+                        openAppointmentDetails(item);
+                    });
+
+                    row.addEventListener('keydown', (event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            openAppointmentDetails(item);
+                        }
+                    });
+                } else if (item.type === 'free') {
+                    row.innerHTML = `
+                        <div class="time-col">
+                            <div class="time-main">${item.time}</div>
+                            <div class="time-duration">${item.duration} min</div>
+                        </div>
+                        <div class="item-card free">
+                            <div class="free-label"><i class="fa-solid fa-plus"></i> Horario livre</div>
+                        </div>
+                    `;
+
+                    row.classList.add('free-row');
+                    row.tabIndex = 0;
+                    row.setAttribute('role', 'button');
+                    row.setAttribute('aria-label', `Criar agendamento as ${item.time}`);
+                    row.dataset.itemType = 'free';
+
+                    row.addEventListener('click', () => {
+                        openCreateAppointmentFromFreeSlot(item);
+                    });
+
+                    row.addEventListener('keydown', (event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            openCreateAppointmentFromFreeSlot(item);
+                        }
+                    });
+                } else {
+                    const ehAlmoco = item.reason === 'almoco';
+                    const blockIcon = ehAlmoco ? 'fa-mug-hot' : 'fa-ban';
+                    row.innerHTML = `
+                        <div class="time-col">
+                            <div class="time-main">${item.time}</div>
+                            <div class="time-duration">${item.duration} min</div>
+                        </div>
+                        <div class="item-card block${ehAlmoco ? ' almoco' : ''}">
+                            <div class="service-line"><i class="fa-solid ${blockIcon}"></i> ${item.label}</div>
+                        </div>
+                    `;
+                }
+
+                dom.timeline.appendChild(row);
+            });
+        }
+
+        function openAppointmentDetails(appointment, options = {}) {
+            if (!appointment || !appointment.code) {
+                showNotification('Erro ao abrir agendamento.', 'error');
+                return;
+            }
+
+            const params = new URLSearchParams();
+            params.set('codigo', appointment.code);
+            params.set('origem', 'agenda');
+            if (options.acao) {
+                params.set('acao', options.acao);
+            }
+            if (state.codBarbeiro) {
+                params.set('cod_barbeiro', state.codBarbeiro);
+            }
+
+            window.location.href = `agendamento-detalhes.html?${params.toString()}`;
+        }
+
+        function openCreateAppointmentFromFreeSlot(slot) {
+            state.pendingFreeSlot = slot;
+            dom.confirmNewAppointmentText.textContent = `Deseja criar novo agendamento para ${slot.time}?`;
+            openConfirmNewAppointmentModal();
+        }
+
+        function resetRescheduleSelection() {
+            state.pendingRescheduleTime = '';
+            state.pendingRescheduleOcupado = false;
+            state.pendingRescheduleOcupanteNome = '';
+            dom.rescheduleConfirm.disabled = true;
+        }
+
+        function closeRescheduleModal() {
+            state.rescheduleRequestSeq += 1;
+            dom.rescheduleModal.classList.remove('show');
+            dom.rescheduleModal.setAttribute('aria-hidden', 'true');
+            unlockBodyScroll();
+            state.pendingRescheduleAppointment = null;
+            state.pendingRescheduleTime = '';
+            state.pendingRescheduleOcupado = false;
+            state.pendingRescheduleOcupanteNome = '';
+            dom.rescheduleSlots.innerHTML = '';
+            dom.rescheduleSlotsHint.style.display = 'none';
+            dom.rescheduleConfirm.disabled = true;
+        }
+
+        function renderRescheduleSlots(horarios, appointment, selectedDate) {
+            dom.rescheduleSlots.innerHTML = '';
+            dom.rescheduleSlotsHint.style.display = 'none';
+
+            const selectedDateNormalized = normalizeIsoDate(selectedDate);
+            const appointmentDateNormalized = normalizeIsoDate(appointment.date);
+
+            if (!horarios.length) {
+                dom.rescheduleSlotsHint.textContent = 'Nenhum horario cadastrado para a data selecionada.';
+                dom.rescheduleSlotsHint.style.display = 'block';
+                return;
+            }
+
+            horarios.forEach((item) => {
+                const horario = formatTime(item.horario);
+                const isCurrent = selectedDateNormalized === appointmentDateNormalized && horario === appointment.time;
+                const bloqueado = item.status === 'bloqueado';
+                const ehAlmoco = bloqueado && item.motivo_bloqueio === 'almoco';
+                const ocupado = !isCurrent && item.status === 'agendado';
+                const nomeOcupante = ocupado && item.info && item.info.cliente_nome ? item.info.cliente_nome : '';
+
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'search-result-item';
+                button.style.padding = '9px 11px';
+
+                let linha, corLinha, corBorda, corFundo, cursor, subtitulo = '';
+                if (isCurrent) {
+                    linha = 'Horario atual'; corLinha = '#c9f5e8';
+                    corBorda = 'var(--line-soft)'; corFundo = 'rgba(255, 255, 255, 0.02)'; cursor = 'default';
+                } else if (bloqueado) {
+                    linha = ehAlmoco ? 'Horario de almoco' : 'Bloqueado';
+                    corLinha = '#ef8686';
+                    corBorda = 'rgba(239, 68, 68, 0.3)'; corFundo = 'rgba(239, 68, 68, 0.08)'; cursor = 'not-allowed';
+                } else if (ocupado) {
+                    linha = 'Ocupado';
+                    corLinha = '#f59e0b';
+                    corBorda = 'rgba(245, 158, 11, 0.35)'; corFundo = 'rgba(245, 158, 11, 0.1)'; cursor = 'pointer';
+                    subtitulo = nomeOcupante ? `Agendado para ${nomeOcupante}` : 'Ja existe agendamento neste horario';
+                } else {
+                    linha = 'Disponivel'; corLinha = '#c9f5e8';
+                    corBorda = 'var(--line-soft)'; corFundo = 'rgba(255, 255, 255, 0.02)'; cursor = 'pointer';
+                }
+
+                button.dataset.borderColor = corBorda;
+                button.dataset.background = corFundo;
+                button.style.borderColor = corBorda;
+                button.style.background = corFundo;
+                button.style.cursor = cursor;
+
+                button.innerHTML = `
+                    <div class="search-result-line" style="color:${corLinha};">${linha}</div>
+                    <div class="search-result-title">${horario}</div>
+                    ${subtitulo ? `<div class="search-result-subtitle">${subtitulo}</div>` : ''}
+                `;
+
+                if (isCurrent || bloqueado) {
+                    button.disabled = true;
+                    button.style.opacity = '.55';
+                } else {
+                    button.addEventListener('click', () => {
+                        dom.rescheduleSlots.querySelectorAll('.search-result-item').forEach((el) => {
+                            el.style.borderColor = el.dataset.borderColor || 'var(--line-soft)';
+                            el.style.background = el.dataset.background || 'rgba(255, 255, 255, 0.02)';
+                        });
+
+                        button.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+                        button.style.background = 'rgba(16, 185, 129, 0.12)';
+
+                        state.pendingRescheduleTime = horario;
+                        state.pendingRescheduleOcupado = ocupado;
+                        state.pendingRescheduleOcupanteNome = nomeOcupante;
+                        dom.rescheduleConfirm.disabled = false;
+                    });
+                }
+
+                dom.rescheduleSlots.appendChild(button);
+            });
+        }
+
+        async function loadRescheduleSlots(dateIso) {
+            const appointment = state.pendingRescheduleAppointment;
+            const requestedDate = normalizeIsoDate(dateIso);
+            if (!appointment || !requestedDate) return;
+
+            const requestSeq = ++state.rescheduleRequestSeq;
+
+            dom.rescheduleSlots.innerHTML = '<div class="timeline-empty">Carregando horarios...</div>';
+            resetRescheduleSelection();
+
+            try {
+                const url = new URL('../../bancodedados/horarios/buscar_horarios_dia.php', window.location.href);
+                url.searchParams.set('data', requestedDate);
+                if (state.codBarbeiro) url.searchParams.set('cod_barbeiro', state.codBarbeiro);
+
+                const response = await fetch(url.toString(), { cache: 'no-store' });
+                const result = await response.json();
+
+                if (
+                    requestSeq !== state.rescheduleRequestSeq ||
+                    !state.pendingRescheduleAppointment ||
+                    normalizeIsoDate(dom.rescheduleDateInput.value) !== requestedDate
+                ) {
+                    return;
+                }
+
+                if (!result.sucesso) {
+                    throw new Error(result.mensagem || 'Falha ao carregar horarios.');
+                }
+
+                const horarios = (result.horarios || []).slice();
+                const currentAppointment = state.pendingRescheduleAppointment;
+                const currentAppointmentDate = normalizeIsoDate(currentAppointment.date);
+
+                if (
+                    requestedDate === currentAppointmentDate &&
+                    !horarios.some((item) => formatTime(item.horario) === currentAppointment.time)
+                ) {
+                    horarios.push({
+                        horario: currentAppointment.time,
+                        status: 'agendado',
+                        info: { cliente_nome: currentAppointment.client }
+                    });
+                    horarios.sort((a, b) => timeToMinutes(formatTime(a.horario)) - timeToMinutes(formatTime(b.horario)));
+                }
+
+                renderRescheduleSlots(horarios, currentAppointment, requestedDate);
+            } catch (error) {
+                if (requestSeq !== state.rescheduleRequestSeq) {
+                    return;
+                }
+                dom.rescheduleSlots.innerHTML = '';
+                dom.rescheduleSlotsHint.textContent = `Erro ao carregar horarios: ${error.message}`;
+                dom.rescheduleSlotsHint.style.display = 'block';
+            }
+        }
+
+        async function openRescheduleModal(appointment) {
+            if (!appointment || !appointment.code) {
+                showNotification('Erro ao abrir remarcacao.', 'error');
+                return;
+            }
+
+            state.pendingRescheduleAppointment = appointment;
+            state.pendingRescheduleTime = '';
+
+            dom.rescheduleModalInfo.textContent = `Alterar horario de ${appointment.client} (${appointment.time}).`;
+            dom.rescheduleDateInput.value = normalizeIsoDate(appointment.date) || state.selectedDate;
+            dom.rescheduleConfirm.disabled = true;
+
+            dom.rescheduleModal.classList.add('show');
+            dom.rescheduleModal.setAttribute('aria-hidden', 'false');
+            lockBodyScroll();
+
+            await loadRescheduleSlots(dom.rescheduleDateInput.value);
+        }
+
+        function openRescheduleOccupiedModal() {
+            const nome = state.pendingRescheduleOcupanteNome;
+            dom.rescheduleOccupiedText.textContent = nome
+                ? `Já existe um agendamento de ${nome} para ${state.pendingRescheduleTime}. Deseja mesmo assim mover este agendamento para esse horário? Os dois atendimentos ficarão marcados ao mesmo tempo.`
+                : `Já existe um agendamento para ${state.pendingRescheduleTime}. Deseja mesmo assim mover este agendamento para esse horário? Os dois atendimentos ficarão marcados ao mesmo tempo.`;
+            dom.rescheduleOccupiedModal.classList.add('show');
+            dom.rescheduleOccupiedModal.setAttribute('aria-hidden', 'false');
+            lockBodyScroll();
+        }
+
+        function closeRescheduleOccupiedModal() {
+            dom.rescheduleOccupiedModal.classList.remove('show');
+            dom.rescheduleOccupiedModal.setAttribute('aria-hidden', 'true');
+            unlockBodyScroll();
+        }
+
+        async function confirmReschedule(forcarOcupado = false) {
+            const appointment = state.pendingRescheduleAppointment;
+            const novaData = dom.rescheduleDateInput.value;
+            const novoHorario = state.pendingRescheduleTime;
+
+            if (!appointment || !appointment.code || !novaData || !novoHorario) {
+                return;
+            }
+
+            if (state.pendingRescheduleOcupado && !forcarOcupado) {
+                openRescheduleOccupiedModal();
+                return;
+            }
+
+            dom.rescheduleConfirm.disabled = true;
+
+            try {
+                const payload = {
+                    codigo: appointment.code,
+                    nova_data: novaData,
+                    novo_horario: novoHorario,
+                    forcar_horario_ocupado: forcarOcupado
+                };
+
+                let response = await fetch('../../bancodedados/agendamentos/alterar_horario.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                let result = await response.json();
+
+                if (!result.sucesso && result.conflito) {
+                    payload.confirmar_conflito = true;
+                    response = await fetch('../../bancodedados/agendamentos/alterar_horario.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    result = await response.json();
+                }
+
+                if (!result.sucesso) {
+                    throw new Error(result.mensagem || 'Nao foi possivel alterar o horario.');
+                }
+
+                closeRescheduleOccupiedModal();
+                closeRescheduleModal();
+                await refreshSelectedDay();
+                showNotification(result.mensagem || 'Horario alterado com sucesso!', 'success');
+            } catch (error) {
+                showNotification(error.message || 'Erro ao alterar horario.', 'error');
+                dom.rescheduleConfirm.disabled = false;
+            }
+        }
+
+        function renderAgenda() {
+            const appointments = state.appointmentsByDate.get(state.selectedDate) || [];
+            const freeSlots = state.freeSlotsByDate.get(state.selectedDate) || [];
+            const blockedSlots = state.blockedByDate.get(state.selectedDate) || [];
+
+            updateDayHeader();
+            renderWeekNav();
+
+            const metrics = calculateMetrics(appointments, freeSlots);
+            dom.metricAppointments.textContent = metrics.totalAppointments;
+            dom.metricRevenue.textContent = formatBRL(metrics.projectedRevenue);
+            dom.metricFree.textContent = metrics.freeSlots;
+
+            updateNextAppointment(appointments);
+            const timelineItems = buildTimelineItems(appointments, freeSlots, blockedSlots);
+            renderTimeline(timelineItems);
+        }
+
+        async function fetchAppointments(dateIso) {
+            const url = new URL('../../bancodedados/agendamentos/listar_agendamento.php', window.location.href);
+            url.searchParams.set('data_inicio', dateIso);
+            url.searchParams.set('data_fim', dateIso);
+            if (state.codBarbeiro) url.searchParams.set('cod_barbeiro', state.codBarbeiro);
+
+            const response = await fetch(url.toString(), { cache: 'no-store' });
+            const result = await response.json();
+
+            if (!result.sucesso) {
+                throw new Error(result.mensagem || 'Falha ao carregar agendamentos.');
+            }
+
+            const mapped = (result.agendamentos || [])
+                .map((agendamento) => {
+                    const status = mapStatus(agendamento.codigo_status, agendamento.status_nome);
+                    return {
+                        code: agendamento.id || agendamento.codigo,
+                        date: String(agendamento.data_agendamento || dateIso).slice(0, 10),
+                        time: formatTime(agendamento.hora_formatada || agendamento.horario || '00:00'),
+                        duration: parseInt(agendamento.duracao_minutos, 10) || 30,
+                        client: agendamento.cliente_nome || 'Cliente nao informado',
+                        phone: agendamento.cliente_telefone || '',
+                        service: agendamento.servico_nome || (agendamento.servicos && agendamento.servicos[0] ? agendamento.servicos[0].nome : 'Servico nao informado'),
+                        price: parseFloat(agendamento.valor) || 0,
+                        note: agendamento.observacoes || '',
+                        status
+                    };
+                })
+                .sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+
+            state.appointmentsByDate.set(dateIso, mapped);
+        }
+
+        async function fetchFreeAndBlocked(dateIso) {
+            const url = new URL('../../bancodedados/agendamentos/buscar_horarios_dia.php', window.location.href);
+            url.searchParams.set('data', dateIso);
+            if (state.codBarbeiro) url.searchParams.set('barbeiro', state.codBarbeiro);
+
+            const response = await fetch(url.toString(), { cache: 'no-store' });
+            const result = await response.json();
+
+            if (!result.sucesso) {
+                throw new Error(result.mensagem || 'Falha ao carregar horarios do dia.');
+            }
+
+            const horarios = result.horarios || [];
+            const freeSlots = horarios
+                .filter((item) => item.status === 'disponivel')
+                .map((item) => ({ time: formatTime(item.horario), duration: 30 }));
+
+            const blockedSlots = horarios
+                .filter((item) => item.status === 'bloqueado')
+                .map((item) => ({
+                    time: formatTime(item.horario),
+                    duration: 30,
+                    reason: item.motivo_bloqueio === 'almoco' ? 'almoco' : 'manual',
+                    label: item.motivo_bloqueio === 'almoco' ? 'Horário de almoço' : 'Horário bloqueado'
+                }));
+
+            state.freeSlotsByDate.set(dateIso, freeSlots);
+            state.blockedByDate.set(dateIso, blockedSlots);
+        }
+
+        async function ensureDayLoaded(dateIso, silent = false) {
+            if (!silent) {
+                dom.timeline.innerHTML = '<div class="timeline-empty">Carregando agenda...</div>';
+            }
+
+            try {
+                await Promise.all([fetchAppointments(dateIso), fetchFreeAndBlocked(dateIso)]);
+                setLastUpdate();
+            } catch (error) {
+                console.error(error);
+                dom.timeline.innerHTML = `<div class="timeline-empty">Erro ao carregar agenda: ${error.message}</div>`;
+            }
+        }
+
+        async function preloadWeekData() {
+            await Promise.all(state.weekDays.map((day) => ensureDayLoaded(day.id, true)));
+            setLastUpdate();
+        }
+
+        async function changeWeek(weekOffset) {
+            setWeekControlsLoading(true);
+            state.selectedDate = addDaysToIsoDate(state.selectedDate, weekOffset * 7);
+            state.weekDays = buildWeekDays(state.selectedDate);
+            renderWeekNav();
+            updateDayHeader();
+            dom.timeline.innerHTML = '<div class="timeline-empty">Carregando semana...</div>';
+
+            try {
+                await preloadWeekData();
+                renderAgenda();
+            } finally {
+                setWeekControlsLoading(false);
+            }
+        }
+
+        async function goToCurrentWeek() {
+            setWeekControlsLoading(true);
+            state.selectedDate = toIsoDate(new Date());
+            state.weekDays = buildWeekDays(state.selectedDate);
+            renderWeekNav();
+            updateDayHeader();
+            dom.timeline.innerHTML = '<div class="timeline-empty">Carregando semana...</div>';
+
+            try {
+                await preloadWeekData();
+                renderAgenda();
+            } finally {
+                setWeekControlsLoading(false);
+            }
+        }
+
+        async function refreshSelectedDay() {
+            await ensureDayLoaded(state.selectedDate, true);
+            renderAgenda();
+        }
+
+        function bindPeriodFilter() {
+            document.querySelectorAll('.period-btn').forEach((button) => {
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('.period-btn').forEach((item) => item.classList.remove('active'));
+                    button.classList.add('active');
+                    state.selectedPeriod = button.dataset.period;
+                    renderAgenda();
+                });
+            });
+        }
+
+        function bindActions() {
+            dom.btnPrevWeek.addEventListener('click', () => {
+                changeWeek(-1);
+            });
+
+            dom.btnToday.addEventListener('click', () => {
+                goToCurrentWeek();
+            });
+
+            dom.btnNextWeek.addEventListener('click', () => {
+                changeWeek(1);
+            });
+
+            document.getElementById('btnSearch').addEventListener('click', () => {
+                openSearchModal();
+            });
+
+            dom.searchClose.addEventListener('click', closeSearchModal);
+            dom.searchModal.addEventListener('click', (event) => {
+                if (event.target === dom.searchModal) {
+                    closeSearchModal();
+                }
+            });
+
+            dom.confirmNewAppointmentClose.addEventListener('click', closeConfirmNewAppointmentModal);
+            dom.confirmNewAppointmentCancel.addEventListener('click', closeConfirmNewAppointmentModal);
+            dom.confirmNewAppointmentProceed.addEventListener('click', proceedCreateAppointmentFromPendingSlot);
+            dom.confirmNewAppointmentModal.addEventListener('click', (event) => {
+                if (event.target === dom.confirmNewAppointmentModal) {
+                    closeConfirmNewAppointmentModal();
+                }
+            });
+
+            dom.rescheduleOccupiedClose.addEventListener('click', closeRescheduleOccupiedModal);
+            dom.rescheduleOccupiedCancel.addEventListener('click', closeRescheduleOccupiedModal);
+            dom.rescheduleOccupiedProceed.addEventListener('click', () => confirmReschedule(true));
+            dom.rescheduleOccupiedModal.addEventListener('click', (event) => {
+                if (event.target === dom.rescheduleOccupiedModal) {
+                    closeRescheduleOccupiedModal();
+                }
+            });
+
+            dom.rescheduleModalClose.addEventListener('click', closeRescheduleModal);
+            dom.rescheduleCancel.addEventListener('click', closeRescheduleModal);
+            dom.rescheduleConfirm.addEventListener('click', () => confirmReschedule(false));
+            dom.rescheduleDateInput.addEventListener('change', () => {
+                loadRescheduleSlots(dom.rescheduleDateInput.value);
+            });
+            dom.rescheduleModal.addEventListener('click', (event) => {
+                if (event.target === dom.rescheduleModal) {
+                    closeRescheduleModal();
+                }
+            });
+
+            dom.searchForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const matches = getSearchMatches(dom.searchInput.value);
+                if (matches.length === 0) {
+                    dom.searchResults.innerHTML = '<div class="timeline-empty">Nenhum agendamento encontrado para essa busca.</div>';
+                    return;
+                }
+                focusOnAppointment(matches[0]);
+            });
+
+            dom.searchInput.addEventListener('input', () => {
+                renderSearchResults(dom.searchInput.value);
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && dom.searchModal.classList.contains('show')) {
+                    closeSearchModal();
+                }
+
+                if (event.key === 'Escape' && dom.confirmNewAppointmentModal.classList.contains('show')) {
+                    closeConfirmNewAppointmentModal();
+                }
+
+                if (event.key === 'Escape' && dom.rescheduleModal.classList.contains('show')) {
+                    closeRescheduleModal();
+                }
+            });
+
+            function openSearchModal() {
+                dom.searchModal.classList.add('show');
+                dom.searchModal.setAttribute('aria-hidden', 'false');
+                lockBodyScroll();
+                dom.searchInput.value = '';
+                renderSearchResults('');
+                setTimeout(() => dom.searchInput.focus(), 40);
+            }
+
+            function closeSearchModal() {
+                dom.searchModal.classList.remove('show');
+                dom.searchModal.setAttribute('aria-hidden', 'true');
+                unlockBodyScroll();
+            }
+
+            function getSearchMatches(rawTerm) {
+                const term = normalizeSearchTerm(rawTerm);
+                const appointments = state.appointmentsByDate.get(state.selectedDate) || [];
+                if (!term) return appointments.slice(0, 12);
+
+                return appointments.filter((item) => {
+                    const time = normalizeSearchTerm(item.time);
+                    const client = normalizeSearchTerm(item.client);
+                    return time.includes(term) || client.includes(term);
+                });
+            }
+
+            function renderSearchResults(rawTerm) {
+                const matches = getSearchMatches(rawTerm);
+
+                if (matches.length === 0) {
+                    dom.searchResults.innerHTML = '<div class="timeline-empty">Nenhum agendamento encontrado para essa busca.</div>';
+                    return;
+                }
+
+                dom.searchResults.innerHTML = matches.map((item) => `
+                    <button class="search-result-item" type="button" data-code="${item.code || ''}">
+                        <div class="search-result-line">${item.time} • ${item.status.label}</div>
+                        <div class="search-result-title">${item.client}</div>
+                        <div class="search-result-subtitle">${item.service} • ${formatBRL(item.price)}</div>
+                    </button>
+                `).join('');
+
+                dom.searchResults.querySelectorAll('.search-result-item').forEach((button) => {
+                    button.addEventListener('click', () => {
+                        const match = matches.find((item) => String(item.code || '') === button.dataset.code);
+                        if (match) {
+                            focusOnAppointment(match);
+                        }
+                    });
+                });
+            }
+
+            function focusOnAppointment(match) {
+                state.selectedPeriod = 'all';
+                document.querySelectorAll('.period-btn').forEach((item) => item.classList.remove('active'));
+                document.querySelector('.period-btn[data-period="all"]').classList.add('active');
+                renderAgenda();
+                closeSearchModal();
+
+                const timelineRows = [...document.querySelectorAll('.timeline-row[data-item-type="appointment"]')];
+                const target = timelineRows.find((row) => {
+                    if (match.code && row.dataset.code) {
+                        return row.dataset.code === String(match.code);
+                    }
+                    return row.dataset.search === `${normalizeSearchTerm(match.time)}|${normalizeSearchTerm(match.client)}`;
+                });
+
+                if (!target) return;
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                target.style.outline = '2px solid rgba(79, 140, 255, 0.7)';
+                setTimeout(() => {
+                    target.style.outline = 'none';
+                }, 1400);
+            }
+        }
+
+        function openConfirmNewAppointmentModal() {
+            dom.confirmNewAppointmentModal.classList.add('show');
+            dom.confirmNewAppointmentModal.setAttribute('aria-hidden', 'false');
+            lockBodyScroll();
+        }
+
+        function closeConfirmNewAppointmentModal() {
+            dom.confirmNewAppointmentModal.classList.remove('show');
+            dom.confirmNewAppointmentModal.setAttribute('aria-hidden', 'true');
+            unlockBodyScroll();
+            state.pendingFreeSlot = null;
+        }
+
+        function proceedCreateAppointmentFromPendingSlot() {
+            const slot = state.pendingFreeSlot;
+            if (!slot) {
+                closeConfirmNewAppointmentModal();
+                return;
+            }
+
+            const params = new URLSearchParams();
+            params.set('origem', 'agenda');
+            params.set('data', state.selectedDate);
+            params.set('horario', slot.time);
+            if (state.codBarbeiro) {
+                params.set('cod_barbeiro', state.codBarbeiro);
+            }
+
+            state.pendingFreeSlot = null;
+            dom.confirmNewAppointmentModal.classList.remove('show');
+            dom.confirmNewAppointmentModal.setAttribute('aria-hidden', 'true');
+            unlockBodyScroll();
+            window.location.href = `incluir-agendamento.html?${params.toString()}`;
+        }
+
+        function setupAutoRefresh() {
+            if (state.refreshHandle) {
+                clearInterval(state.refreshHandle);
+            }
+
+            state.refreshHandle = setInterval(() => {
+                refreshSelectedDay();
+            }, state.refreshIntervalMs);
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    refreshSelectedDay();
+                }
+            });
+        }
+
+        function ensureNotificationStyles() {
+            if (document.getElementById('agendaNotificationStyles')) {
+                return;
+            }
+
+            const style = document.createElement('style');
+            style.id = 'agendaNotificationStyles';
+            style.textContent = `
+                @keyframes slideInRight {
+                    from {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+
+                @keyframes slideOutRight {
+                    from {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                    to {
+                        transform: translateX(100%);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        function showNotification(message, type = 'info', duration = 3000) {
+            ensureNotificationStyles();
+
+            const existing = document.querySelector('.notification');
+            if (existing) {
+                existing.remove();
+            }
+
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.style.cssText = `
+                position: fixed;
+                top: 1rem;
+                right: 1rem;
+                background: rgba(26, 24, 22, 0.95);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                border-left: 4px solid ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#e8e8e8'};
+                color: #e8e8e8;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                z-index: 10001;
+                max-width: 320px;
+                animation: slideInRight 0.3s ease-in-out;
+                font-family: 'Inter', sans-serif;
+            `;
+            notification.innerHTML = `
+                <div style="display:flex;align-items:center;gap:0.75rem;">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-in-out';
+                setTimeout(() => notification.remove(), 300);
+            }, duration);
+        }
+
+        async function init() {
+            state.weekDays = buildWeekDays(state.selectedDate);
+            bindPeriodFilter();
+            bindActions();
+            await preloadWeekData();
+            renderAgenda();
+            setupAutoRefresh();
+        }
+
+        init();
+    </script>
+</body>
+</html>

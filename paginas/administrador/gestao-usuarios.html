@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gest&atilde;o de Usu&aacute;rios - Administrador</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="../tema-claro.css" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+                background: #1a1a1a;
+            color: #e8e8e8;
+            min-height: 100vh;
+        }
+
+        .admin-container {
+                max-width: 1400px;
+            margin: 0 auto;
+                padding: 10px 12px;
+        }
+
+        /* Cards de Resumo */
+        .summary-grid {
+            display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+                margin-bottom: 1rem;
+        }
+
+        .summary-card {
+                background: rgba(25, 25, 28, 0.9);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 14px;
+                padding: 1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .summary-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
+        }
+
+        .summary-card-header {
+            display: flex;
+            justify-content: space-between;
+                align-items: flex-start;
+                gap: 0.625rem;
+        }
+
+        .summary-icon {
+                width: 44px;
+                height: 44px;
+                border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+                font-size: 1.2rem;
+                flex-shrink: 0;
+        }
+
+        .summary-icon.total {
+            background: linear-gradient(135deg, #d4a574, #b8843d);
+        }
+
+        .summary-icon.ativos {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .summary-icon.vencidos {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .summary-icon.receita {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .summary-label {
+            color: rgba(232, 232, 232, 0.72);
+            font-size: 0.8rem;
+            margin-bottom: 0.45rem;
+        }
+
+        .summary-value {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #e8e8e8;
+            line-height: 1;
+            word-break: break-word;
+        }
+
+        /* Tabela de Usu&aacute;rios */
+        .users-table-container {
+            background: rgba(25, 25, 28, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 1rem;
+        }
+
+        .table-header {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            margin-bottom: 1rem;
+            gap: 0.875rem;
+        }
+
+        .table-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #e8e8e8;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .filter-select {
+            padding: 0.85rem 1rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 10px;
+            color: #e8e8e8;
+            font-size: 0.875rem;
+            cursor: pointer;
+            flex: 1 1 160px;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+
+        .users-table thead {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .users-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #e8e8e8;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .users-table td {
+            padding: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e8e8e8;
+            font-size: 0.875rem;
+        }
+
+        .users-table tbody tr {
+            transition: background-color 0.3s;
+        }
+
+        .users-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Estilos dos Modais */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #2a2a2e 0%, #1a1a1d 100%);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #e8e8e8;
+            font-size: 1.25rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #e8e8e8;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-info {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid #3b82f6;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            color: #e8e8e8;
+        }
+
+        .modal-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 3px solid #f59e0b;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            color: #e8e8e8;
+            font-size: 0.875rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #e8e8e8;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .form-group label i {
+            margin-right: 0.5rem;
+            color: #3b82f6;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #e8e8e8;
+            font-size: 0.875rem;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Estilos para as op&ccedil;&otilde;es do select */
+        .form-control option {
+            background: #2a2a2e;
+            color: #e8e8e8;
+            padding: 0.75rem;
+        }
+
+        .form-control option:hover {
+            background: #3a3a3e;
+        }
+
+        .form-control option:checked {
+            background: #3b82f6;
+            color: white;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .btn-cancel {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e8e8e8;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-confirm {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .status-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .status-badge.pago {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-badge.pendente {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .status-badge.vencido {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .status-badge.teste {
+            background: rgba(59, 130, 246, 0.18);
+            color: #60a5fa;
+        }
+
+        .status-badge.cancelado {
+            background: rgba(255, 255, 255, 0.12);
+            color: rgba(232, 232, 232, 0.72);
+        }
+
+        .status-badge.isento {
+            background: rgba(20, 184, 166, 0.2);
+            color: #2dd4bf;
+        }
+
+        .plano-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.12);
+            color: #e8e8e8;
+        }
+        .plano-badge[data-plano="2"] { background: rgba(156,163,175,.18); color: #d1d5db; }
+        .plano-badge[data-plano="3"] { background: rgba(156,163,175,.18); color: #d1d5db; }
+        .plano-badge[data-plano="4"] { background: rgba(59,130,246,.18);  color: #93c5fd; }
+        .plano-badge[data-plano="6"] { background: rgba(248,113,113,.18); color: #fca5a5; }
+
+        .dias-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .dias-badge.verde {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .dias-badge.amarelo {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .dias-badge.vermelho {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .trial-note {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            margin-top: 0.875rem;
+            padding: 0.45rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.22);
+            color: #60a5fa;
+            font-size: 0.75rem;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a4a4a, #1f1f1f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #e8e8e8;
+        }
+
+        .user-email {
+            font-size: 0.75rem;
+            color: #e8e8e8;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e8e8e8;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-vencimento {
+            padding: 0.5rem 1rem;
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-vencimento:hover {
+            background: rgba(245, 158, 11, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-pagamento {
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid #10b981;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-pagamento:hover {
+            background: rgba(16, 185, 129, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Cards de Usu&aacute;rios */
+        .users-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .user-card {
+            background: rgba(25, 25, 28, 0.88);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 1.25rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+            border-color: rgba(255, 255, 255, 0.14);
+        }
+
+        .user-card-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a4a4a, #1f1f1f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.65rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 0 auto 0.875rem;
+            box-shadow: 0 4px 16px rgba(255, 255, 255, 0.12);
+            overflow: hidden;
+        }
+
+        .user-card-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .user-card-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #e8e8e8;
+            margin-bottom: 0.4rem;
+            text-align: center;
+        }
+
+        .user-card-contact {
+            font-size: 0.82rem;
+            color: rgba(232, 232, 232, 0.82);
+            margin-bottom: 0.28rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            word-break: break-word;
+        }
+
+        .user-card-plano {
+            text-align: center;
+            margin: 0.875rem 0 0;
+        }
+
+        .user-card-info {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 0.9rem 1rem;
+            margin-top: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-size: 0.82rem;
+            color: rgba(232, 232, 232, 0.78);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-value {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #e8e8e8;
+            text-align: right;
+        }
+
+        .user-card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .user-card-actions button {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-view {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+        }
+
+        .btn-view:hover {
+            background: rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .user-card-actions .btn-vencimento {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border: 1px solid #f59e0b;
+        }
+
+        .user-card-actions .btn-vencimento:hover {
+            background: rgba(245, 158, 11, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-isencao {
+            background: rgba(20, 184, 166, 0.15);
+            color: #2dd4bf;
+            border: 1px solid #2dd4bf;
+        }
+
+        .btn-isencao:hover {
+            background: rgba(20, 184, 166, 0.28);
+            transform: translateY(-2px);
+        }
+
+        .btn-isencao.remover {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+
+        .btn-isencao.remover:hover {
+            background: rgba(239, 68, 68, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .btn-embaixador {
+            background: rgba(212, 165, 116, 0.12);
+            color: #d4a574;
+            border: 1px solid #d4a574;
+        }
+
+        .btn-embaixador:hover {
+            background: rgba(212, 165, 116, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .btn-embaixador.ativo {
+            background: rgba(212, 165, 116, 0.22);
+            color: #b8843d;
+            border: 1px solid #b8843d;
+        }
+
+        .btn-embaixador.ativo:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border-color: #ef4444;
+        }
+
+        .btn-dia {
+            background: rgba(139, 92, 246, 0.18);
+            color: #a78bfa;
+            border: 1px solid #a78bfa;
+        }
+
+        .btn-dia:hover {
+            background: rgba(139, 92, 246, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .login-info {
+            text-align: center;
+            margin-top: 0.75rem;
+            padding: 0.6rem 0.9rem;
+            background: rgba(255,255,255,0.04);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .login-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.35rem 0;
+        }
+
+        .login-nunca {
+            color: rgba(232,232,232,0.38);
+            font-style: italic;
+            font-size: 0.78rem;
+        }
+
+        /* Anima&ccedil;&otilde;es para Toast */
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        /* Responsivo */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: #e8e8e8;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (min-width: 769px) {
+            .admin-container {
+                padding: 1.25rem;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 1rem;
+                margin-bottom: 1.25rem;
+            }
+
+            .summary-card {
+                padding: 1.5rem;
+            }
+
+            .summary-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.4rem;
+            }
+
+            .summary-value {
+                font-size: 2rem;
+            }
+
+            .users-table-container {
+                padding: 1.5rem;
+            }
+
+            .table-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1.25rem;
+            }
+
+            .table-title {
+                font-size: 1.5rem;
+                text-transform: none;
+                letter-spacing: 0;
+            }
+
+            .filter-group {
+                width: auto;
+            }
+
+            .filter-select {
+                flex: 0 0 auto;
+                min-width: 200px;
+            }
+
+            .users-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                gap: 1.25rem;
+                margin-top: 1rem;
+            }
+
+            .user-card {
+                padding: 1.5rem;
+            }
+
+            .user-card-name {
+                font-size: 1.2rem;
+            }
+
+            .user-card-contact {
+                font-size: 0.88rem;
+            }
+
+            .modal-content {
+                width: 90%;
+                max-width: 500px;
+            }
+
+            .modal-footer {
+                flex-direction: row;
+            }
+
+            .modal-footer button {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Cards de Resumo -->
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="summary-card-header">
+                    <div>
+                        <div class="summary-label">Total de Barbeiros</div>
+                        <div class="summary-value" id="totalBarbeiros">0</div>
+                    </div>
+                    <div class="summary-icon total">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-card-header">
+                    <div>
+                        <div class="summary-label">Assinaturas Ativas</div>
+                        <div class="summary-value" id="assinaturasAtivas">0</div>
+                    </div>
+                    <div class="summary-icon ativos">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-card-header">
+                    <div>
+                        <div class="summary-label">Pagamentos Vencidos</div>
+                        <div class="summary-value" id="assinaturasVencidas">0</div>
+                    </div>
+                    <div class="summary-icon vencidos">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-card-header">
+                    <div>
+                        <div class="summary-label">Receita Mensal</div>
+                        <div class="summary-value" id="receitaMensal">R$ 0,00</div>
+                    </div>
+                    <div class="summary-icon receita">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid de Usu&aacute;rios em Cards -->
+        <div class="users-table-container">
+            <div class="table-header">
+                <h2 class="table-title">Usu&aacute;rios do Sistema</h2>
+                <div class="filter-group">
+                    <select class="filter-select" id="filterPlano" onchange="filtrarUsuarios()">
+                        <option value="">Todos os Planos</option>
+                        <option value="2">Plano Starter</option>
+                        <option value="3">Plano Essencial</option>
+                        <option value="4">Plano Equipe</option>
+                        <option value="6">Plano Barbearia Pro</option>
+                    </select>
+                    <select class="filter-select" id="filterStatus" onchange="filtrarUsuarios()">
+                        <option value="">Todos os Status</option>
+                        <option value="2">Pagamento em Dia</option>
+                        <option value="1">Pagamento Pendente</option>
+                        <option value="3">Pagamento Vencido</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="cardsContainer">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Carregando usu&aacute;rios...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let usuariosData = [];
+        let assinaturasData = [];
+        let diaVencimentoAtual = 1;
+
+        // Carregar dados ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarDados();
+        });
+
+        async function carregarDados() {
+            try {
+                const ts = Date.now();
+                // Carregar usu&aacute;rios
+                const responseUsuarios = await fetch('../../bancodedados/usuarios/listar_usuarios.php?t=' + ts, { cache: 'no-store' });
+                const resultUsuarios = await responseUsuarios.json();
+
+                if (resultUsuarios.sucesso) {
+                    usuariosData = resultUsuarios.usuarios || [];
+                }
+
+                // Carregar assinaturas
+                const responseAssinaturas = await fetch('../../bancodedados/administrador/listar_assinaturas.php?t=' + ts, { cache: 'no-store' });
+                const resultAssinaturas = await responseAssinaturas.json();
+
+                if (resultAssinaturas.sucesso) {
+                    assinaturasData = resultAssinaturas.assinaturas || [];
+                }
+
+                atualizarResumo();
+                renderizarTabela();
+
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                document.getElementById('cardsContainer').innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Erro ao carregar dados do sistema</p>
+                    </div>
+                `;
+            }
+        }
+
+        function atualizarResumo() {
+            // Total de barbeiros (excluindo administradores e clientes)
+            const barbeiros = usuariosData.filter(u => {
+                const p = parseInt(u.perfil);
+                return p === 2 || p === 3 || p === 4 || p === 6;
+            });
+            document.getElementById('totalBarbeiros').textContent = barbeiros.length;
+
+            // Set de isentos para cruzamento r\u00e1pido
+            const isentosSet = new Set(
+                barbeiros.filter(u => u.isento_pagamento).map(u => u.codigo)
+            );
+
+            // Assinaturas pagas em dia (n\u00e3o vencidas)
+            const pagas = assinaturasData.filter(a => a.status_pagamento == 2 && !a.esta_vencido);
+            const codigosPagos = new Set(pagas.map(a => a.codigo_barbeiro));
+
+            // Assinaturas ativas = pagos em dia + isentos (sem dupla contagem)
+            const ativos = barbeiros.filter(u => u.isento_pagamento || codigosPagos.has(u.codigo));
+            document.getElementById('assinaturasAtivas').textContent = ativos.length;
+
+            // Pagamentos vencidos: excluir isentos (eles n\u00e3o precisam pagar)
+            const vencidas = assinaturasData.filter(a => a.esta_vencido && !isentosSet.has(a.codigo_barbeiro));
+            document.getElementById('assinaturasVencidas').textContent = vencidas.length;
+
+            // Receita mensal (soma das mensalidades pagas em dia)
+            const receita = pagas.reduce((sum, a) => sum + parseFloat(a.valor_mensalidade || 0), 0);
+            document.getElementById('receitaMensal').textContent = 'R$ ' + receita.toFixed(2).replace('.', ',');
+        }
+
+        function parseDateOnly(dataString) {
+            if (!dataString) return null;
+
+            const texto = String(dataString).split(' ')[0].split('T')[0];
+            const partes = texto.split('-');
+
+            if (partes.length === 3) {
+                return new Date(Number(partes[0]), Number(partes[1]) - 1, Number(partes[2]));
+            }
+
+            const data = new Date(dataString);
+            if (Number.isNaN(data.getTime())) return null;
+            return new Date(data.getFullYear(), data.getMonth(), data.getDate());
+        }
+
+        function calcularPeriodoTeste(usuario, assinatura = {}) {
+            const dataBase = parseDateOnly(usuario.data_cadastro || assinatura.data_cadastro_barbeiro || assinatura.data_cadastro);
+
+            if (!dataBase) {
+                return { emTeste: false, diasRestantes: 0, dataFim: null };
+            }
+
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+
+            const diferencaDias = Math.floor((hoje - dataBase) / 86400000);
+            const diasRestantes = 7 - diferencaDias;
+            const dataFim = new Date(dataBase);
+            dataFim.setDate(dataFim.getDate() + 6);
+
+            return {
+                emTeste: diasRestantes > 0,
+                diasRestantes: Math.max(0, diasRestantes),
+                dataFim
+            };
+        }
+
+        function formatarQuantidadeDias(dias) {
+            return dias === 1 ? '1 dia' : `${dias} dias`;
+        }
+
+        function renderizarTabela(filtroPlano = '', filtroStatus = '') {
+            const container = document.getElementById('cardsContainer');
+            
+            if (usuariosData.length === 0) {
+                container.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-users-slash"></i>
+                        <p>Nenhum usu&aacute;rio encontrado</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Filtrar apenas barbeiros (perfil 2, 3, 4, 6)
+            let barbeiros = usuariosData.filter(u => {
+                const perfil = parseInt(u.perfil);
+                return perfil === 2 || perfil === 3 || perfil === 4 || perfil === 6;
+            });
+
+            // Aplicar filtro de plano se selecionado
+            if (filtroPlano !== '') {
+                barbeiros = barbeiros.filter(u => parseInt(u.perfil) === parseInt(filtroPlano));
+            }
+
+            // Combinar dados de usu&aacute;rios com assinaturas
+            let usuariosComAssinatura = barbeiros.map(usuario => {
+                const assinatura = assinaturasData.find(a => a.codigo_barbeiro == usuario.codigo) || {};
+                return { ...usuario, assinatura };
+            });
+
+            // Aplicar filtro de status se selecionado
+            if (filtroStatus !== '') {
+                usuariosComAssinatura = usuariosComAssinatura.filter(u => {
+                    const statusPagamento = u.assinatura.status_pagamento || 1;
+                    const estaVencido = u.assinatura.esta_vencido || false;
+                    
+                    if (filtroStatus === '2') { // Pagamento em Dia
+                        return statusPagamento == 2 && !estaVencido;
+                    } else if (filtroStatus === '1') { // Pagamento Pendente
+                        return statusPagamento == 1;
+                    } else if (filtroStatus === '3') { // Pagamento Vencido
+                        return statusPagamento == 3 || estaVencido;
+                    }
+                    return true;
+                });
+            }
+
+            if (usuariosComAssinatura.length === 0) {
+                container.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-users-slash"></i>
+                        <p>Nenhum barbeiro encontrado com os filtros selecionados</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div class="users-grid">';
+
+            usuariosComAssinatura.forEach(usuario => {
+                const iniciais = usuario.nome.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                const planoNome = getNomePlano(usuario.perfil);
+                const assinatura = usuario.assinatura;
+                const possuiVencimento = Boolean(assinatura.data_vencimento);
+                const statusPagamento = Number(assinatura.status_pagamento || 0);
+                const periodoTeste = calcularPeriodoTeste(usuario, assinatura);
+                const isento = Boolean(usuario.isento_pagamento);
+
+                let diasRestantes = possuiVencimento
+                    ? Number(assinatura.dias_para_vencimento ?? 0)
+                    : periodoTeste.diasRestantes;
+
+                let diasTexto = possuiVencimento || periodoTeste.emTeste
+                    ? formatarQuantidadeDias(diasRestantes)
+                    : 'Sem prazo';
+
+                let diasBadgeClass = diasRestantes > 7 ? 'verde' : diasRestantes > 3 ? 'amarelo' : 'vermelho';
+                if (!possuiVencimento && !periodoTeste.emTeste) diasBadgeClass = 'amarelo';
+
+                // Status com prioridade: isento sobrep\u00f5e tudo
+                let statusBadgeClass = 'pendente';
+                let statusTexto = 'Pendente';
+
+                if (isento) {
+                    statusBadgeClass = 'isento';
+                    statusTexto = '<i class="fas fa-star" style="font-size:0.7rem"></i> Isento';
+                } else if (periodoTeste.emTeste && !possuiVencimento) {
+                    statusBadgeClass = 'teste';
+                    statusTexto = 'Teste gr&aacute;tis';
+                } else if (statusPagamento === 2 && !assinatura.esta_vencido) {
+                    statusBadgeClass = 'pago';
+                    statusTexto = 'Pago';
+                } else if (statusPagamento === 4) {
+                    statusBadgeClass = 'cancelado';
+                    statusTexto = 'Cancelado';
+                } else if (statusPagamento === 3 || assinatura.esta_vencido) {
+                    statusBadgeClass = 'vencido';
+                    statusTexto = 'Vencido';
+                } else if (!possuiVencimento) {
+                    statusBadgeClass = 'pendente';
+                    statusTexto = 'Sem assinatura';
+                }
+
+                const nomeSeguro = JSON.stringify(usuario.nome);
+                const diaVenc = Number(usuario.dia_vencimento || 1);
+
+                // Avatar: foto ou iniciais
+                const avatarHtml = usuario.foto_caminho
+                    ? `<img src="../../${usuario.foto_caminho}" alt="${usuario.nome}" onerror="this.parentElement.innerHTML='${iniciais}'">`
+                    : iniciais;
+
+                const trialHtml = periodoTeste.emTeste
+                    ? `<div class="trial-note"><i class="fas fa-gift"></i>${formatarQuantidadeDias(periodoTeste.diasRestantes)} restantes no teste gr&aacute;tis</div>`
+                    : '';
+
+                // \u00daltimo login
+                const ultimoAcesso = usuario.ultimo_acesso || null;
+                let ultimoAcessoTexto = '<span class="login-nunca">Nunca logou</span>';
+                let diasSemLoginTexto = '<span class="login-nunca">Nunca</span>';
+
+                if (ultimoAcesso) {
+                    const dtAcesso = new Date(ultimoAcesso);
+                    ultimoAcessoTexto = dtAcesso.toLocaleDateString('pt-BR') + ' ' + dtAcesso.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                    const diasSemLogin = Math.floor((Date.now() - dtAcesso.getTime()) / 86400000);
+                    const loginBadgeClass = diasSemLogin === 0 ? 'verde' : diasSemLogin <= 7 ? 'amarelo' : 'vermelho';
+                    diasSemLoginTexto = `<span class="dias-badge ${loginBadgeClass}">${diasSemLogin === 0 ? 'Hoje' : diasSemLogin + (diasSemLogin === 1 ? ' dia' : ' dias')}</span>`;
+                }
+
+                // Bot\u00e3o de isen\u00e7\u00e3o
+                const btnIsencaoClass = isento ? 'btn-isencao remover' : 'btn-isencao';
+                const btnIsencaoIcon = isento ? 'fa-ban' : 'fa-star';
+                const btnIsencaoTexto = isento ? 'Remover Isen\u00e7\u00e3o' : 'Isentar Pagamento';
+
+                // Bot\u00e3o de embaixador
+                const ehEmbaixador = Boolean(usuario.embaixador);
+                const btnEmbClass = ehEmbaixador ? 'btn-embaixador ativo' : 'btn-embaixador';
+                const btnEmbIcon  = ehEmbaixador ? 'fa-star' : 'fa-star';
+                const btnEmbTexto = ehEmbaixador ? 'Remover Embaixador' : 'Tornar Embaixador';
+
+                html += `
+                    <div class="user-card">
+                        <div class="user-card-avatar">${avatarHtml}</div>
+                        <div class="user-card-name">${usuario.nome}</div>
+
+                        <div class="user-card-contact">
+                            <i class="fas fa-envelope"></i>
+                            ${usuario.email}
+                        </div>
+
+                        <div class="user-card-contact">
+                            <i class="fas fa-phone"></i>
+                            ${usuario.telefone || 'N&atilde;o informado'}
+                        </div>
+
+                        <div class="user-card-plano">
+                            <span class="plano-badge" data-plano="${usuario.perfil}">${planoNome}</span>
+                        </div>
+
+                        ${trialHtml}
+
+                        <div class="user-card-info">
+                            <div class="info-row">
+                                <span class="info-label"><i class="fas fa-redo-alt"></i> Vencimento</span>
+                                <span class="info-value">Dia <strong>${diaVenc}</strong></span>
+                            </div>
+                            ${isento ? '' : `<div class="info-row">
+                                <span class="info-label"><i class="fas fa-clock"></i> Dias Restantes</span>
+                                <span class="dias-badge ${diasBadgeClass}">${diasTexto}</span>
+                            </div>`}
+                            <div class="info-row">
+                                <span class="info-label"><i class="fas fa-credit-card"></i> Status</span>
+                                <span class="status-badge ${statusBadgeClass}">${statusTexto}</span>
+                            </div>
+                        </div>
+
+                        <div class="login-info">
+                            <div class="login-info-row">
+                                <span class="info-label"><i class="fas fa-sign-in-alt"></i> \u00daltimo login</span>
+                                <span class="info-value" style="font-size:0.78rem">${ultimoAcessoTexto}</span>
+                            </div>
+                            <div class="login-info-row">
+                                <span class="info-label"><i class="fas fa-user-clock"></i> Sem logar</span>
+                                ${diasSemLoginTexto}
+                            </div>
+                        </div>
+
+                        <div class="user-card-actions">
+                            <button class="btn-view" onclick='verPermissoes(${usuario.codigo}, ${nomeSeguro}, ${usuario.perfil})'>
+                                <i class="fas fa-user-shield"></i> Permiss&otilde;es
+                            </button>
+                            <button class="btn-vencimento" onclick='abrirModalDiaVencimento(${usuario.codigo}, ${nomeSeguro}, ${diaVenc})'>
+                                <i class="fas fa-calendar-alt"></i> Dia de Vencimento
+                            </button>
+                            <button class="${btnIsencaoClass}" onclick='toggleIsencao(${usuario.codigo}, ${nomeSeguro}, ${isento})'>
+                                <i class="fas ${btnIsencaoIcon}"></i> ${btnIsencaoTexto}
+                            </button>
+                            <button class="${btnEmbClass}" onclick='toggleEmbaixador(${usuario.codigo}, ${nomeSeguro}, ${ehEmbaixador})'>
+                                <i class="fas ${btnEmbIcon}"></i> ${btnEmbTexto}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function filtrarUsuarios() {
+            const filterPlano = document.getElementById('filterPlano').value;
+            const filterStatus = document.getElementById('filterStatus').value;
+
+            renderizarTabela(filterPlano, filterStatus);
+        }
+
+        function getNomePlano(perfil) {
+            const planos = {
+                1: 'Administrador',
+                2: 'Plano Starter',
+                3: 'Plano Essencial',
+                4: 'Plano Equipe',
+                5: 'Cliente',
+                6: 'Plano Barbearia Pro',
+                7: 'Plano Barbearia Pro'
+            };
+            return planos[perfil] || 'N&atilde;o definido';
+        }
+
+        function formatarData(dataString) {
+            if (!dataString) return '-';
+            const data = new Date(dataString);
+            return data.toLocaleDateString('pt-BR');
+        }
+
+        function formatarDataHora(dataString) {
+            if (!dataString) return '-';
+            const data = new Date(dataString);
+            return data.toLocaleDateString('pt-BR') + ' ' + data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function verPermissoes(codigoUsuario, nomeUsuario, perfilUsuario) {
+            // Redirecionar para p\u00e1gina de permiss\u00f5es
+            window.location.href = `permissoes-usuario.html?codigo=${codigoUsuario}&nome=${encodeURIComponent(nomeUsuario)}&perfil=${perfilUsuario}`;
+        }
+
+        // Fun\u00e7\u00e3o para exibir toast notifications
+        function showToast(mensagem, tipo = 'success') {
+            // Criar elemento do toast
+            const toast = document.createElement('div');
+            toast.style.position = 'fixed';
+            toast.style.top = '20px';
+            toast.style.right = '20px';
+            toast.style.padding = '1rem 1.5rem';
+            toast.style.borderRadius = '8px';
+            toast.style.color = '#fff';
+            toast.style.fontWeight = '600';
+            toast.style.zIndex = '10000';
+            toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+            toast.style.animation = 'slideIn 0.3s ease';
+            
+            if (tipo === 'success') {
+                toast.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                toast.innerHTML = '<i class="fas fa-check-circle"></i> ' + mensagem;
+            } else {
+                toast.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+                toast.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + mensagem;
+            }
+            
+            document.body.appendChild(toast);
+            
+            // Remover ap\u00f3s 3 segundos
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // Vari\u00e1veis globais para modals
+        let codigoBarbeiroAtual = null;
+
+        // ---- Modal Dia de Vencimento ----
+        function abrirModalDiaVencimento(codigo, nome, diaAtual) {
+            codigoBarbeiroAtual = codigo;
+            document.getElementById('nomeBarbeirodia').textContent = nome;
+            document.getElementById('diaVencimento').value = diaAtual || 1;
+            document.getElementById('modalDiaVencimento').style.display = 'flex';
+        }
+
+        function fecharModalDiaVencimento() {
+            document.getElementById('modalDiaVencimento').style.display = 'none';
+            codigoBarbeiroAtual = null;
+        }
+
+        async function salvarDiaVencimento() {
+            const dia = parseInt(document.getElementById('diaVencimento').value);
+            if (!dia || dia < 1 || dia > 31) {
+                showToast('Informe um dia entre 1 e 31.', 'error');
+                return;
+            }
+            try {
+                const response = await fetch('../../bancodedados/administrador/atualizar_dia_vencimento.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codigo_barbeiro: codigoBarbeiroAtual, dia_vencimento: dia })
+                });
+                const data = await response.json();
+                if (data.sucesso) {
+                    showToast(data.mensagem, 'success');
+                    fecharModalDiaVencimento();
+                    carregarDados();
+                } else {
+                    showToast(data.mensagem, 'error');
+                }
+            } catch (error) {
+                showToast('Erro ao salvar dia de vencimento.', 'error');
+            }
+        }
+
+        // ---- Modal Isen\u00e7\u00e3o ----
+        let _isencaoCodigo = null, _isencaoNome = null, _isencaoNovo = false;
+
+        function toggleIsencao(codigo, nome, isentoAtual) {
+            _isencaoCodigo = codigo;
+            _isencaoNome   = nome;
+            _isencaoNovo   = !isentoAtual;
+
+            const remover = isentoAtual;
+            document.getElementById('modalIsencaoTitulo').textContent  = remover ? 'Remover Isen\u00e7\u00e3o' : 'Isentar Pagamento';
+            document.getElementById('modalIsencaoIcone').className      = remover ? 'fas fa-ban' : 'fas fa-star';
+            document.getElementById('modalIsencaoIcone').style.color    = remover ? '#ef4444' : '#2dd4bf';
+            document.getElementById('modalIsencaoNome').textContent     = nome;
+            document.getElementById('modalIsencaoMensagem').textContent = remover
+                ? `Tem certeza que deseja remover a isen\u00e7\u00e3o de pagamento de ${nome}? O plano voltar\u00e1 a ser cobrado normalmente.`
+                : `Tem certeza que deseja isentar ${nome} do pagamento? Essa pessoa n\u00e3o precisar\u00e1 pagar a mensalidade.`;
+
+            const btnConfirmar = document.getElementById('btnConfirmarIsencao');
+            if (remover) {
+                btnConfirmar.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
+                btnConfirmar.innerHTML = '<i class="fas fa-ban"></i> Remover Isen\u00e7\u00e3o';
+            } else {
+                btnConfirmar.style.background = 'linear-gradient(135deg,#2dd4bf,#0d9488)';
+                btnConfirmar.innerHTML = '<i class="fas fa-star"></i> Isentar Pagamento';
+            }
+
+            document.getElementById('modalIsencao').style.display = 'flex';
+        }
+
+        function fecharModalIsencao() {
+            document.getElementById('modalIsencao').style.display = 'none';
+            _isencaoCodigo = null;
+        }
+
+        async function confirmarIsencao() {
+            const codigoIsencao = _isencaoCodigo;
+            const isencaoNovo = _isencaoNovo;
+            fecharModalIsencao();
+            try {
+                const response = await fetch('../../bancodedados/administrador/atualizar_isencao.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codigo_barbeiro: codigoIsencao, isento_pagamento: isencaoNovo })
+                });
+                const data = await response.json();
+                if (data.sucesso) {
+                    showToast(data.mensagem, 'success');
+                    carregarDados();
+                } else {
+                    showToast(data.mensagem, 'error');
+                }
+            } catch (error) {
+                showToast('Erro ao atualizar isen\u00e7\u00e3o.', 'error');
+            }
+        }
+
+        // ---- Modal Embaixador ----
+        let _embCodigo = null, _embNome = null, _embAcao = null;
+
+        function toggleEmbaixador(codigo, nome, ehEmbaixadorAtual) {
+            _embCodigo = codigo;
+            _embNome   = nome;
+            _embAcao   = ehEmbaixadorAtual ? 'rebaixar' : 'promover';
+
+            const promover = !ehEmbaixadorAtual;
+            document.getElementById('modalEmbaixadorTitulo').textContent = promover ? 'Tornar Embaixador(a)' : 'Remover Embaixador';
+            document.getElementById('modalEmbaixadorIcone').className    = 'fas fa-star';
+            document.getElementById('modalEmbaixadorIcone').style.color  = promover ? '#d4a574' : '#ef4444';
+            document.getElementById('modalEmbaixadorNome').textContent   = nome;
+
+            const msgEl = document.getElementById('modalEmbaixadorMensagem');
+            const infoEl = document.getElementById('modalEmbaixadorInfo');
+            if (promover) {
+                msgEl.textContent = `Deseja tornar ${nome} um(a) Embaixador(a) da MustaBarber?`;
+                infoEl.style.display = 'flex';
+            } else {
+                msgEl.textContent = `Deseja remover o status de Embaixador(a) de ${nome}? O link de indica\u00e7\u00e3o ser\u00e1 desativado.`;
+                infoEl.style.display = 'none';
+            }
+
+            const btnConfirmar = document.getElementById('btnConfirmarEmbaixador');
+            if (promover) {
+                btnConfirmar.style.background = 'linear-gradient(135deg,#d4a574,#b8843d)';
+                btnConfirmar.innerHTML = '<i class="fas fa-star"></i> Confirmar';
+            } else {
+                btnConfirmar.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
+                btnConfirmar.innerHTML = '<i class="fas fa-user-times"></i> Remover';
+            }
+
+            document.getElementById('modalEmbaixador').style.display = 'flex';
+        }
+
+        function fecharModalEmbaixador() {
+            document.getElementById('modalEmbaixador').style.display = 'none';
+            _embCodigo = null;
+        }
+
+        async function confirmarEmbaixador() {
+            const embCodigo = _embCodigo;
+            const embAcao = _embAcao;
+            fecharModalEmbaixador();
+            try {
+                const response = await fetch('../../bancodedados/embaixadores/gerenciar_embaixador.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codigo_usuario: embCodigo, acao: embAcao })
+                });
+                const data = await response.json();
+                if (data.sucesso) {
+                    showToast(data.mensagem, 'success');
+                    carregarDados();
+                } else {
+                    showToast(data.mensagem || 'Erro ao atualizar embaixador.', 'error');
+                }
+            } catch (error) {
+                showToast('Erro ao atualizar embaixador.', 'error');
+            }
+        }
+    </script>
+
+    <!-- Modal Isen&ccedil;&atilde;o de Pagamento -->
+    <div id="modalIsencao" class="modal">
+        <div class="modal-content" style="max-width:420px">
+            <div class="modal-header">
+                <h3>
+                    <i id="modalIsencaoIcone" class="fas fa-star" style="margin-right:0.5rem"></i>
+                    <span id="modalIsencaoTitulo">Isentar Pagamento</span>
+                </h3>
+                <button class="modal-close" onclick="fecharModalIsencao()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="display:flex;align-items:center;gap:0.75rem;padding:0.85rem 1rem;background:rgba(255,255,255,0.05);border-radius:10px;margin-bottom:1.25rem;border:1px solid rgba(255,255,255,0.08)">
+                    <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#4a4a4a,#1f1f1f);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;flex-shrink:0">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:0.7rem;color:rgba(232,232,232,0.55);text-transform:uppercase;letter-spacing:0.05em">Usu&aacute;rio</div>
+                        <div id="modalIsencaoNome" style="font-weight:600;font-size:0.95rem"></div>
+                    </div>
+                </div>
+                <p id="modalIsencaoMensagem" style="color:rgba(232,232,232,0.82);font-size:0.875rem;line-height:1.6"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="fecharModalIsencao()">Cancelar</button>
+                <button id="btnConfirmarIsencao" onclick="confirmarIsencao()" style="padding:0.75rem 1.5rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;color:#fff;transition:all 0.3s">
+                    <i class="fas fa-star"></i> Isentar Pagamento
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Embaixador -->
+    <div id="modalEmbaixador" class="modal">
+        <div class="modal-content" style="max-width:440px">
+            <div class="modal-header">
+                <h3>
+                    <i id="modalEmbaixadorIcone" class="fas fa-star" style="color:#d4a574;margin-right:0.5rem"></i>
+                    <span id="modalEmbaixadorTitulo">Tornar Embaixador(a)</span>
+                </h3>
+                <button class="modal-close" onclick="fecharModalEmbaixador()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="display:flex;align-items:center;gap:0.75rem;padding:0.85rem 1rem;background:rgba(255,255,255,0.05);border-radius:10px;margin-bottom:1.25rem;border:1px solid rgba(255,255,255,0.08)">
+                    <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#4a4a4a,#1f1f1f);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;flex-shrink:0">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <div style="font-size:0.7rem;color:rgba(232,232,232,0.55);text-transform:uppercase;letter-spacing:0.05em">Usu&aacute;rio</div>
+                        <div id="modalEmbaixadorNome" style="font-weight:600;font-size:0.95rem"></div>
+                    </div>
+                </div>
+                <p id="modalEmbaixadorMensagem" style="color:rgba(232,232,232,0.82);font-size:0.875rem;line-height:1.6;margin-bottom:1rem"></p>
+                <div id="modalEmbaixadorInfo" style="display:flex;flex-direction:column;gap:0.5rem;padding:0.9rem 1rem;background:rgba(212,165,116,0.08);border:1px solid rgba(212,165,116,0.22);border-radius:10px">
+                    <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.82rem;color:rgba(232,232,232,0.8)">
+                        <i class="fas fa-link" style="color:#d4a574;width:16px"></i>
+                        Receber&aacute; um link exclusivo de indica&ccedil;&atilde;o
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.82rem;color:rgba(232,232,232,0.8)">
+                        <i class="fas fa-percent" style="color:#d4a574;width:16px"></i>
+                        15% de comiss&atilde;o sobre assinaturas indicadas
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.6rem;font-size:0.82rem;color:rgba(232,232,232,0.8)">
+                        <i class="fas fa-star" style="color:#d4a574;width:16px"></i>
+                        Badge de Embaixador(a) no perfil
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="fecharModalEmbaixador()">Cancelar</button>
+                <button id="btnConfirmarEmbaixador" onclick="confirmarEmbaixador()" style="padding:0.75rem 1.5rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;color:#fff;transition:all 0.3s">
+                    <i class="fas fa-star"></i> Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Dia de Vencimento / Renova&ccedil;&atilde;o -->
+    <div id="modalDiaVencimento" class="modal">
+        <div class="modal-content" style="max-width:400px">
+            <div class="modal-header">
+                <h3><i class="fas fa-redo-alt" style="color:#a78bfa;margin-right:0.5rem"></i>Dia de Renova&ccedil;&atilde;o</h3>
+                <button class="modal-close" onclick="fecharModalDiaVencimento()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-info">
+                    <i class="fas fa-user"></i>
+                    <strong id="nomeBarbeirodia"></strong>
+                </p>
+                <div class="modal-warning">
+                    <i class="fas fa-info-circle"></i>
+                    Define em qual <strong>dia do m&ecirc;s</strong> o plano ser&aacute; renovado automaticamente.
+                    Valores aceitos: 1 a 31.
+                </div>
+                <div class="form-group">
+                    <label for="diaVencimento">
+                        <i class="fas fa-redo-alt"></i>
+                        Dia do M&ecirc;s (1 a 31) *
+                    </label>
+                    <select id="diaVencimento" class="form-control">
+                        <option value="">Selecione o dia...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="fecharModalDiaVencimento()">Cancelar</button>
+                <button class="btn-confirm" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)" onclick="salvarDiaVencimento()">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Preencher select de dias (1-31)
+        (function() {
+            const select = document.getElementById('diaVencimento');
+            for (let d = 1; d <= 31; d++) {
+                const opt = document.createElement('option');
+                opt.value = d;
+                opt.textContent = 'Dia ' + d;
+                select.appendChild(opt);
+            }
+        })();
+
+        // Aplicar tema salvo ao carregar p\u00e1gina
+        (function() {
+            const temaSalvo = localStorage.getItem('tema');
+            if (temaSalvo === 'claro') {
+                document.body.classList.add('tema-claro');
+            }
+        })();
+    </script>
+</body>
+</html>

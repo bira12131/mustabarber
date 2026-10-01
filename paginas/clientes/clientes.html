@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#141414">
+    <title>Gest&atilde;o de Clientes - MustaBarber</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="../tema-claro.css" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1a1a1a;
+            color: #e8e8e8;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 10px 12px;
+        }
+
+        /* Barra de ações */
+        .actions-bar {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Botões base */
+        .btn {
+            padding: 0.7rem 1.25rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2a2a38, #1a1a26);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.14);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #3a3a50, #2a2a38);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(40, 40, 55, 0.8);
+            color: #e8e8e8;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .btn-secondary:hover { background: rgba(55,55,75,0.9); color: #fff; }
+
+        .btn-success {
+            background: linear-gradient(135deg, #25d366, #1ea952);
+            color: #fff;
+            border: none;
+        }
+
+        /* Filtros */
+        .filters-section {
+            background: rgba(25, 25, 32, 0.9);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+        }
+
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding: 0.75rem 1rem;
+        }
+
+        .filters-header h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #bbb;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filters-toggle {
+            font-size: 0.9rem;
+            color: #888;
+            transition: transform 0.25s;
+        }
+        .filters-toggle.active { transform: rotate(180deg); }
+
+        .filters-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .filters-content.show { max-height: 200px; }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            padding: 0 1rem 1rem;
+        }
+
+        .filter-group { display: flex; flex-direction: column; gap: 0.35rem; }
+
+        .filter-group label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .filter-group input {
+            padding: 0.6rem 0.875rem;
+            background: rgba(30, 30, 40, 0.8);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 9px;
+            color: #e8e8e8;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .filter-group input:focus {
+            outline: none;
+            border-color: rgba(99,102,241,0.5);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+        }
+        .filter-group input::placeholder { color: #555; }
+
+        /* Grid de clientes */
+        .clients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Card horizontal compacto */
+        .client-card {
+            background: rgba(25, 25, 32, 0.9);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .client-card:hover {
+            border-color: rgba(255,255,255,0.16);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+            transform: translateY(-2px);
+        }
+
+        .client-card-top {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.875rem;
+        }
+
+        .client-avatar {
+            width: 52px;
+            height: 52px;
+            min-width: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3a3a4a, #2a2a38);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #e8e8e8;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .client-info { flex: 1; min-width: 0; }
+
+        .client-name {
+            font-size: 0.975rem;
+            font-weight: 700;
+            color: #f0f0f0;
+            margin-bottom: 0.2rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .client-phone {
+            font-size: 0.825rem;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Stats bar inferior do card */
+        .client-stats {
+            background: rgba(255,255,255,0.04);
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding: 0.6rem 0.875rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .client-stats-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .client-stats-icon {
+            font-size: 0.95rem;
+            color: #888;
+        }
+
+        .client-stats-content { text-align: left; }
+
+        .client-stats-label {
+            font-size: 0.68rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .client-stats-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #e8e8e8;
+            line-height: 1.2;
+        }
+
+        .btn-whatsapp {
+            background: #25d366;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(37,211,102,0.25);
+        }
+        .btn-whatsapp:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 14px rgba(37,211,102,0.45);
+        }
+
+        /* Botão de bloqueio */
+        .btn-bloquear {
+            background: rgba(107,114,128,0.18);
+            color: #9ca3af;
+            border: 1px solid rgba(107,114,128,0.28);
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            min-width: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        .btn-bloquear:hover {
+            background: rgba(239,68,68,0.15);
+            color: #f87171;
+            border-color: rgba(239,68,68,0.4);
+            transform: scale(1.1);
+        }
+        .btn-bloquear.bloqueado {
+            background: rgba(239,68,68,0.15);
+            color: #f87171;
+            border-color: rgba(239,68,68,0.4);
+        }
+
+        /* Card bloqueado */
+        .client-card.bloqueado {
+            border-color: rgba(239,68,68,0.3);
+        }
+        .client-card.bloqueado .client-card-top {
+            opacity: 0.8;
+        }
+        .bloqueado-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.22rem;
+            background: rgba(239,68,68,0.12);
+            color: #f87171;
+            border: 1px solid rgba(239,68,68,0.28);
+            border-radius: 20px;
+            font-size: 0.63rem;
+            font-weight: 700;
+            padding: 0.12rem 0.45rem;
+            margin-left: 0.4rem;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2.5rem;
+            color: #888;
+        }
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 0.75rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Empty state */
+        .empty-state {
+            background: rgba(25,25,32,0.8);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+        .empty-state-icon {
+            font-size: 2.75rem;
+            color: rgba(255,255,255,0.18);
+            margin-bottom: 0.75rem;
+        }
+        .empty-state-text {
+            font-size: 0.975rem;
+            color: #bbb;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Modais */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.show {
+            display: flex;
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal {
+            background: rgba(25,25,32,0.98);
+            border-radius: 16px;
+            padding: 1.75rem;
+            max-width: 460px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            animation: slideUp 0.25s ease-out;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #e8e8e8;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 0.25rem;
+        }
+        .modal-close:hover { color: #ef4444; }
+
+        .modal-body { margin-bottom: 1.25rem; }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 0.4rem;
+        }
+        .form-group input, .whatsapp-textarea {
+            width: 100%;
+            padding: 0.65rem 0.875rem;
+            background: rgba(30,30,40,0.9);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px;
+            color: #e8e8e8;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+        .form-group input:focus, .whatsapp-textarea:focus {
+            outline: none;
+            border-color: rgba(99,102,241,0.5);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+        }
+        .form-group input::placeholder, .whatsapp-textarea::placeholder { color: #444; }
+
+        .whatsapp-textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+        .whatsapp-textarea:focus {
+            border-color: rgba(37,211,102,0.5);
+            box-shadow: 0 0 0 3px rgba(37,211,102,0.1);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+
+        /* Modal de Notificação */
+        .notification-modal {
+            background: rgba(25,25,32,0.98);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 1.75rem;
+            max-width: 380px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            animation: slideUp 0.25s ease-out;
+        }
+        .notification-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+        .notification-icon.success { background: rgba(16,185,129,0.15); color: #10b981; }
+        .notification-icon.error   { background: rgba(239,68,68,0.15);   color: #ef4444; }
+        .notification-icon.warning { background: rgba(245,158,11,0.15);  color: #f59e0b; }
+        .notification-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #e8e8e8;
+            text-align: center;
+            margin-bottom: 0.625rem;
+        }
+        .notification-message {
+            font-size: 0.875rem;
+            color: #aaa;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        .notification-buttons {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        /* ========== MOBILE ========== */
+        @media (max-width: 768px) {
+            body { overflow-x: hidden; }
+            .container { padding: 8px 8px; }
+
+            .actions-bar { margin-bottom: 0.625rem; }
+
+            .filters-section { border-radius: 12px; margin-bottom: 0.625rem; }
+            .filters-header { padding: 0.75rem 0.875rem; }
+            .filters-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+                padding: 0 0.875rem 0.875rem;
+            }
+
+            /* Cards 1 coluna, layout horizontal compacto */
+            .clients-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .client-card { border-radius: 12px; }
+
+            .client-card-top {
+                padding: 0.75rem 0.875rem;
+                gap: 0.75rem;
+            }
+
+            .client-avatar {
+                width: 46px;
+                height: 46px;
+                min-width: 46px;
+                font-size: 1.1rem;
+            }
+
+            .client-name { font-size: 0.9rem; }
+            .client-phone { font-size: 0.78rem; }
+
+            .client-stats {
+                padding: 0.5rem 0.875rem;
+            }
+
+            .client-stats-value { font-size: 0.9rem; }
+            .client-stats-label { font-size: 0.65rem; }
+
+            .btn-whatsapp {
+                width: 36px;
+                height: 36px;
+                min-width: 36px;
+                font-size: 0.95rem;
+            }
+
+            .btn-bloquear {
+                width: 36px;
+                height: 36px;
+                min-width: 36px;
+                font-size: 0.85rem;
+            }
+
+            /* Botão Novo Cliente full width */
+            .btn-primary {
+                width: 100%;
+                justify-content: center;
+                padding: 0.75rem;
+            }
+
+            /* Modais bottom-sheet */
+            .modal-overlay { align-items: flex-end; padding: 0; }
+
+            .modal {
+                max-width: 100%;
+                width: 100%;
+                border-radius: 20px 20px 0 0;
+                padding: 1.5rem 1rem 2rem;
+                animation: slideUpModal 0.3s ease;
+                position: relative;
+            }
+            .modal::before {
+                content: '';
+                position: absolute;
+                top: 8px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 36px;
+                height: 4px;
+                background: rgba(255,255,255,0.18);
+                border-radius: 2px;
+            }
+            @keyframes slideUpModal {
+                from { transform: translateY(100%); }
+                to   { transform: translateY(0); }
+            }
+
+            .modal-footer {
+                flex-direction: column-reverse;
+                gap: 0.5rem;
+            }
+            .modal-footer .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .notification-modal {
+                max-width: 100%;
+                width: 100%;
+                border-radius: 20px 20px 0 0;
+                padding: 1.5rem 1rem 2rem;
+                animation: slideUpModal 0.3s ease;
+            }
+            .notification-buttons {
+                flex-direction: column;
+            }
+            .notification-buttons .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .clients-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.875rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="actions-bar">
+            <button class="btn btn-primary" onclick="abrirModalCadastro()">
+                <i class="fas fa-user-plus"></i> Novo Cliente
+            </button>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters-section">
+            <div class="filters-header" onclick="toggleFilters()">
+                <h3>
+                    <i class="fas fa-filter"></i>
+                    Filtros
+                </h3>
+                <i class="fas fa-chevron-down filters-toggle" id="filtersToggle"></i>
+            </div>
+            <div class="filters-content" id="filtersContent">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="searchInputNome">Nome do Cliente</label>
+                        <input type="text" id="searchInputNome" placeholder="Digite o nome..." onkeyup="filtrarClientes()">
+                    </div>
+                    <div class="filter-group">
+                        <label for="searchInputTelefone">N&uacute;mero de Telefone</label>
+                        <input type="text" id="searchInputTelefone" placeholder="Digite o n&uacute;mero..." onkeyup="filtrarClientes()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>Carregando clientes...</p>
+        </div>
+
+        <!-- Grid de Clientes -->
+        <div class="clients-grid" id="clientsGrid" style="display: none;">
+            <!-- Os cards dos clientes ser&#65533;o inseridos aqui via JavaScript -->
+        </div>
+
+        <!-- Estado Vazio -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-state-icon">
+                <i class="fas fa-users-slash"></i>
+            </div>
+            <p class="empty-state-text">Nenhum cliente encontrado</p>
+            <p style="color: #a8a19a; font-size: 0.875rem;">
+                Os clientes aparcer&atilde;o aqui automaticamente quando realizarem agendamentos.
+            </p>
+        </div>
+    </div>
+
+    <!-- Modal de Cadastro de Cliente -->
+    <div class="modal-overlay" id="modalCadastro">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Novo Cliente</h2>
+                <button class="modal-close" onclick="fecharModalCadastro()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formCliente">
+                    <div class="form-group">
+                        <label for="nomeCliente">Nome do Cliente *</label>
+                        <input type="text" id="nomeCliente" placeholder="Digite o nome completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefoneCliente">N&uacute;mero de Telefone *</label>
+                        <input type="tel" id="telefoneCliente" placeholder="(00) 00000-0000" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="fecharModalCadastro()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn btn-primary" onclick="salvarCliente()">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Mensagem WhatsApp -->
+    <div class="modal-overlay" id="modalWhatsapp">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fab fa-whatsapp" style="color: #25d366;"></i>
+                    Enviar Mensagem
+                </h2>
+                <button class="modal-close" onclick="fecharModalWhatsapp()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="whatsappDestino">Para</label>
+                    <input type="text" id="whatsappDestino" readonly style="background: rgba(30,30,40,0.6); color: #aaa;">
+                </div>
+                <div class="form-group">
+                    <label for="whatsappMensagem">Mensagem</label>
+                    <textarea class="whatsapp-textarea" id="whatsappMensagem" placeholder="Digite sua mensagem..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="fecharModalWhatsapp()">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+                <button class="btn btn-primary" onclick="enviarWhatsapp()" style="background: linear-gradient(135deg, #25d366, #1ea952);">
+                    <i class="fab fa-whatsapp"></i> Enviar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Notifica&ccedil;&atilde;o Personalizado -->
+    <div class="modal-overlay" id="notificationOverlay">
+        <div class="notification-modal" id="notificationModal">
+            <div class="notification-icon" id="notificationIcon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h3 class="notification-title" id="notificationTitle">Sucesso</h3>
+            <p class="notification-message" id="notificationMessage">Opera??o realizada com sucesso!</p>
+            <div class="notification-buttons" id="notificationButtons">
+                <button class="btn btn-primary" onclick="fecharNotificacao()">
+                    <i class="fas fa-check"></i> OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let clientesData = [];
+        let clienteSelecionado = null;
+
+        // Sistema de Notifica??es
+        function mostrarNotificacao(tipo, titulo, mensagem, onConfirm = null) {
+            const overlay = document.getElementById('notificationOverlay');
+            const modal = document.getElementById('notificationModal');
+            const icon = document.getElementById('notificationIcon');
+            const titleEl = document.getElementById('notificationTitle');
+            const messageEl = document.getElementById('notificationMessage');
+            const buttonsEl = document.getElementById('notificationButtons');
+
+            // Configurar ?cone
+            icon.className = 'notification-icon ' + tipo;
+            if (tipo === 'success') {
+                icon.innerHTML = '<i class="fas fa-check"></i>';
+            } else if (tipo === 'error') {
+                icon.innerHTML = '<i class="fas fa-times"></i>';
+            } else if (tipo === 'warning') {
+                icon.innerHTML = '<i class="fas fa-exclamation"></i>';
+            }
+
+            // Configurar textos
+            titleEl.textContent = titulo;
+            messageEl.textContent = mensagem;
+
+            // Configurar bot?es
+            if (onConfirm) {
+                buttonsEl.innerHTML = `
+                    <button class="btn btn-secondary" onclick="fecharNotificacao()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button class="btn btn-primary" onclick="confirmarNotificacao()">
+                        <i class="fas fa-check"></i> Confirmar
+                    </button>
+                `;
+                window.notificationCallback = onConfirm;
+            } else {
+                buttonsEl.innerHTML = `
+                    <button class="btn btn-primary" onclick="fecharNotificacao()">
+                        <i class="fas fa-check"></i> OK
+                    </button>
+                `;
+            }
+
+            // Mostrar modal
+            overlay.classList.add('show');
+            modal.classList.add('show');
+        }
+
+        function fecharNotificacao() {
+            const overlay = document.getElementById('notificationOverlay');
+            const modal = document.getElementById('notificationModal');
+            overlay.classList.remove('show');
+            modal.classList.remove('show');
+            window.notificationCallback = null;
+        }
+
+        function confirmarNotificacao() {
+            if (window.notificationCallback) {
+                window.notificationCallback();
+            }
+            fecharNotificacao();
+        }
+
+        // Verificar sess&#65533;o e carregar clientes ao abrir a p&#65533;gina
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar se h&#65533; usu&#65533;rio logado (via parent frame)
+            if (window.parent && window.parent.usuarioLogado) {
+                console.log('Usu&#65533;rio logado na tela de clientes:', window.parent.usuarioLogado);
+                carregarClientes();
+            } else {
+                console.log('Carregando clientes...');
+                carregarClientes();
+            }
+        });
+
+        // Toggle dos filtros
+        function toggleFilters() {
+            const content = document.getElementById('filtersContent');
+            const toggle = document.getElementById('filtersToggle');
+            
+            content.classList.toggle('show');
+            toggle.classList.toggle('active');
+        }
+
+        // M&#65533;scara de telefone
+        document.addEventListener('DOMContentLoaded', function() {
+            const telefoneInput = document.getElementById('telefoneCliente');
+            telefoneInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                if (value.length <= 11) {
+                    if (value.length <= 10) {
+                        value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+                    } else {
+                        value = value.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+                    }
+                }
+                
+                e.target.value = value;
+            });
+        });
+
+        // Abrir modal de cadastro
+        function abrirModalCadastro() {
+            document.getElementById('modalCadastro').classList.add('show');
+            document.getElementById('nomeCliente').value = '';
+            document.getElementById('telefoneCliente').value = '';
+        }
+
+        // Fechar modal de cadastro
+        function fecharModalCadastro() {
+            document.getElementById('modalCadastro').classList.remove('show');
+        }
+
+        // Salvar cliente
+        async function salvarCliente() {
+            const nome = document.getElementById('nomeCliente').value.trim();
+            const telefone = document.getElementById('telefoneCliente').value.trim();
+
+            if (!nome || !telefone) {
+                mostrarNotificacao('warning', 'Aten&#65533;&#65533;o', 'Por favor, preencha todos os campos obrigat&#65533;rios!');
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('nome', nome);
+                formData.append('telefone', telefone);
+
+                const response = await fetch('../../bancodedados/clientes/cadastro_cliente.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                // Verificar se usu&#65533;rio n&#65533;o est&#65533; autenticado
+                if (!result.sucesso && result.mensagem && result.mensagem.includes('autenticado')) {
+                    fecharModalCadastro();
+                    mostrarNotificacao('error', 'Sess&#65533;o Expirada', 'Por favor, fa&#65533;a login novamente.');
+                    setTimeout(() => {
+                        if (window.parent) {
+                            window.parent.location.href = '../../login.html';
+                        } else {
+                            window.location.href = '../../login.html';
+                        }
+                    }, 2000);
+                    return;
+                }
+
+                if (result.sucesso) {
+                    fecharModalCadastro();
+                    mostrarNotificacao('success', 'Sucesso', 'Cliente cadastrado com sucesso!');
+                    carregarClientes();
+                } else {
+                    mostrarNotificacao('error', 'Erro', result.mensagem);
+                }
+            } catch (error) {
+                console.error('Erro ao salvar cliente:', error);
+                mostrarNotificacao('error', 'Erro', 'Erro ao salvar cliente. Tente novamente.');
+            }
+        }
+
+        // Fun&#65533;&#65533;o para carregar clientes
+        async function carregarClientes() {
+            const loading = document.getElementById('loading');
+            const grid = document.getElementById('clientsGrid');
+            const emptyState = document.getElementById('emptyState');
+
+            loading.style.display = 'block';
+            grid.style.display = 'none';
+            emptyState.style.display = 'none';
+
+            try {
+                const response = await fetch('../../bancodedados/clientes/listar_clientes.php');
+                const result = await response.json();
+
+                loading.style.display = 'none';
+
+                // Verificar se usu&#65533;rio n&#65533;o est&#65533; autenticado
+                if (!result.sucesso && result.mensagem && result.mensagem.includes('autenticado')) {
+                    mostrarNotificacao('error', 'Sess&#65533;o Expirada', 'Por favor, fa&#65533;a login novamente.');
+                    setTimeout(() => {
+                        if (window.parent) {
+                            window.parent.location.href = '../../login.html';
+                        } else {
+                            window.location.href = '../../login.html';
+                        }
+                    }, 2000);
+                    return;
+                }
+
+                if (result.sucesso && result.clientes.length > 0) {
+                    clientesData = result.clientes;
+                    renderizarClientes(clientesData);
+                    grid.style.display = 'grid';
+                } else {
+                    emptyState.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar clientes:', error);
+                loading.style.display = 'none';
+                emptyState.style.display = 'block';
+            }
+        }
+
+        // Fun&#65533;&#65533;o para renderizar clientes
+        function renderizarClientes(clientes) {
+            const grid = document.getElementById('clientsGrid');
+            grid.innerHTML = '';
+
+            clientes.forEach(cliente => {
+                const iniciais = obterIniciais(cliente.nome);
+                const telefoneFormatado = formatarTelefone(cliente.telefone);
+                const totalAgendamentos = 0;
+                const bloqueado = cliente.bloqueado === true || cliente.bloqueado === 1;
+
+                const assinanteBadge = cliente.is_assinante
+                    ? '<span style="background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.3);border-radius:20px;font-size:.65rem;font-weight:700;padding:.12rem .45rem;margin-left:.4rem;display:inline-flex;align-items:center;gap:.22rem"><i class=\'fas fa-crown\'></i> Assinante</span>'
+                    : '<span style="background:rgba(107,114,128,.12);color:#9ca3af;border:1px solid rgba(107,114,128,.2);border-radius:20px;font-size:.65rem;font-weight:600;padding:.12rem .45rem;margin-left:.4rem;display:inline-flex;align-items:center;gap:.22rem"><i class=\'fas fa-user\'></i> Não assinante</span>';
+
+                const bloqueadoBadge = bloqueado
+                    ? '<span class="bloqueado-badge"><i class="fas fa-ban"></i> Bloqueado</span>'
+                    : '';
+
+                const card = document.createElement('div');
+                card.className = 'client-card' + (bloqueado ? ' bloqueado' : '');
+                card.dataset.codigo = cliente.codigo;
+                card.dataset.bloqueado = bloqueado ? '1' : '0';
+                card.innerHTML = `
+                    <div class="client-card-top">
+                        <div class="client-avatar">${iniciais}</div>
+                        <div class="client-info">
+                            <div class="client-name">
+                                ${cliente.nome}
+                                ${assinanteBadge}
+                                ${bloqueadoBadge}
+                            </div>
+                            <div class="client-phone">
+                                <i class="fas fa-phone"></i>
+                                ${telefoneFormatado}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="client-stats">
+                        <div class="client-stats-info">
+                            <div class="client-stats-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="client-stats-content">
+                                <div class="client-stats-label">Agendamentos</div>
+                                <div class="client-stats-value">${totalAgendamentos}</div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:0.5rem;align-items:center;">
+                            <button class="btn-bloquear${bloqueado ? ' bloqueado' : ''}"
+                                    onclick="confirmarBloqueio(${cliente.codigo}, ${bloqueado})"
+                                    title="${bloqueado ? 'Desbloquear cliente' : 'Bloquear cliente'}">
+                                <i class="fas ${bloqueado ? 'fa-lock-open' : 'fa-ban'}"></i>
+                            </button>
+                            <button class="btn-whatsapp" onclick="abrirModalWhatsapp('${cliente.nome}', '${cliente.telefone}')" title="Enviar mensagem">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Fun&#65533;&#65533;o para obter iniciais do nome
+        function obterIniciais(nome) {
+            const partes = nome.trim().split(' ');
+            if (partes.length >= 2) {
+                return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+            }
+            return partes[0][0].toUpperCase();
+        }
+
+        // Fun&#65533;&#65533;o para formatar telefone
+        function formatarTelefone(telefone) {
+            if (!telefone) return 'Sem telefone';
+            
+            // Remove tudo que n&#65533;o &#65533; n&#65533;mero
+            const numeros = telefone.replace(/\D/g, '');
+            
+            // Formata (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
+            if (numeros.length === 11) {
+                return `(${numeros.substring(0, 2)}) ${numeros.substring(2, 7)}-${numeros.substring(7)}`;
+            } else if (numeros.length === 10) {
+                return `(${numeros.substring(0, 2)}) ${numeros.substring(2, 6)}-${numeros.substring(6)}`;
+            }
+            
+            return telefone;
+        }
+
+        // Fun&#65533;&#65533;o para filtrar clientes
+        function filtrarClientes() {
+            const searchNome = document.getElementById('searchInputNome').value.toLowerCase();
+            const searchTelefone = document.getElementById('searchInputTelefone').value.replace(/\D/g, '');
+            
+            if (searchNome === '' && searchTelefone === '') {
+                renderizarClientes(clientesData);
+                return;
+            }
+
+            const clientesFiltrados = clientesData.filter(cliente => {
+                const nome = cliente.nome.toLowerCase();
+                const telefone = cliente.telefone ? cliente.telefone.replace(/\D/g, '') : '';
+                
+                const matchNome = searchNome === '' || nome.includes(searchNome);
+                const matchTelefone = searchTelefone === '' || telefone.includes(searchTelefone);
+                
+                return matchNome && matchTelefone;
+            });
+
+            if (clientesFiltrados.length > 0) {
+                renderizarClientes(clientesFiltrados);
+                document.getElementById('clientsGrid').style.display = 'grid';
+                document.getElementById('emptyState').style.display = 'none';
+            } else {
+                document.getElementById('clientsGrid').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+            }
+        }
+
+        // Fun??es do WhatsApp
+        function abrirModalWhatsapp(nome, telefone) {
+            clienteSelecionado = { nome, telefone };
+            document.getElementById('whatsappDestino').value = `${nome} - ${formatarTelefone(telefone)}`;
+            document.getElementById('whatsappMensagem').value = '';
+            
+            // Resetar estado do bot&#65533;o de envio
+            const btnEnviar = document.querySelector('#modalWhatsapp .btn-primary');
+            btnEnviar.disabled = false;
+            btnEnviar.innerHTML = '<i class="fab fa-whatsapp"></i> Enviar';
+            
+            document.getElementById('modalWhatsapp').classList.add('show');
+        }
+
+        function fecharModalWhatsapp() {
+            document.getElementById('modalWhatsapp').classList.remove('show');
+            clienteSelecionado = null;
+        }
+
+        async function enviarWhatsapp() {
+            const mensagem = document.getElementById('whatsappMensagem').value.trim();
+            
+            if (!mensagem) {
+                mostrarNotificacao('warning', 'Aten??o', 'Por favor, digite uma mensagem!');
+                return;
+            }
+
+            if (!clienteSelecionado) {
+                mostrarNotificacao('error', 'Erro', 'Erro ao identificar o cliente!');
+                return;
+            }
+
+            // Capturar refer&#65533;ncia do bot&#65533;o antes do try
+            const btnEnviar = document.querySelector('#modalWhatsapp .btn-primary');
+            const textoOriginal = btnEnviar.innerHTML;
+
+            try {
+                // Desabilitar bot?o enquanto envia
+                btnEnviar.disabled = true;
+                btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+
+                // Preparar dados
+                const formData = new FormData();
+                formData.append('telefone', clienteSelecionado.telefone);
+                formData.append('mensagem', mensagem);
+
+                // Enviar para o backend
+                const response = await fetch('../../bancodedados/whatsapp/enviar_mensagem.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const resultado = await response.json();
+
+                if (resultado.sucesso) {
+                    // Reabilitar bot&#65533;o ANTES de fechar o modal
+                    btnEnviar.disabled = false;
+                    btnEnviar.innerHTML = textoOriginal;
+                    
+                    fecharModalWhatsapp();
+                    mostrarNotificacao('success', 'Mensagem Enviada', 'Sua mensagem foi enviada com sucesso via WhatsApp!');
+                } else {
+                    throw new Error(resultado.mensagem || 'Erro ao enviar mensagem');
+                }
+
+            } catch (error) {
+                console.error('Erro ao enviar WhatsApp:', error);
+                mostrarNotificacao('error', 'Erro no Envio', error.message);
+                
+                // Reabilitar bot?o
+                btnEnviar.disabled = false;
+                btnEnviar.innerHTML = textoOriginal;
+            }
+        }
+
+        // ── BLOQUEIO DE CLIENTE ──
+
+        function confirmarBloqueio(codCliente, bloqueadoAtual) {
+            const titulo  = bloqueadoAtual ? 'Desbloquear Cliente' : 'Bloquear Cliente';
+            const mensagem = bloqueadoAtual
+                ? 'Deseja desbloquear este cliente? Ele poderá realizar agendamentos novamente.'
+                : 'Deseja bloquear este cliente? Ele não poderá realizar novos agendamentos.';
+
+            mostrarNotificacao('warning', titulo, mensagem, () => {
+                toggleBloquearCliente(codCliente, bloqueadoAtual);
+            });
+        }
+
+        async function toggleBloquearCliente(codCliente, bloqueadoAtual) {
+            try {
+                const formData = new FormData();
+                formData.append('cod_cliente', codCliente);
+
+                const response = await fetch('../../bancodedados/clientes/bloquear_cliente.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.sucesso) {
+                    mostrarNotificacao(
+                        result.bloqueado ? 'warning' : 'success',
+                        result.bloqueado ? 'Cliente Bloqueado' : 'Cliente Desbloqueado',
+                        result.mensagem
+                    );
+                    // Atualiza o card na tela sem recarregar tudo
+                    atualizarCardBloqueio(codCliente, result.bloqueado);
+                } else {
+                    mostrarNotificacao('error', 'Erro', result.mensagem);
+                }
+            } catch (error) {
+                console.error('Erro ao bloquear/desbloquear cliente:', error);
+                mostrarNotificacao('error', 'Erro', 'Não foi possível alterar o bloqueio. Tente novamente.');
+            }
+        }
+
+        function atualizarCardBloqueio(codCliente, bloqueado) {
+            // Atualiza o array de dados em memória
+            const idx = clientesData.findIndex(c => c.codigo == codCliente);
+            if (idx !== -1) {
+                clientesData[idx].bloqueado = bloqueado;
+            }
+
+            // Atualiza o card no DOM
+            const card = document.querySelector(`.client-card[data-codigo="${codCliente}"]`);
+            if (!card) return;
+
+            card.dataset.bloqueado = bloqueado ? '1' : '0';
+            card.classList.toggle('bloqueado', bloqueado);
+
+            // Atualiza badge de bloqueado no nome
+            const clienteName = card.querySelector('.client-name');
+            const badgeExistente = clienteName.querySelector('.bloqueado-badge');
+            if (bloqueado && !badgeExistente) {
+                clienteName.insertAdjacentHTML('beforeend',
+                    '<span class="bloqueado-badge"><i class="fas fa-ban"></i> Bloqueado</span>');
+            } else if (!bloqueado && badgeExistente) {
+                badgeExistente.remove();
+            }
+
+            // Atualiza botão de bloqueio
+            const btnBloquear = card.querySelector('.btn-bloquear');
+            if (btnBloquear) {
+                btnBloquear.classList.toggle('bloqueado', bloqueado);
+                btnBloquear.title = bloqueado ? 'Desbloquear cliente' : 'Bloquear cliente';
+                btnBloquear.innerHTML = `<i class="fas ${bloqueado ? 'fa-lock-open' : 'fa-ban'}"></i>`;
+                btnBloquear.onclick = () => confirmarBloqueio(codCliente, bloqueado);
+            }
+        }
+    </script>
+    
+    <script>
+        // Aplicar tema salvo ao carregar p&#65533;gina
+        (function() {
+            const temaSalvo = localStorage.getItem('tema');
+            if (temaSalvo === 'claro') {
+                document.body.classList.add('tema-claro');
+            }
+        })();
+    </script>
+</body>
+</html>
+
+

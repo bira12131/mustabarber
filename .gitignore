@@ -1,0 +1,20 @@
+# Segredos e configuração local
+.env
+.env.*
+!.env.example
+*.local.php
+!*.local.example.php
+frete_token.local.php
+
+# Dados gerados em produção
+uploads/*
+!uploads/.gitkeep
+logs/
+erros/
+*.log
+phpinfo*.php
+
+# Sistema / dependências
+.DS_Store
+node_modules/
+vendor/

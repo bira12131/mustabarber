@@ -1,0 +1,2097 @@
+/* 
+ * Tema Claro - MustaBarber
+ * Sistema: MustaBarber
+ * Data: 11/12/2025
+ * 
+ * Este arquivo contém os estilos para o tema claro do sistema
+ */
+
+/* Tema Claro - Estilos Globais */
+body.tema-claro {
+    background: linear-gradient(135deg, #fdfcfb 0%, #f5f3f0 100%) !important;
+    color: #2d2520 !important;
+}
+
+/* Cards e Seções */
+body.tema-claro .container,
+body.tema-claro .financeiro-container,
+body.tema-claro .clientes-container {
+    background: transparent;
+}
+
+body.tema-claro .page-header,
+body.tema-claro .welcome-section,
+body.tema-claro .header-section {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.tema-claro .page-header h1,
+body.tema-claro .welcome-section h1,
+body.tema-claro .header-section h1 {
+    background: linear-gradient(135deg, #c4935b, #d4a574) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+body.tema-claro .page-header p,
+body.tema-claro .welcome-section p {
+    color: #6b5d52 !important;
+}
+
+/* Cards Gerais */
+body.tema-claro .summary-card,
+body.tema-claro .stat-card,
+body.tema-claro .client-card,
+body.tema-claro .action-card {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.tema-claro .summary-card:hover,
+body.tema-claro .stat-card:hover,
+body.tema-claro .client-card:hover,
+body.tema-claro .action-card:hover {
+    box-shadow: 0 8px 20px rgba(212, 165, 116, 0.2) !important;
+}
+
+/* Labels e Textos */
+body.tema-claro .summary-label,
+body.tema-claro .stat-label,
+body.tema-claro .client-phone {
+    color: #8b7968 !important;
+}
+
+body.tema-claro .summary-value,
+body.tema-claro .stat-value,
+body.tema-claro .client-name {
+    color: #2d2520 !important;
+}
+
+/* Ícones */
+body.tema-claro .summary-icon,
+body.tema-claro .stat-icon,
+body.tema-claro .action-icon,
+body.tema-claro .recent-icon {
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.2), rgba(196, 147, 91, 0.2)) !important;
+    color: #c4935b !important;
+}
+
+/* Botões */
+body.tema-claro .btn-secondary {
+    background: rgba(245, 243, 240, 0.8) !important;
+    color: #2d2520 !important;
+    border: 2px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .btn-secondary:hover {
+    background: rgba(212, 165, 116, 0.15) !important;
+}
+
+/* Tabelas */
+body.tema-claro .transactions-table,
+body.tema-claro table {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro table thead {
+    background: rgba(212, 165, 116, 0.1) !important;
+}
+
+body.tema-claro table th {
+    color: #2d2520 !important;
+}
+
+body.tema-claro table td {
+    color: #2d2520 !important;
+    border-bottom: 1px solid rgba(212, 165, 116, 0.1) !important;
+}
+
+body.tema-claro table tr:hover {
+    background: rgba(212, 165, 116, 0.05) !important;
+}
+
+/* Abas */
+body.tema-claro .tabs {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .tab-btn {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .tab-btn:hover {
+    background: rgba(212, 165, 116, 0.1) !important;
+    color: #c4935b !important;
+}
+
+body.tema-claro .tab-btn.active {
+    background: linear-gradient(135deg, #d4a574, #c4935b) !important;
+    color: #fff !important;
+}
+
+/* Barra de Ações */
+body.tema-claro .actions-bar {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+/* Busca */
+body.tema-claro .search-box {
+    background: rgba(245, 243, 240, 0.8) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .search-box input {
+    color: #2d2520 !important;
+    background: transparent !important;
+}
+
+body.tema-claro .search-box input::placeholder {
+    color: #8b7968 !important;
+}
+
+/* Gráficos */
+body.tema-claro .chart-section,
+body.tema-claro .chart-container {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.tema-claro .chart-header {
+    border-bottom: 1px solid rgba(212, 165, 116, 0.15) !important;
+}
+
+body.tema-claro .chart-header h2,
+body.tema-claro .chart-title {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .chart-legend {
+    background: transparent !important;
+}
+
+body.tema-claro .legend-item {
+    color: #4b5563 !important;
+}
+
+body.tema-claro .chart-stats {
+    border-top: 1px solid rgba(212, 165, 116, 0.15) !important;
+}
+
+body.tema-claro .stat-item {
+    background: rgba(245, 243, 240, 0.5) !important;
+}
+
+body.tema-claro .stat-item:hover {
+    background: rgba(212, 165, 116, 0.15) !important;
+}
+
+body.tema-claro .stat-label {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .stat-value {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .stat-value.positive {
+    color: #059669 !important;
+}
+
+body.tema-claro .stat-value.negative {
+    color: #dc2626 !important;
+}
+
+body.tema-claro .filtro-periodo,
+body.tema-claro .filtro-data {
+    background: rgba(245, 243, 240, 0.8) !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+    color: #2d2520 !important;
+}
+
+body.tema-claro .filtro-periodo:hover,
+body.tema-claro .filtro-data:hover {
+    background: rgba(212, 165, 116, 0.15) !important;
+    border-color: #c4935b !important;
+}
+
+body.tema-claro .filtro-periodo:focus,
+body.tema-claro .filtro-data:focus {
+    border-color: #c4935b !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+body.tema-claro .filtro-periodo option,
+body.tema-claro .filtro-data option {
+    background: #ffffff !important;
+    color: #2d2520 !important;
+}
+
+body.tema-claro .chart-wrapper {
+    background: rgba(255, 255, 255, 0.5) !important;
+    border-radius: 8px !important;
+    padding: 1rem !important;
+}
+
+/* Estados vazios */
+body.tema-claro .empty-state {
+    color: #6b5d52 !important;
+}
+
+/* Modais */
+body.tema-claro .modal {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .modal-header h2,
+body.tema-claro .modal-title {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .form-group label {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .form-group input,
+body.tema-claro .form-group textarea,
+body.tema-claro .form-group select {
+    background: rgba(245, 243, 240, 0.5) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    color: #2d2520 !important;
+}
+
+body.tema-claro .form-group input::placeholder,
+body.tema-claro .form-group textarea::placeholder {
+    color: #8b7968 !important;
+}
+
+/* Atividades Recentes */
+body.tema-claro .recent-section {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .recent-section h2 {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .recent-item {
+    background: rgba(245, 243, 240, 0.5) !important;
+    border-left: 3px solid #d4a574 !important;
+}
+
+body.tema-claro .recent-item:hover {
+    background: rgba(212, 165, 116, 0.1) !important;
+}
+
+body.tema-claro .recent-title {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .recent-subtitle {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .recent-time {
+    color: #8b7968 !important;
+}
+
+/* Loading */
+body.tema-claro .loading,
+body.tema-claro .spinner {
+    border-color: rgba(212, 165, 116, 0.2) !important;
+    border-top-color: #c4935b !important;
+}
+
+/* Lista de Cards (Produtos, Serviços, etc) */
+body.tema-claro .product-card,
+body.tema-claro .service-card,
+body.tema-claro .appointment-card {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.tema-claro .product-card:hover,
+body.tema-claro .service-card:hover,
+body.tema-claro .appointment-card:hover {
+    box-shadow: 0 8px 20px rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .product-name,
+body.tema-claro .service-name,
+body.tema-claro .appointment-client {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .product-price,
+body.tema-claro .service-price,
+body.tema-claro .appointment-time {
+    color: #c4935b !important;
+}
+
+body.tema-claro .product-description,
+body.tema-claro .service-description,
+body.tema-claro .appointment-service {
+    color: #6b5d52 !important;
+}
+
+/* Filtros */
+body.tema-claro .filter-bar,
+body.tema-claro .filters {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .filter-btn {
+    background: rgba(245, 243, 240, 0.8) !important;
+    color: #2d2520 !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .filter-btn.active {
+    background: linear-gradient(135deg, #d4a574, #c4935b) !important;
+    color: #fff !important;
+}
+
+/* Badges e Tags */
+body.tema-claro .badge,
+body.tema-claro .tag,
+body.tema-claro .status-badge {
+    background: rgba(212, 165, 116, 0.15) !important;
+    color: #c4935b !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .badge-success {
+    background: rgba(16, 185, 129, 0.1) !important;
+    color: #059669 !important;
+    border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+body.tema-claro .badge-warning {
+    background: rgba(245, 158, 11, 0.1) !important;
+    color: #d97706 !important;
+    border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+body.tema-claro .badge-danger {
+    background: rgba(239, 68, 68, 0.1) !important;
+    color: #dc2626 !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+/* Calendário e Horários */
+body.tema-claro .calendar-container,
+body.tema-claro .time-slots {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .calendar-day,
+body.tema-claro .time-slot {
+    background: rgba(245, 243, 240, 0.5) !important;
+    color: #2d2520 !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .calendar-day:hover,
+body.tema-claro .time-slot:hover {
+    background: rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .calendar-day.selected,
+body.tema-claro .time-slot.selected {
+    background: linear-gradient(135deg, #d4a574, #c4935b) !important;
+    color: #fff !important;
+}
+
+body.tema-claro .calendar-day.blocked,
+body.tema-claro .time-slot.blocked {
+    background: rgba(239, 68, 68, 0.1) !important;
+    color: #dc2626 !important;
+}
+
+/* Notificações */
+body.tema-claro .notification,
+body.tema-claro .toast {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+    color: #2d2520 !important;
+}
+
+body.tema-claro .notification.success {
+    border-left: 4px solid #10b981 !important;
+}
+
+body.tema-claro .notification.error {
+    border-left: 4px solid #ef4444 !important;
+}
+
+body.tema-claro .notification.info {
+    border-left: 4px solid #3b82f6 !important;
+}
+
+/* Dropdown e Select */
+body.tema-claro select,
+body.tema-claro .dropdown,
+body.tema-claro .select-wrapper {
+    background: rgba(245, 243, 240, 0.8) !important;
+    color: #2d2520 !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro option {
+    background: #fdfcfb !important;
+    color: #2d2520 !important;
+}
+
+/* Checkbox e Radio */
+body.tema-claro input[type="checkbox"],
+body.tema-claro input[type="radio"] {
+    border: 2px solid rgba(212, 165, 116, 0.4) !important;
+}
+
+body.tema-claro input[type="checkbox"]:checked,
+body.tema-claro input[type="radio"]:checked {
+    background: linear-gradient(135deg, #d4a574, #c4935b) !important;
+    border-color: #c4935b !important;
+}
+
+/* Separadores */
+body.tema-claro hr,
+body.tema-claro .divider {
+    border-color: rgba(212, 165, 116, 0.2) !important;
+}
+
+/* Textos específicos */
+body.tema-claro h1, 
+body.tema-claro h2, 
+body.tema-claro h3, 
+body.tema-claro h4, 
+body.tema-claro h5, 
+body.tema-claro h6 {
+    color: #2d2520 !important;
+}
+
+body.tema-claro p,
+body.tema-claro span,
+body.tema-claro div {
+    color: inherit;
+}
+
+body.tema-claro .text-muted,
+body.tema-claro .subtitle {
+    color: #6b5d52 !important;
+}
+
+/* Overlay de Modais */
+body.tema-claro .modal-overlay {
+    background: rgba(45, 37, 32, 0.7) !important;
+}
+
+/* ==================== PÁGINA DE PRODUTOS ==================== */
+
+/* Container e Header */
+body.tema-claro .products-container,
+body.tema-claro .container {
+    background: transparent;
+}
+
+body.tema-claro .header-section {
+    background: transparent;
+}
+
+body.tema-claro .header-section h1 {
+    background: linear-gradient(135deg, #c4935b, #d4a574) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+/* Seção de Filtros */
+body.tema-claro .filters-section {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.tema-claro .filters-header h3 {
+    color: #c4935b !important;
+}
+
+body.tema-claro .filters-toggle {
+    color: #c4935b !important;
+}
+
+body.tema-claro .filter-group label {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .filter-group input,
+body.tema-claro .filter-group select {
+    background: rgba(245, 243, 240, 0.8) !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+    color: #2d2520 !important;
+}
+
+body.tema-claro .filter-group input::placeholder {
+    color: #8b7968 !important;
+}
+
+body.tema-claro .filter-group input:focus,
+body.tema-claro .filter-group select:focus {
+    border-color: #c4935b !important;
+    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.15) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+body.tema-claro .filter-group select option {
+    background: #ffffff !important;
+    color: #2d2520 !important;
+}
+
+/* Cards de Produtos */
+body.tema-claro .product-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.tema-claro .product-card:hover {
+    box-shadow: 0 8px 20px rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .product-image-container {
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.08), rgba(184, 132, 61, 0.08)) !important;
+}
+
+body.tema-claro .product-image-placeholder {
+    color: rgba(212, 165, 116, 0.4) !important;
+}
+
+body.tema-claro .product-status {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+body.tema-claro .status-ativo {
+    background: rgba(5, 150, 105, 0.95) !important;
+    color: #fff !important;
+}
+
+body.tema-claro .status-inativo {
+    background: rgba(220, 38, 38, 0.95) !important;
+    color: #fff !important;
+}
+
+body.tema-claro .product-name {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .product-brand {
+    color: #c4935b !important;
+}
+
+body.tema-claro .product-price {
+    color: #c4935b !important;
+}
+
+body.tema-claro .product-stock {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .stock-low {
+    color: #dc2626 !important;
+}
+
+/* Estado Vazio */
+body.tema-claro .empty-state {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.tema-claro .empty-state-icon {
+    color: rgba(212, 165, 116, 0.4) !important;
+}
+
+body.tema-claro .empty-state-text {
+    color: #6b5d52 !important;
+}
+
+/* Botões específicos da página de produtos */
+body.tema-claro .btn-secondary {
+    background: rgba(245, 243, 240, 0.9) !important;
+    color: #2d2520 !important;
+    border: 2px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .btn-secondary:hover {
+    background: rgba(212, 165, 116, 0.2) !important;
+    border-color: #c4935b !important;
+}
+
+/* Modal de Entrada de Estoque */
+body.tema-claro #stockEntryModal .modal {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro #stockEntryModal .modal-title {
+    color: #2d2520 !important;
+}
+
+body.tema-claro #stockEntryModal .modal-close {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro #stockEntryModal .modal-close:hover {
+    background: rgba(212, 165, 116, 0.2) !important;
+    color: #2d2520 !important;
+}
+
+/* Área de informações do produto */
+body.tema-claro #stockEntryModal div[style*="rgba(212, 165, 116, 0.1)"] {
+    background: rgba(212, 165, 116, 0.15) !important;
+}
+
+body.tema-claro #stockProductName {
+    color: #b8843d !important;
+}
+
+body.tema-claro #stockEntryModal div[style*="color: #c8bfb6"] {
+    color: #6b5d52 !important;
+}
+
+/* Labels */
+body.tema-claro #stockEntryModal label {
+    color: #2d2520 !important;
+}
+
+/* Inputs */
+body.tema-claro #stockEntryQty,
+body.tema-claro #stockEntryUnitPrice,
+body.tema-claro #stockEntryObs {
+    background: rgba(245, 243, 240, 0.9) !important;
+    border: 2px solid rgba(212, 165, 116, 0.3) !important;
+    color: #2d2520 !important;
+}
+
+body.tema-claro #stockEntryQty::placeholder,
+body.tema-claro #stockEntryUnitPrice::placeholder,
+body.tema-claro #stockEntryObs::placeholder {
+    color: rgba(107, 93, 82, 0.5) !important;
+}
+
+body.tema-claro #stockEntryQty:focus,
+body.tema-claro #stockEntryUnitPrice:focus,
+body.tema-claro #stockEntryObs:focus {
+    border-color: #c4935b !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Área de resumo */
+body.tema-claro #stockEntryModal div[style*="rgba(45, 37, 32, 0.5)"] {
+    background: rgba(245, 243, 240, 0.7) !important;
+}
+
+body.tema-claro #stockEntryModal div[style*="rgba(45, 37, 32, 0.5)"] span[style*="color: #c8bfb6"] {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro #stockEntryModal div[style*="border-top"] {
+    border-top-color: rgba(212, 165, 116, 0.25) !important;
+}
+
+/* Área de informação (nota) */
+body.tema-claro #stockEntryModal div[style*="rgba(16, 185, 129, 0.1)"] {
+    background: rgba(16, 185, 129, 0.1) !important;
+    color: #6b5d52 !important;
+}
+
+/* ==================== PÁGINA DE AGENDAMENTOS ==================== */
+
+/* Container e Header */
+body.tema-claro .agendamentos-container {
+    background: transparent;
+}
+
+body.tema-claro .page-header {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.tema-claro .page-header h1 {
+    background: linear-gradient(135deg, #c4935b, #d4a574) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+body.tema-claro .page-header p {
+    color: #6b5d52 !important;
+}
+
+/* Cards de Resumo */
+body.tema-claro .summary-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.tema-claro .summary-card:hover {
+    box-shadow: 0 8px 20px rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .summary-label {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .summary-value {
+    color: #2d2520 !important;
+}
+
+/* Barra de Ações */
+body.tema-claro .actions-bar {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.tema-claro .search-box {
+    background: rgba(245, 243, 240, 0.8) !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .search-box input {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .search-box input::placeholder {
+    color: #8b7968 !important;
+}
+
+body.tema-claro .search-box i {
+    color: #c4935b !important;
+}
+
+body.tema-claro .date-filter-box {
+    background: rgba(245, 243, 240, 0.8) !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .date-filter-box input[type="date"] {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .date-filter-box input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.4) !important;
+}
+
+body.tema-claro .date-filter-box span {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .date-filter-box i {
+    color: #c4935b !important;
+}
+
+body.tema-claro .btn-limpar {
+    background: rgba(245, 243, 240, 0.9) !important;
+    color: #2d2520 !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .btn-limpar:hover {
+    background: rgba(212, 165, 116, 0.2) !important;
+    border-color: #c4935b !important;
+}
+
+body.tema-claro .btn-buscar {
+    background: linear-gradient(135deg, #c4935b, #d4a574) !important;
+}
+
+/* Cards de Agendamentos */
+body.tema-claro .agendamento-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.tema-claro .agendamento-card:hover {
+    box-shadow: 0 8px 20px rgba(212, 165, 116, 0.2) !important;
+    border-color: #c4935b !important;
+}
+
+body.tema-claro .agendamento-card .card-header {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(212, 165, 116, 0.15) !important;
+}
+
+body.tema-claro .card-header {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(212, 165, 116, 0.15) !important;
+}
+
+body.tema-claro .cliente-card-info {
+    background: transparent !important;
+}
+
+body.tema-claro .cliente-card-nome {
+    color: #2d2520 !important;
+    background: transparent !important;
+}
+
+body.tema-claro .cliente-card-telefone {
+    color: #6b5d52 !important;
+    background: transparent !important;
+}
+
+body.tema-claro .card-info-row {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .card-info-row i {
+    color: #c4935b !important;
+}
+
+body.tema-claro .card-info-row strong {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .card-valor {
+    color: #c4935b !important;
+}
+
+body.tema-claro .card-footer {
+    border-top: 1px solid rgba(212, 165, 116, 0.15) !important;
+}
+
+/* Status Badges */
+body.tema-claro .status-badge.pendente {
+    background: rgba(245, 158, 11, 0.15) !important;
+    color: #d97706 !important;
+    border: 1px solid rgba(245, 158, 11, 0.4) !important;
+}
+
+body.tema-claro .status-badge.confirmado {
+    background: rgba(5, 150, 105, 0.15) !important;
+    color: #059669 !important;
+    border: 1px solid rgba(5, 150, 105, 0.4) !important;
+}
+
+body.tema-claro .status-badge.concluido {
+    background: rgba(37, 99, 235, 0.15) !important;
+    color: #2563eb !important;
+    border: 1px solid rgba(37, 99, 235, 0.4) !important;
+}
+
+body.tema-claro .status-badge.cancelado {
+    background: rgba(220, 38, 38, 0.15) !important;
+    color: #dc2626 !important;
+    border: 1px solid rgba(220, 38, 38, 0.4) !important;
+}
+
+/* Estado Vazio */
+body.tema-claro .empty-state-agendamentos {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    color: #6b5d52 !important;
+}
+
+/* Modal de Detalhes */
+body.tema-claro .modal-content {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .modal-header-custom {
+    border-bottom: 1px solid rgba(212, 165, 116, 0.15) !important;
+}
+
+body.tema-claro .modal-header-custom h2 {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .modal-close {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .modal-close:hover {
+    color: #dc2626 !important;
+}
+
+body.tema-claro .detail-section {
+    border-bottom: 1px solid rgba(212, 165, 116, 0.1) !important;
+}
+
+body.tema-claro .detail-section h3 {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .detail-row {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .detail-row strong {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .detail-row i {
+    color: #c4935b !important;
+}
+
+body.tema-claro .total-valor {
+    background: rgba(212, 165, 116, 0.1) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .total-valor .label {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .total-valor .valor {
+    color: #c4935b !important;
+}
+
+/* Botões do Modal */
+body.tema-claro .btn-modal {
+    background: rgba(245, 243, 240, 0.9) !important;
+    color: #2d2520 !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .btn-modal:hover {
+    background: rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .btn-finalizar {
+    background: linear-gradient(135deg, #059669, #10b981) !important;
+}
+
+body.tema-claro .btn-cancelar {
+    background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+}
+
+body.tema-claro .btn-editar {
+    background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+}
+
+/* ==================== PÁGINA DE GESTÃO DE HORÁRIOS ==================== */
+
+/* Header da página */
+body.tema-claro .header-section {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.tema-claro .header-section h2 {
+    background: linear-gradient(135deg, #c4935b, #d4a574) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+body.tema-claro .header-section p {
+    color: #6b5d52 !important;
+}
+
+/* Tabs de navegação */
+body.tema-claro .nav-tabs {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-bottom: 2px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .nav-tabs .nav-link {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .nav-tabs .nav-link:hover:not(.active) {
+    background: rgba(212, 165, 116, 0.15) !important;
+}
+
+body.tema-claro .nav-tabs .nav-link.active {
+    background: linear-gradient(135deg, #c4935b, #d4a574) !important;
+    color: #fff !important;
+}
+
+/* Cards */
+body.tema-claro .card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.tema-claro .card:hover {
+    box-shadow: 0 8px 20px rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .card-header {
+    background: linear-gradient(135deg, #c4935b, #d4a574) !important;
+    color: #fff !important;
+}
+
+body.tema-claro .card-body {
+    background: transparent !important;
+}
+
+/* Seletor de data */
+body.tema-claro .data-selector {
+    background: rgba(245, 243, 240, 0.5) !important;
+}
+
+body.tema-claro .data-selector label {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .data-selector input[type="date"] {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+    color: #2d2520 !important;
+}
+
+body.tema-claro .data-selector input[type="date"]:focus {
+    border-color: #c4935b !important;
+    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.15) !important;
+}
+
+body.tema-claro .data-selector input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.4) !important;
+}
+
+/* Legendas */
+body.tema-claro .legenda {
+    background: rgba(245, 243, 240, 0.5) !important;
+}
+
+body.tema-claro .legenda-item {
+    background: rgba(255, 255, 255, 0.8) !important;
+    color: #2d2520 !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+/* Grid de horários */
+body.tema-claro .horario-grid {
+    background: transparent !important;
+}
+
+body.tema-claro .horario-item {
+    font-weight: 600 !important;
+}
+
+body.tema-claro .horario-disponivel {
+    background: linear-gradient(135deg, #059669, #10b981) !important;
+    border-color: #059669 !important;
+}
+
+body.tema-claro .horario-disponivel:hover {
+    background: linear-gradient(135deg, #047857, #059669) !important;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4) !important;
+}
+
+body.tema-claro .horario-bloqueado {
+    background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+    border-color: #dc2626 !important;
+}
+
+body.tema-claro .horario-bloqueado:hover {
+    background: linear-gradient(135deg, #b91c1c, #dc2626) !important;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4) !important;
+}
+
+body.tema-claro .horario-agendado {
+    background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+    border-color: #2563eb !important;
+}
+
+body.tema-claro .horario-item.selecionado {
+    border-color: #c4935b !important;
+    box-shadow: 0 0 15px rgba(212, 165, 116, 0.8) !important;
+}
+
+body.tema-claro .horario-item.selecionado::after {
+    background: #c4935b !important;
+}
+
+/* Botões */
+body.tema-claro .btn-buscar,
+body.tema-claro .btn-selecao {
+    background: linear-gradient(135deg, #c4935b, #d4a574) !important;
+}
+
+body.tema-claro .btn-limpar-selecao {
+    background: rgba(245, 243, 240, 0.9) !important;
+    color: #2d2520 !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .btn-limpar-selecao:hover {
+    background: rgba(212, 165, 116, 0.2) !important;
+}
+
+/* Configurações de dias */
+body.tema-claro .config-dia {
+    background: rgba(245, 243, 240, 0.5) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .config-dia h6 {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .config-dia .form-label {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .config-dia .form-control,
+body.tema-claro .config-dia .form-select {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+    color: #2d2520 !important;
+}
+
+body.tema-claro .config-dia .form-control:focus,
+body.tema-claro .config-dia .form-select:focus {
+    border-color: #c4935b !important;
+    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.15) !important;
+}
+
+body.tema-claro .config-dia .form-check {
+    background: rgba(212, 165, 116, 0.1) !important;
+    border: 1px solid rgba(212, 165, 116, 0.25) !important;
+}
+
+body.tema-claro .config-dia .form-check-label {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .config-dia .form-check-label small {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .form-switch {
+    background: rgba(212, 165, 116, 0.12) !important;
+}
+
+body.tema-claro .form-switch .form-check-label {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .form-check-input:checked {
+    background-color: #c4935b !important;
+    border-color: #c4935b !important;
+}
+
+/* Container de botões de configuração */
+body.tema-claro .btn-container-config {
+    background: rgba(245, 243, 240, 0.5) !important;
+}
+
+/* Modais */
+body.tema-claro .modal-custom {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .modal-header-custom {
+    border-bottom: 1px solid rgba(212, 165, 116, 0.15) !important;
+}
+
+body.tema-claro .modal-header-custom h5 {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .modal-close {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .modal-close:hover {
+    color: #dc2626 !important;
+}
+
+body.tema-claro .modal-body {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .modal-body label {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .modal-body .form-control,
+body.tema-claro .modal-body .form-select {
+    background: rgba(245, 243, 240, 0.8) !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+    color: #2d2520 !important;
+}
+
+body.tema-claro .modal-body .form-control:focus,
+body.tema-claro .modal-body .form-select:focus {
+    border-color: #c4935b !important;
+    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.15) !important;
+}
+
+body.tema-claro .modal-body .horario-selected-display {
+    background: rgba(212, 165, 116, 0.15) !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+    color: #2d2520 !important;
+}
+
+body.tema-claro .modal-footer {
+    border-top: 1px solid rgba(212, 165, 116, 0.15) !important;
+}
+
+/* Alertas e mensagens */
+body.tema-claro .alert {
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .alert-info {
+    background: rgba(59, 130, 246, 0.1) !important;
+    color: #2563eb !important;
+    border-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+body.tema-claro .alert-success {
+    background: rgba(5, 150, 105, 0.1) !important;
+    color: #059669 !important;
+    border-color: rgba(5, 150, 105, 0.3) !important;
+}
+
+body.tema-claro .alert-warning {
+    background: rgba(245, 158, 11, 0.1) !important;
+    color: #d97706 !important;
+    border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+body.tema-claro .alert-danger {
+    background: rgba(220, 38, 38, 0.1) !important;
+    color: #dc2626 !important;
+    border-color: rgba(220, 38, 38, 0.3) !important;
+}
+
+/* ==================== PÁGINA DE CADASTRO DE SERVIÇO ==================== */
+
+/* Container e Header */
+body.tema-claro .header-section h1 {
+    background: linear-gradient(135deg, #c4935b, #d4a574) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+/* Card do Formulário */
+body.tema-claro .form-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Labels dos campos */
+body.tema-claro .form-label {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .form-label .required {
+    color: #dc2626 !important;
+}
+
+/* Inputs, Textareas e Selects */
+body.tema-claro .form-input,
+body.tema-claro .form-textarea,
+body.tema-claro .form-select {
+    background: rgba(245, 243, 240, 0.8) !important;
+    border: 2px solid rgba(212, 165, 116, 0.3) !important;
+    color: #2d2520 !important;
+}
+
+body.tema-claro .form-input::placeholder,
+body.tema-claro .form-textarea::placeholder {
+    color: #8b7968 !important;
+}
+
+body.tema-claro .form-input:focus,
+body.tema-claro .form-textarea:focus,
+body.tema-claro .form-select:focus {
+    border-color: #c4935b !important;
+    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.15) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+body.tema-claro .form-select option {
+    background: #ffffff !important;
+    color: #2d2520 !important;
+}
+
+/* Upload de Imagem */
+body.tema-claro .image-upload-container {
+    background: transparent !important;
+}
+
+body.tema-claro .image-preview {
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.08), rgba(184, 132, 61, 0.08)) !important;
+    border: 2px dashed rgba(212, 165, 116, 0.4) !important;
+}
+
+body.tema-claro .image-preview-placeholder {
+    color: rgba(212, 165, 116, 0.5) !important;
+}
+
+body.tema-claro .image-upload-label {
+    background: rgba(212, 165, 116, 0.15) !important;
+    border: 2px solid rgba(212, 165, 116, 0.4) !important;
+    color: #c4935b !important;
+}
+
+body.tema-claro .image-upload-label:hover {
+    background: rgba(212, 165, 116, 0.25) !important;
+    border-color: #c4935b !important;
+}
+
+body.tema-claro .image-info-text {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .remove-image-btn {
+    background: rgba(220, 38, 38, 0.95) !important;
+}
+
+/* Botões de ação */
+body.tema-claro .form-actions {
+    background: transparent !important;
+}
+
+/* Mensagens de validação */
+body.tema-claro .error-message {
+    color: #dc2626 !important;
+}
+
+body.tema-claro .success-message {
+    color: #059669 !important;
+}
+
+/* Loading/Spinner */
+body.tema-claro .loading-overlay {
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+body.tema-claro .spinner {
+    border-color: rgba(212, 165, 116, 0.2) !important;
+    border-top-color: #c4935b !important;
+}
+
+/* ==================== PÁGINA DE NOVO AGENDAMENTO ==================== */
+
+/* Header */
+body.tema-claro .header {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.tema-claro .header h1 {
+    background: linear-gradient(135deg, #c4935b, #d4a574) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+body.tema-claro .btn-voltar {
+    background: rgba(245, 243, 240, 0.9) !important;
+    color: #c4935b !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .btn-voltar:hover {
+    background: rgba(212, 165, 116, 0.2) !important;
+}
+
+/* Card principal */
+body.tema-claro .card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Seções */
+body.tema-claro .section-title {
+    color: #c4935b !important;
+}
+
+/* Formulário */
+body.tema-claro .form-group label {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .form-group .required {
+    color: #dc2626 !important;
+}
+
+body.tema-claro .form-group input,
+body.tema-claro .form-group select,
+body.tema-claro .form-group textarea {
+    background: rgba(245, 243, 240, 0.8) !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+    color: #2d2520 !important;
+}
+
+body.tema-claro .form-group input::placeholder,
+body.tema-claro .form-group textarea::placeholder {
+    color: #8b7968 !important;
+}
+
+body.tema-claro .form-group input:focus,
+body.tema-claro .form-group select:focus,
+body.tema-claro .form-group textarea:focus {
+    border-color: #c4935b !important;
+    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.15) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+body.tema-claro .form-group select option {
+    background: #ffffff !important;
+    color: #2d2520 !important;
+}
+
+body.tema-claro .form-group select:disabled {
+    opacity: 0.6 !important;
+    background: rgba(212, 165, 116, 0.08) !important;
+}
+
+/* Opções de horário no select */
+body.tema-claro .horario-disponivel {
+    background-color: #059669 !important;
+}
+
+body.tema-claro .horario-bloqueado {
+    background-color: #dc2626 !important;
+}
+
+body.tema-claro .horario-agendado {
+    background-color: #2563eb !important;
+}
+
+/* Cards de serviço */
+body.tema-claro .servicos-grid {
+    background: transparent !important;
+}
+
+body.tema-claro .servico-card {
+    background: rgba(245, 243, 240, 0.6) !important;
+    border: 2px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .servico-card:hover {
+    background: rgba(212, 165, 116, 0.15) !important;
+    border-color: #c4935b !important;
+}
+
+body.tema-claro .servico-card input[type="checkbox"] {
+    accent-color: #c4935b !important;
+}
+
+body.tema-claro .servico-nome {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .servico-duracao {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .servico-preco {
+    color: #c4935b !important;
+}
+
+/* Resumo */
+body.tema-claro .resumo {
+    background: rgba(212, 165, 116, 0.08) !important;
+    border: 1px solid rgba(212, 165, 116, 0.25) !important;
+}
+
+body.tema-claro .resumo-title {
+    color: #2d2520 !important;
+    font-weight: 700 !important;
+}
+
+body.tema-claro .resumo-item {
+    border-bottom: 1px solid rgba(212, 165, 116, 0.15) !important;
+    color: #2d2520 !important;
+}
+
+body.tema-claro .resumo-total {
+    color: #c4935b !important;
+}
+
+/* Botões de ação */
+body.tema-claro .actions {
+    background: transparent !important;
+}
+
+body.tema-claro .btn-cancelar {
+    background: rgba(245, 243, 240, 0.9) !important;
+    color: #2d2520 !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .btn-cancelar:hover {
+    background: rgba(212, 165, 116, 0.15) !important;
+}
+
+body.tema-claro .btn-salvar,
+body.tema-claro .btn-agendar {
+    background: linear-gradient(135deg, #c4935b, #d4a574) !important;
+}
+
+/* Loading */
+body.tema-claro .loading-container {
+    background: rgba(255, 255, 255, 0.95) !important;
+}
+
+body.tema-claro .loading-text {
+    color: #2d2520 !important;
+}
+
+/* Mensagens de erro/aviso */
+body.tema-claro .error-message,
+body.tema-claro .alert-error {
+    background: rgba(220, 38, 38, 0.1) !important;
+    color: #dc2626 !important;
+    border: 1px solid rgba(220, 38, 38, 0.3) !important;
+}
+
+body.tema-claro .success-message,
+body.tema-claro .alert-success {
+    background: rgba(5, 150, 105, 0.1) !important;
+    color: #059669 !important;
+    border: 1px solid rgba(5, 150, 105, 0.3) !important;
+}
+
+body.tema-claro .info-message,
+body.tema-claro .alert-info {
+    background: rgba(59, 130, 246, 0.1) !important;
+    color: #2563eb !important;
+    border: 1px solid rgba(59, 130, 246, 0.3) !important;
+}
+
+body.tema-claro .warning-message,
+body.tema-claro .alert-warning {
+    background: rgba(245, 158, 11, 0.1) !important;
+    color: #d97706 !important;
+    border: 1px solid rgba(245, 158, 11, 0.3) !important;
+}
+
+/* ==================== PÁGINA DE CADASTRO DE PRODUTO ==================== */
+
+/* Container e Card do Formulário */
+body.tema-claro .form-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Header do Formulário */
+body.tema-claro .form-header h1 {
+    background: linear-gradient(135deg, #c4935b, #d4a574) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+body.tema-claro .btn-back {
+    background: rgba(245, 243, 240, 0.9) !important;
+    color: #2d2520 !important;
+    border: 2px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .btn-back:hover {
+    background: rgba(212, 165, 116, 0.2) !important;
+}
+
+/* Títulos de Seção */
+body.tema-claro .section-title {
+    color: #c4935b !important;
+}
+
+/* Grupos de Formulário */
+body.tema-claro .form-group label {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .form-group label .required {
+    color: #dc2626 !important;
+}
+
+body.tema-claro .form-group input,
+body.tema-claro .form-group select,
+body.tema-claro .form-group textarea {
+    background: rgba(245, 243, 240, 0.8) !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+    color: #2d2520 !important;
+}
+
+body.tema-claro .form-group input::placeholder,
+body.tema-claro .form-group textarea::placeholder {
+    color: #8b7968 !important;
+}
+
+body.tema-claro .form-group input:focus,
+body.tema-claro .form-group select:focus,
+body.tema-claro .form-group textarea:focus {
+    border-color: #c4935b !important;
+    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.15) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+body.tema-claro .form-group select option {
+    background: #ffffff !important;
+    color: #2d2520 !important;
+}
+
+/* Upload de Imagem */
+body.tema-claro .image-upload-container {
+    background: transparent !important;
+}
+
+body.tema-claro .image-preview-area {
+    border: 2px dashed rgba(212, 165, 116, 0.4) !important;
+    background: rgba(245, 243, 240, 0.5) !important;
+}
+
+body.tema-claro .image-preview-area:hover {
+    border-color: #c4935b !important;
+    background: rgba(212, 165, 116, 0.1) !important;
+}
+
+body.tema-claro .image-preview-placeholder {
+    color: rgba(212, 165, 116, 0.5) !important;
+}
+
+body.tema-claro .image-preview-text {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .image-upload-btn {
+    background: rgba(212, 165, 116, 0.15) !important;
+    border: 2px solid rgba(212, 165, 116, 0.4) !important;
+    color: #c4935b !important;
+}
+
+body.tema-claro .image-upload-btn:hover {
+    background: rgba(212, 165, 116, 0.25) !important;
+    border-color: #c4935b !important;
+}
+
+body.tema-claro .image-info {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .remove-image-btn {
+    background: rgba(220, 38, 38, 0.95) !important;
+}
+
+body.tema-claro .remove-image-btn:hover {
+    background: rgba(185, 28, 28, 0.95) !important;
+}
+
+/* Botões de Ação */
+body.tema-claro .form-actions {
+    background: transparent !important;
+}
+
+body.tema-claro .btn-secondary {
+    background: rgba(245, 243, 240, 0.9) !important;
+    color: #2d2520 !important;
+    border: 2px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .btn-secondary:hover {
+    background: rgba(212, 165, 116, 0.2) !important;
+}
+
+body.tema-claro .btn-primary {
+    background: linear-gradient(135deg, #c4935b, #d4a574) !important;
+}
+
+body.tema-claro .btn-primary:disabled {
+    opacity: 0.5 !important;
+}
+
+/* Indicadores de Status */
+body.tema-claro .status-indicator {
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .status-indicator.active {
+    background: rgba(5, 150, 105, 0.1) !important;
+    border-color: rgba(5, 150, 105, 0.3) !important;
+    color: #059669 !important;
+}
+
+body.tema-claro .status-indicator.inactive {
+    background: rgba(220, 38, 38, 0.1) !important;
+    border-color: rgba(220, 38, 38, 0.3) !important;
+    color: #dc2626 !important;
+}
+
+/* Loading */
+body.tema-claro .loading-spinner {
+    border-color: rgba(212, 165, 116, 0.2) !important;
+    border-top-color: #c4935b !important;
+}
+
+/* Validação de campos */
+body.tema-claro .error-text {
+    color: #dc2626 !important;
+}
+
+body.tema-claro .success-text {
+    color: #059669 !important;
+}
+
+/* ==================== PÁGINAS DE INCLUIR RECEITA E DESPESA ==================== */
+
+/* Container */
+body.tema-claro .receita-container,
+body.tema-claro .despesa-container {
+    background: transparent;
+}
+
+/* Header da página */
+body.tema-claro .page-header {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.tema-claro .page-header h1 {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .page-header p {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .btn-voltar {
+    background: rgba(245, 243, 240, 0.9) !important;
+    color: #c4935b !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .btn-voltar:hover {
+    background: rgba(212, 165, 116, 0.2) !important;
+}
+
+/* Card do formulário */
+body.tema-claro .form-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Títulos de seção */
+body.tema-claro .section-title {
+    color: #2d2520 !important;
+    border-bottom: 2px solid rgba(212, 165, 116, 0.25) !important;
+}
+
+/* Formulário */
+body.tema-claro .form-group label {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .form-group label .required {
+    color: #dc2626 !important;
+}
+
+body.tema-claro .form-group input,
+body.tema-claro .form-group select,
+body.tema-claro .form-group textarea {
+    background: rgba(245, 243, 240, 0.8) !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+    color: #2d2520 !important;
+}
+
+body.tema-claro .form-group input::placeholder,
+body.tema-claro .form-group textarea::placeholder {
+    color: #8b7968 !important;
+}
+
+body.tema-claro .form-group input:focus,
+body.tema-claro .form-group select:focus,
+body.tema-claro .form-group textarea:focus {
+    border-color: #c4935b !important;
+    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.15) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+body.tema-claro .form-group select option {
+    background: #ffffff !important;
+    color: #2d2520 !important;
+}
+
+/* Ícones de input */
+body.tema-claro .input-icon {
+    color: #c4935b !important;
+}
+
+/* Texto de ajuda */
+body.tema-claro .form-help {
+    color: #6b5d52 !important;
+}
+
+/* Métodos de pagamento */
+body.tema-claro .payment-method {
+    background: rgba(245, 243, 240, 0.6) !important;
+    border: 2px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .payment-method:hover {
+    background: rgba(212, 165, 116, 0.15) !important;
+    border-color: #c4935b !important;
+}
+
+body.tema-claro .payment-method input[type="radio"]:checked + label {
+    background: rgba(212, 165, 116, 0.2) !important;
+    border-color: #c4935b !important;
+}
+
+body.tema-claro .payment-method label {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .payment-method input[type="radio"] {
+    accent-color: #c4935b !important;
+}
+
+/* Status de pagamento */
+body.tema-claro .status-options {
+    background: transparent !important;
+}
+
+body.tema-claro .status-option {
+    background: rgba(245, 243, 240, 0.6) !important;
+    border: 2px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .status-option:hover {
+    background: rgba(212, 165, 116, 0.15) !important;
+}
+
+body.tema-claro .status-option.active,
+body.tema-claro .status-option input[type="radio"]:checked + label {
+    background: rgba(212, 165, 116, 0.2) !important;
+    border-color: #c4935b !important;
+}
+
+body.tema-claro .status-option label {
+    color: #2d2520 !important;
+}
+
+/* Categoria e outras opções */
+body.tema-claro .categoria-option,
+body.tema-claro .option-card {
+    background: rgba(245, 243, 240, 0.6) !important;
+    border: 2px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .categoria-option:hover,
+body.tema-claro .option-card:hover {
+    background: rgba(212, 165, 116, 0.15) !important;
+    border-color: #c4935b !important;
+}
+
+body.tema-claro .categoria-option.selected,
+body.tema-claro .option-card.selected {
+    background: rgba(212, 165, 116, 0.2) !important;
+    border-color: #c4935b !important;
+}
+
+/* Botões de ação */
+body.tema-claro .form-actions {
+    background: transparent !important;
+}
+
+body.tema-claro .btn-cancelar {
+    background: rgba(245, 243, 240, 0.9) !important;
+    color: #2d2520 !important;
+    border: 1px solid rgba(212, 165, 116, 0.3) !important;
+}
+
+body.tema-claro .btn-cancelar:hover {
+    background: rgba(212, 165, 116, 0.15) !important;
+}
+
+body.tema-claro .btn-salvar {
+    background: linear-gradient(135deg, #c4935b, #d4a574) !important;
+}
+
+/* Resumo de valor */
+body.tema-claro .valor-resumo {
+    background: rgba(212, 165, 116, 0.08) !important;
+    border: 1px solid rgba(212, 165, 116, 0.25) !important;
+}
+
+body.tema-claro .valor-label {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .valor-total {
+    color: #c4935b !important;
+}
+
+/* Anexos e upload */
+body.tema-claro .upload-area {
+    background: rgba(245, 243, 240, 0.5) !important;
+    border: 2px dashed rgba(212, 165, 116, 0.4) !important;
+}
+
+body.tema-claro .upload-area:hover {
+    background: rgba(212, 165, 116, 0.1) !important;
+    border-color: #c4935b !important;
+}
+
+body.tema-claro .upload-icon {
+    color: rgba(212, 165, 116, 0.5) !important;
+}
+
+body.tema-claro .upload-text {
+    color: #6b5d52 !important;
+}
+
+/* Mensagens de validação */
+body.tema-claro .validation-error {
+    color: #dc2626 !important;
+}
+
+body.tema-claro .validation-success {
+    color: #059669 !important;
+}
+
+/* ==================== BOTÕES ESPECÍFICOS GESTÃO FINANCEIRA ==================== */
+
+/* Botão Nova Receita - manter verde no tema claro */
+body.tema-claro .btn[onclick*="novaReceita"] {
+    background: linear-gradient(135deg, #059669, #10b981) !important;
+    color: #fff !important;
+}
+
+body.tema-claro .btn[onclick*="novaReceita"]:hover {
+    background: linear-gradient(135deg, #047857, #059669) !important;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4) !important;
+}
+
+/* Botão Nova Despesa - manter vermelho no tema claro */
+body.tema-claro .btn[onclick*="novaDespesa"] {
+    background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+    color: #fff !important;
+}
+
+body.tema-claro .btn[onclick*="novaDespesa"]:hover {
+    background: linear-gradient(135deg, #b91c1c, #dc2626) !important;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4) !important;
+}
+/* ==================== PÁGINA DE INSTALAÇÃO DO APP ==================== */
+
+/* Background da página */
+body.tema-claro {
+    background: linear-gradient(135deg, #f5f3f0 0%, #e8e4df 100%) !important;
+}
+
+/* Header */
+body.tema-claro .header h1 {
+    background: linear-gradient(135deg, #b8843d, #c4935b) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+body.tema-claro .header p {
+    color: #6b5d52 !important;
+}
+
+/* Link de voltar */
+body.tema-claro .back-link {
+    color: #b8843d !important;
+}
+
+body.tema-claro .back-link:hover {
+    color: #c4935b !important;
+}
+
+/* Cards de instalação */
+body.tema-claro .install-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.tema-claro .platform-header {
+    border-bottom: 1px solid rgba(212, 165, 116, 0.25) !important;
+}
+
+body.tema-claro .platform-header h2 {
+    color: #2d2520 !important;
+}
+
+/* Steps */
+body.tema-claro .step {
+    background: rgba(245, 243, 240, 0.7) !important;
+}
+
+body.tema-claro .step-title {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .step-description {
+    color: #6b5d52 !important;
+}
+
+body.tema-claro .step-icon {
+    color: #c4935b !important;
+}
+
+/* Note */
+body.tema-claro .note {
+    background: rgba(212, 165, 116, 0.15) !important;
+    border-left: 4px solid #c4935b !important;
+}
+
+body.tema-claro .note-title {
+    color: #b8843d !important;
+}
+
+body.tema-claro .note-text {
+    color: #6b5d52 !important;
+}
+
+/* Benefit Cards */
+body.tema-claro .benefit-card {
+    background: rgba(245, 243, 240, 0.7) !important;
+}
+
+body.tema-claro .benefit-icon {
+    background: rgba(212, 165, 116, 0.2) !important;
+    color: #c4935b !important;
+}
+
+body.tema-claro .benefit-title {
+    color: #2d2520 !important;
+}
+
+body.tema-claro .benefit-text {
+    color: #6b5d52 !important;
+}
+
+/* Botão de instalação */
+body.tema-claro .btn-install {
+    background: linear-gradient(135deg, #b8843d, #c4935b) !important;
+}
+
+body.tema-claro .btn-install:hover {
+    box-shadow: 0 10px 30px rgba(196, 147, 91, 0.4) !important;
+}

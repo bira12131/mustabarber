@@ -1,0 +1,30 @@
+{
+  "name": "MustaBarber - Sistema de Gerenciamento",
+  "short_name": "MustaBarber",
+  "description": "Sistema completo de gerenciamento para barbearias",
+  "start_url": "/login.html?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#1a1512",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
+  "categories": ["business", "productivity"],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "icons": [
+    {
+      "src": "uploads/logo/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "uploads/logo/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

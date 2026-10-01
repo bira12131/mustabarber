@@ -1,0 +1,2484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MustaBarber - Sistema completo de gest&atilde;o para barbearias, sal&otilde;es, est&eacute;ticas e profissionais de beleza">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="MustaBarber - Transforme seu Neg&oacute;cio de Beleza">
+        <meta property="og:description" content="Sistema completo de gest&atilde;o para barbearias, sal&otilde;es, est&eacute;ticas e profissionais de beleza.">
+        <meta property="og:image" content="uploads/logo/logo.png">
+        <meta property="og:image:alt" content="Logo da MustaBarber">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="MustaBarber - Transforme seu Neg&oacute;cio de Beleza">
+        <meta name="twitter:description" content="Sistema completo de gest&atilde;o para barbearias, sal&otilde;es, est&eacute;ticas e profissionais de beleza.">
+        <meta name="twitter:image" content="uploads/logo/logo.png">
+    <meta name="theme-color" content="#d4a574">
+    <title>MustaBarber - Transforme seu Neg&oacute;cio de Beleza</title>
+    <link rel="icon" type="image/png" href="uploads/logo/logo.png">
+        <link rel="shortcut icon" href="uploads/logo/logo.png" type="image/png">
+        <link rel="apple-touch-icon" href="uploads/logo/logo.png">
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "MustaBarber",
+            "url": "/",
+            "logo": "/uploads/logo/logo.png",
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "email": "contato.mustech@gmail.com",
+                "contactType": "customer support",
+                "availableLanguage": "pt-BR"
+            }
+        }
+        </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #d4a574;
+            --gold-hover: #c99456;
+            --gold-dark: #b8843d;
+            --gold-light: #e8c49a;
+            --bg-dark: #0d0d0d;
+            --bg-card: #161412;
+            --bg-surface: #1e1a16;
+            --bg-surface2: #2a2218;
+            --text-primary: #f0ece8;
+            --text-secondary: #a89880;
+            --text-muted: #6b5d4f;
+            --border: #3a2f24;
+            --success: #10b981;
+            --radius: 16px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ============================
+           NAV
+        ============================ */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 16px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(13, 13, 13, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .nav-logo img {
+            height: 48px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        .nav-cta {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #fff !important;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 16px rgba(212, 165, 116, 0.3);
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(212, 165, 116, 0.45) !important;
+            color: #fff !important;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 8px;
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .hamburger:hover {
+            background: rgba(212,165,116,0.1);
+        }
+
+        .hamburger span {
+            display: block;
+            width: 26px;
+            height: 2px;
+            background: var(--text-primary);
+            border-radius: 2px;
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+                        opacity  0.3s ease,
+                        width    0.3s ease;
+            transform-origin: center;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            width: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* Overlay de fundo */
+        .nav-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(6px);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .nav-overlay.visible {
+            opacity: 1;
+        }
+
+        /* ============================
+           HERO
+        ============================ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 24px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% 0%, rgba(212, 165, 116, 0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 40% at 80% 80%, rgba(184, 132, 61, 0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(212, 165, 116, 0.12);
+            border: 1px solid rgba(212, 165, 116, 0.3);
+            color: var(--gold-light);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 28px;
+            animation: fadeDown 0.6s ease forwards, float 3s ease-in-out 1s infinite;
+        }
+
+        .hero h1 {
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            animation: fadeDown 0.7s ease forwards;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: clamp(16px, 2vw, 20px);
+            color: var(--text-secondary);
+            max-width: 620px;
+            margin: 0 auto 40px;
+            animation: fadeDown 0.8s ease forwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeDown 0.9s ease forwards;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #fff;
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 24px rgba(212, 165, 116, 0.35);
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -80%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+            transform: skewX(-18deg);
+            animation: shimmer-sweep 3.5s ease-in-out 1.5s infinite;
+            pointer-events: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 36px rgba(212, 165, 116, 0.5);
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            color: var(--gold);
+            padding: 16px 36px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(212, 165, 116, 0.4);
+            cursor: pointer;
+        }
+
+        .btn-outline:hover {
+            background: rgba(212, 165, 116, 0.1);
+            border-color: var(--gold);
+            transform: translateY(-3px);
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            flex-wrap: wrap;
+            margin-top: 72px;
+            padding-top: 48px;
+            border-top: 1px solid var(--border);
+            animation: fadeUp 1s ease forwards;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ============================
+           SECTIONS COMUNS
+        ============================ */
+        section {
+            padding: 100px 24px;
+        }
+
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(212, 165, 116, 0.1);
+            border: 1px solid rgba(212, 165, 116, 0.25);
+            color: var(--gold);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: clamp(28px, 4vw, 44px);
+            font-weight: 800;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .section-title .highlight {
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-sub {
+            font-size: 17px;
+            color: var(--text-secondary);
+            max-width: 560px;
+            line-height: 1.7;
+        }
+
+        /* ============================
+           FEATURES
+        ============================ */
+        .features {
+            background: var(--bg-card);
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--gold-dark));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(212, 165, 116, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.15), rgba(184, 132, 61, 0.1));
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ============================
+           COMO FUNCIONA (PASSO A PASSO)
+        ============================ */
+        .how-it-works {
+            background: var(--bg-dark);
+        }
+
+        .how-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .steps-wrapper {
+            position: relative;
+        }
+
+        .steps-line {
+            position: absolute;
+            left: 50%;
+            top: 32px;
+            bottom: 32px;
+            width: 2px;
+            background: linear-gradient(180deg, var(--gold) 0%, rgba(212, 165, 116, 0.1) 100%);
+            transform: translateX(-50%);
+        }
+
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 48px;
+        }
+
+        .step-item {
+            display: grid;
+            grid-template-columns: 1fr 80px 1fr;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .step-item:nth-child(even) .step-content {
+            order: 3;
+            text-align: left;
+        }
+
+        .step-item:nth-child(even) .step-empty {
+            order: 1;
+        }
+
+        .step-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            order: 2;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-number {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+            box-shadow: 0 0 0 6px rgba(212, 165, 116, 0.12);
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            transition: all 0.3s ease;
+        }
+
+        .step-content:hover {
+            border-color: rgba(212, 165, 116, 0.35);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+        }
+
+        .step-content .step-icon {
+            font-size: 28px;
+            color: var(--gold);
+            margin-bottom: 12px;
+        }
+
+        .step-content h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .step-content p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .step-empty {
+            display: block;
+        }
+
+        /* ============================
+           PLANOS
+        ============================ */
+        .plans {
+            background: var(--bg-card);
+        }
+
+        .plans .container {
+            max-width: 1380px;
+        }
+
+        .plans-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 1150px;
+            margin: 0 auto;
+        }
+
+        .plan-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 28px 22px;
+            position: relative;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+
+        .plan-card.featured:hover {
+            box-shadow: 0 20px 60px rgba(212, 165, 116, 0.35);
+        }
+
+        .plan-card.featured-blue:hover {
+            box-shadow: 0 20px 60px rgba(59, 130, 246, 0.3);
+        }
+
+        .plan-card.featured-master:hover {
+            box-shadow: 0 20px 60px rgba(239, 68, 68, 0.25);
+        }
+
+        .plan-card.featured {
+            border: 2px solid var(--gold);
+            background: linear-gradient(160deg, var(--bg-surface) 0%, rgba(212, 165, 116, 0.06) 100%);
+            box-shadow: 0 8px 40px rgba(212, 165, 116, 0.15);
+        }
+
+        .plan-card.featured-blue {
+            border: 2px solid #3b82f6;
+            background: linear-gradient(160deg, var(--bg-surface) 0%, rgba(59, 130, 246, 0.06) 100%);
+            box-shadow: 0 8px 40px rgba(59, 130, 246, 0.15);
+        }
+
+        .plan-card.featured-master {
+            border: 2px solid #f87171;
+            background: linear-gradient(160deg, var(--bg-surface) 0%, rgba(239, 68, 68, 0.05) 100%);
+            box-shadow: 0 8px 40px rgba(239, 68, 68, 0.12);
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #fff;
+            padding: 6px 20px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            text-transform: uppercase;
+        }
+
+        .plan-badge.badge-blue {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+
+        /* Etiqueta de tier (Starter / Essencial / Premium / Master) */
+        .plan-tier-label {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .plan-tier-label.tier-starter  { background: rgba(160,160,160,.15); color: #9ca3af; border: 1px solid rgba(160,160,160,.25); }
+        .plan-tier-label.tier-essencial { background: rgba(160,160,160,.15); color: #9ca3af; border: 1px solid rgba(160,160,160,.25); }
+        .plan-tier-label.tier-blue { background: rgba(59,130,246,.15); color: #60a5fa; border: 1px solid rgba(59,130,246,.3); }
+        .plan-tier-label.tier-premium  { background: rgba(212,165,116,.15); color: var(--gold); border: 1px solid rgba(212,165,116,.3); }
+        .plan-tier-label.tier-master   { background: rgba(239,68,68,.15); color: #f87171; border: 1px solid rgba(239,68,68,.3); }
+
+        /* Badge de limite de barbeiros */
+        .plan-limit-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+        .plan-limit-badge.limit-default { background: rgba(160,160,160,.12); color: #9ca3af; border: 1px solid rgba(160,160,160,.25); }
+        .plan-limit-badge.limit-blue    { background: rgba(59,130,246,.12); color: #60a5fa; border: 1px solid rgba(59,130,246,.3); }
+        .plan-limit-badge.limit-gold    { background: rgba(212,165,116,.12); color: var(--gold); border: 1px solid rgba(212,165,116,.3); }
+        .plan-limit-badge.limit-master  { background: rgba(239,68,68,.12); color: #f87171; border: 1px solid rgba(239,68,68,.3); }
+
+        .plan-name {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .plan-card.featured .plan-name {
+            color: var(--gold);
+        }
+
+        .plan-title {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .plan-price {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            margin-bottom: 8px;
+            min-height: 72px;
+        }
+
+        .plan-price .currency {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--gold);
+            line-height: 1.5;
+        }
+
+        .plan-price .amount {
+            font-size: 56px;
+            font-weight: 900;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .plan-price .period {
+            font-size: 15px;
+            color: var(--text-muted);
+            padding-bottom: 8px;
+        }
+
+        .plan-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            line-height: 1.6;
+            min-height: 90px;
+        }
+
+        .plan-divider {
+            height: 1px;
+            background: var(--border);
+            margin-bottom: 28px;
+        }
+
+        .plan-features-title {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .plan-features-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex: 1;
+        }
+
+        .plan-features-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .plan-features-list li i {
+            font-size: 14px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .plan-features-list li.included i {
+            color: var(--success);
+        }
+
+        .plan-features-list li.excluded {
+            opacity: 0.45;
+        }
+
+        .plan-features-list li.excluded i {
+            color: var(--text-muted);
+        }
+
+        .plan-btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .plan-btn-outline {
+            background: transparent;
+            border: 2px solid rgba(212, 165, 116, 0.4);
+            color: var(--gold);
+        }
+
+        .plan-btn-outline:hover {
+            background: rgba(212, 165, 116, 0.1);
+            border-color: var(--gold);
+        }
+
+        .plan-btn-filled {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #fff;
+            box-shadow: 0 6px 24px rgba(212, 165, 116, 0.35);
+        }
+
+        .plan-btn-filled:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 36px rgba(212, 165, 116, 0.5);
+        }
+
+        /* Bot&#65533;o principal "Come&#65533;ar teste gr&#65533;tis" */
+        .plan-btn-trial {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: #fff;
+            box-shadow: 0 6px 24px rgba(34, 197, 94, 0.45);
+            font-size: 17px;
+            letter-spacing: 0.3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-btn-trial::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .plan-btn-trial:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 36px rgba(34, 197, 94, 0.6);
+            color: #fff;
+        }
+
+        /* Bot&#65533;o secund&#65533;rio */
+        .plan-btn-secondary {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 11px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            background: transparent;
+            border: 1.5px solid rgba(212, 165, 116, 0.35);
+            color: var(--gold);
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+
+        .plan-btn-secondary:hover {
+            opacity: 1;
+            background: rgba(212, 165, 116, 0.08);
+            border-color: var(--gold);
+        }
+
+        .plan-card.featured .plan-btn-secondary {
+            border-color: rgba(212, 165, 116, 0.5);
+        }
+
+        /* Badge "7 dias gr&#65533;tis" */
+        .plan-trial-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: #4ade80;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin-bottom: 18px;
+            letter-spacing: 0.5px;
+        }
+
+        .plan-trial-info i {
+            font-size: 12px;
+        }
+
+        /* Trust badges */
+        .plan-trust {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .plan-trust-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .plan-trust-item i {
+            color: #4ade80;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .plans-note {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-muted);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .plans-note i {
+            color: var(--gold);
+        }
+
+        /* Regras de altera&#65533;&#65533;o de plano */
+        .plans-upgrade-rules {
+            max-width: 700px;
+            margin: 40px auto 0;
+            background: rgba(212, 165, 116, 0.06);
+            border: 1px solid rgba(212, 165, 116, 0.18);
+            border-radius: 16px;
+            padding: 28px 32px;
+            text-align: left;
+        }
+
+        .plans-upgrade-rules .upgrade-rules-icon {
+            width: 42px;
+            height: 42px;
+            background: rgba(212, 165, 116, 0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+
+        .plans-upgrade-rules .upgrade-rules-icon i {
+            color: var(--gold);
+            font-size: 18px;
+        }
+
+        .plans-upgrade-rules h3 {
+            color: var(--text-primary);
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .plans-upgrade-rules ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .plans-upgrade-rules ul li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .plans-upgrade-rules ul li i {
+            margin-top: 3px;
+            flex-shrink: 0;
+            font-size: 13px;
+        }
+
+        .plans-upgrade-rules ul li i.fa-check-circle {
+            color: var(--success);
+        }
+
+        .plans-upgrade-rules ul li i.fa-info-circle {
+            color: var(--gold);
+        }
+
+        /* ============================
+           INDIQUE E GANHE
+        ============================ */
+        .referral-section {
+            background: var(--bg-dark);
+            position: relative;
+        }
+
+        .referral-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .referral-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .referral-step {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px 20px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .referral-step:hover {
+            border-color: rgba(212, 165, 116, 0.4);
+            transform: translateY(-4px);
+        }
+
+        .referral-step-number {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #fff;
+            font-size: 13px;
+            font-weight: 800;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .referral-step-icon {
+            width: 52px;
+            height: 52px;
+            background: rgba(212, 165, 116, 0.12);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .referral-step-icon i {
+            font-size: 22px;
+            color: var(--gold);
+        }
+
+        .referral-step h3 {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .referral-step p {
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .referral-rules {
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(34, 197, 94, 0.06);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 16px;
+            padding: 28px 32px;
+        }
+
+        .referral-rules h3 {
+            color: var(--text-primary);
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .referral-rules h3 i {
+            color: var(--gold);
+            font-size: 18px;
+        }
+
+        .referral-rules ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .referral-rules ul li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .referral-rules ul li i {
+            color: #4ade80;
+            margin-top: 3px;
+            flex-shrink: 0;
+            font-size: 12px;
+        }
+
+        @media (max-width: 900px) {
+            .referral-steps {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .referral-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .referral-rules {
+                padding: 20px;
+            }
+
+            .plans-upgrade-rules {
+                padding: 20px;
+            }
+        }
+
+        /* ============================
+           DEPOIMENTOS
+        ============================ */
+        .testimonials {
+            background: var(--bg-dark);
+        }
+
+        .testimonials-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .testimonial-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            border-color: rgba(212, 165, 116, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .testimonial-stars {
+            color: var(--gold);
+            font-size: 14px;
+            margin-bottom: 16px;
+            letter-spacing: 2px;
+        }
+
+        .testimonial-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-style: italic;
+            margin-bottom: 24px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .author-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .author-info .author-name {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .author-info .author-role {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ============================
+           CTA FINAL
+        ============================ */
+        .cta-section {
+            background: var(--bg-card);
+            text-align: center;
+        }
+
+        .cta-inner {
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.08) 0%, rgba(184, 132, 61, 0.05) 100%);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 28px;
+            padding: 80px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-inner::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(ellipse, rgba(212, 165, 116, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cta-inner h2 {
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .cta-inner p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ============================
+           CONTATO
+        ============================ */
+        .contact {
+            background: var(--bg-dark);
+        }
+
+        .contact-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .contact-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover {
+            border-color: rgba(212, 165, 116, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 36px rgba(0,0,0,0.3);
+        }
+
+        .contact-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(212,165,116,0.15), rgba(184,132,61,0.1));
+            border: 1px solid rgba(212,165,116,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--gold);
+        }
+
+        .contact-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .contact-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .contact-card a {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gold);
+            text-decoration: none;
+            word-break: break-all;
+            transition: color 0.3s ease;
+        }
+
+        .contact-card a:hover {
+            color: var(--gold-light);
+        }
+
+        /* ============================
+           FOOTER
+        ============================ */
+        footer {
+            background: var(--bg-dark);
+            border-top: 1px solid var(--border);
+            padding: 48px 24px 32px;
+        }
+
+        .footer-inner {
+            max-width: 1140px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+            text-align: center;
+        }
+
+        .footer-logo img {
+            height: 40px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--gold);
+        }
+
+        .footer-copy {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .footer-contact-row {
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer-contact-item i {
+            color: var(--gold);
+            font-size: 14px;
+        }
+
+        .footer-contact-item a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-contact-item a:hover {
+            color: var(--gold);
+        }
+
+        /* ============================
+           ANIMACOES
+        ============================ */
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Barra de progresso de scroll */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
+            z-index: 9999;
+            border-radius: 0 2px 2px 0;
+            pointer-events: none;
+            transition: width 0.08s linear;
+        }
+
+        /* Float do hero badge */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-7px); }
+        }
+
+        /* Shimmer dos botões primários */
+        @keyframes shimmer-sweep {
+            0%   { left: -80%; }
+            100% { left: 160%; }
+        }
+
+        /* Pulse glow nos números dos passos */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 6px rgba(212, 165, 116, 0.12); }
+            50%       { box-shadow: 0 0 0 18px rgba(212, 165, 116, 0.04), 0 0 28px rgba(212, 165, 116, 0.22); }
+        }
+
+        .step-number {
+            animation: pulse-glow 2.5s ease-in-out infinite;
+        }
+
+        /* Bounce nos ícones das features ao hover */
+        @keyframes icon-pop {
+            0%   { transform: scale(1) rotate(0deg); }
+            35%  { transform: scale(1.22) rotate(-6deg); }
+            65%  { transform: scale(1.1) rotate(3deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .feature-card:hover .feature-icon {
+            animation: icon-pop 0.45s ease;
+        }
+
+        /* Partículas flutuantes do hero */
+        @keyframes particle-rise {
+            0%   { transform: translateY(0) scale(1); opacity: 0; }
+            10%  { opacity: 1; }
+            88%  { opacity: 0.35; }
+            100% { transform: translateY(-115vh) scale(0.2); opacity: 0; }
+        }
+
+        .hero-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--gold);
+            pointer-events: none;
+            animation: particle-rise linear infinite;
+        }
+
+        /* Planos: breakpoints específicos */
+        @media (max-width: 1150px) {
+            .plans .container { max-width: 720px; }
+            .plans-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* ============================
+           RESPONSIVO
+        ============================ */
+        @media (max-width: 900px) {
+            nav {
+                padding: 14px 20px;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: min(320px, 85vw);
+                background: linear-gradient(160deg, #1a1410 0%, #0d0d0d 100%);
+                border-left: 1px solid rgba(212,165,116,0.15);
+                flex-direction: column;
+                justify-content: center;
+                gap: 0;
+                padding: 100px 0 40px;
+                transition: right 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+                z-index: 999;
+                display: flex;
+                align-items: stretch;
+                overflow-y: auto;
+            }
+
+            .nav-links.open {
+                right: 0;
+            }
+
+            /* Itens do menu mobile */
+            .nav-links li {
+                opacity: 0;
+                transform: translateX(20px);
+                transition: opacity 0.35s ease, transform 0.35s ease;
+            }
+
+            .nav-links.open li:nth-child(1) { opacity:1; transform:none; transition-delay:0.08s; }
+            .nav-links.open li:nth-child(2) { opacity:1; transform:none; transition-delay:0.13s; }
+            .nav-links.open li:nth-child(3) { opacity:1; transform:none; transition-delay:0.18s; }
+            .nav-links.open li:nth-child(4) { opacity:1; transform:none; transition-delay:0.23s; }
+            .nav-links.open li:nth-child(5) { opacity:1; transform:none; transition-delay:0.28s; }
+            .nav-links.open li:nth-child(6) { opacity:1; transform:none; transition-delay:0.33s; }
+            .nav-links.open li:nth-child(7) { opacity:1; transform:none; transition-delay:0.38s; }
+
+            .nav-links a {
+                font-size: 17px;
+                display: flex;
+                align-items: center;
+                padding: 16px 32px;
+                border-radius: 0;
+                transition: background 0.25s ease, color 0.25s ease, padding-left 0.25s ease;
+                position: relative;
+            }
+
+            .nav-links a:not(.nav-cta):hover {
+                background: rgba(212,165,116,0.07);
+                color: var(--gold) !important;
+                padding-left: 40px;
+            }
+
+            .nav-links a:not(.nav-cta)::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 3px;
+                height: 0;
+                background: var(--gold);
+                border-radius: 0 3px 3px 0;
+                transition: height 0.25s ease;
+            }
+
+            .nav-links a:not(.nav-cta):hover::before {
+                height: 60%;
+            }
+
+            .nav-links .nav-cta {
+                margin: 24px 32px 0;
+                text-align: center;
+                padding: 14px 24px;
+                border-radius: 12px;
+                font-size: 16px;
+                justify-content: center;
+            }
+
+            /* Rodap&eacute; do menu mobile */
+            .mobile-menu-footer {
+                margin-top: auto;
+                padding: 28px 32px 0;
+                border-top: 1px solid rgba(212,165,116,0.1);
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+            }
+
+            .mobile-menu-footer a {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-size: 14px;
+                color: var(--text-muted) !important;
+                text-decoration: none;
+                padding: 0 !important;
+                transition: color 0.25s ease !important;
+            }
+
+            .mobile-menu-footer a:hover {
+                color: var(--gold) !important;
+                padding-left: 0 !important;
+                background: none !important;
+            }
+
+            .mobile-menu-footer a:hover::before { display: none !important; }
+
+            .mobile-menu-footer a i {
+                color: var(--gold);
+                font-size: 16px;
+                width: 20px;
+                text-align: center;
+            }
+
+            .hamburger {
+                display: flex;
+                z-index: 1001;
+            }
+
+            .steps-line { display: none; }
+
+            .step-item {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .step-item:nth-child(even) .step-content { order: unset; }
+            .step-item:nth-child(even) .step-empty  { order: unset; }
+
+            .step-empty { display: none; }
+
+            .step-center {
+                flex-direction: row;
+                align-items: center;
+                gap: 16px;
+                margin-bottom: 0;
+            }
+
+            .step-number {
+                width: 48px;
+                height: 48px;
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            section { padding: 72px 16px; }
+            .hero { padding: 100px 16px 60px; }
+            .hero-stats { gap: 28px; }
+            .cta-inner { padding: 48px 20px; }
+            .plans .container { max-width: none; }
+            .plans-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+        }
+    </style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- ============================
+     NAVBAR
+============================ -->
+<nav id="navbar">
+    <div class="nav-logo">
+        <img src="uploads/logo/logo.png" alt="MustaBarber">
+    </div>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#funcionalidades">Funcionalidades</a></li>
+        <li><a href="#como-funciona">Como Funciona</a></li>
+        <li><a href="#planos">Planos</a></li>
+        <li><a href="#indique">Indique e Ganhe</a></li>
+        <li><a href="#contato">Contato</a></li>
+        <li><a href="login.html" class="nav-cta">Entrar</a></li>
+        <li class="mobile-menu-footer">
+            <a href="mailto:contato.mustech@gmail.com">
+                <i class="fas fa-envelope"></i> contato.mustech@gmail.com
+            </a>
+            <a href="https://wa.me/5562994057005" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-whatsapp"></i> (62) 99405-7005
+            </a>
+            <a href="https://www.instagram.com/mustechdevs" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-instagram"></i> @mustechdevs
+            </a>
+        </li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+</nav>
+
+<!-- Overlay do menu mobile -->
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- ============================
+     HERO
+============================ -->
+<section class="hero" id="inicio">
+    <div>
+        <div class="hero-badge">
+            <i class="fas fa-star"></i>
+            Sistema Profissional para Estetica &amp; Beleza
+        </div>
+        <h1>
+            Eleve seu <span class="highlight">Neg&oacute;cio de Beleza</span><br>
+            a outro n&iacute;vel
+        </h1>
+        <p>
+            O MustaBarber centraliza agendamentos, controle financeiro, gest&atilde;o de clientes
+            e muito mais em um &uacute;nico sistema pensado para profissionais do ramo da beleza.
+        </p>
+        <div class="hero-buttons">
+            <a href="#como-funciona" class="btn-outline">
+                <i class="fas fa-play-circle"></i>
+                Ver como funciona
+            </a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-number" data-count="100" data-suffix="%">100%</div>
+                <div class="stat-label">Online &amp; M&oacute;vel</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="10" data-prefix="+">+10</div>
+                <div class="stat-label">M&oacute;dulos Dispon&iacute;veis</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Acesso a qualquer hora</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="52" data-prefix="R$" data-suffix=",90">R$52,90</div>
+                <div class="stat-label">A partir de / m&ecirc;s</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================
+     FUNCIONALIDADES
+============================ -->
+<section class="features" id="funcionalidades">
+    <div class="container">
+        <div class="features-header">
+            <div class="section-badge">
+                <i class="fas fa-bolt"></i>
+                Tudo que voc&ecirc; precisa
+            </div>
+            <h2 class="section-title">Funcionalidades que <span class="highlight">fazem a diferen&ccedil;a</span></h2>
+            <p class="section-sub" style="margin: 0 auto;">
+                Do agendamento ao financeiro, o MustaBarber cobre cada etapa do seu neg&oacute;cio.
+            </p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card fade-in">
+                <div class="feature-icon"><i class="fas fa-calendar-check"></i></div>
+                <h3>Agendamentos Inteligentes</h3>
+                <p>Gerencie hor&aacute;rios de forma simples. Seus clientes podem agendar online a qualquer momento, sem filas e sem liga&ccedil;&otilde;es.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon"><i class="fas fa-users"></i></div>
+                <h3>Gest&atilde;o de Clientes</h3>
+                <p>Hist&oacute;rico completo de cada cliente: servi&ccedil;os realizados, prefer&ecirc;ncias e muito mais para um atendimento personalizado.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>Controle Financeiro</h3>
+                <p>Acompanhe receitas, despesas e o desempenho do seu neg&oacute;cio com relat&oacute;rios visuais e intuitivos.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon"><i class="fas fa-cut"></i></div>
+                <h3>Cat&aacute;logo de Servi&ccedil;os</h3>
+                <p>Cadastre todos os seus servi&ccedil;os com pre&ccedil;os e dura&ccedil;&atilde;o. Mantenha tudo organizado e dispon&iacute;vel para agendamento.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon"><i class="fas fa-box-open"></i></div>
+                <h3>Controle de Estoque</h3>
+                <p>Gerencie seus produtos com alertas de reposi&ccedil;&atilde;o e controle de sa&iacute;da integrado ao fluxo de atendimento.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                <h3>Acesso pelo Celular</h3>
+                <p>Instale como aplicativo no seu celular e acesse de qualquer lugar. Interface otimizada para dispositivos m&oacute;veis.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon"><i class="fas fa-clock"></i></div>
+                <h3>Hor&aacute;rios Flex&iacute;veis</h3>
+                <p>Configure folgas, intervalos, hor&aacute;rios especiais e bloqueios de agenda de forma pr&aacute;tica e r&aacute;pida.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon"><i class="fas fa-user-tie"></i></div>
+                <h3>Painel do Barbeiro</h3>
+                <p>Cada profissional tem sua pr&oacute;pria vis&atilde;o da agenda, clientes e desempenho sem interferi&ecirc;ncias entre equipes.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3>Permiss&otilde;es por Perfil</h3>
+                <p>Defina o que cada funcion&aacute;rio pode ver e fazer dentro do sistema com controle detalhado de acessos.</p>
+            </div>
+            <div class="feature-card fade-in">
+                <div class="feature-icon"><i class="fab fa-whatsapp"></i></div>
+                <h3>Integra&ccedil;&atilde;o com WhatsApp</h3>
+                <p>Envio autom&aacute;tico de confirma&ccedil;&atilde;o de agendamento via WhatsApp tanto para o barbeiro quanto para o cliente, garantindo que nenhum hor&aacute;rio seja esquecido.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================
+     COMO FUNCIONA
+============================ -->
+<section class="how-it-works" id="como-funciona">
+    <div class="container">
+        <div class="how-header">
+            <div class="section-badge">
+                <i class="fas fa-map-signs"></i>
+                Passo a passo
+            </div>
+            <h2 class="section-title">Come&ccedil;ar &eacute; <span class="highlight">simples assim</span></h2>
+            <p class="section-sub" style="margin: 0 auto;">
+                Em poucos minutos voc&ecirc; ter&aacute; seu estabelecimento totalmente configurado e pronto para receber clientes.
+            </p>
+        </div>
+        <div class="steps-wrapper">
+            <div class="steps-line"></div>
+            <div class="steps-list">
+
+                <!-- PASSO 1 -->
+                <div class="step-item fade-in">
+                    <div class="step-content" style="text-align: right;">
+                        <div class="step-icon" style="text-align: left;"><i class="fas fa-user-plus"></i></div>
+                        <h3>Crie sua Conta</h3>
+                        <p>Acesse a p&aacute;gina de cadastro, informe seus dados b&aacute;sicos: nome, e-mail, telefone e crie uma senha segura. O processo leva menos de 2 minutos.</p>
+                    </div>
+                    <div class="step-center">
+                        <div class="step-number">1</div>
+                    </div>
+                    <div class="step-empty"></div>
+                </div>
+
+                <!-- PASSO 2 -->
+                <div class="step-item fade-in">
+                    <div class="step-empty"></div>
+                    <div class="step-center">
+                        <div class="step-number">2</div>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-icon"><i class="fas fa-tag"></i></div>
+                        <h3>Escolha seu Plano e Data de Cobran&ccedil;a</h3>
+                        <p>Selecione o plano ideal para o seu neg&oacute;cio e informe a data em que deseja que a cobran&ccedil;a seja gerada. Voc&ecirc; ter&aacute; <strong>7 dias gr&aacute;tis</strong> para testar o sistema antes de qualquer cobran&ccedil;a.</p>
+                    </div>
+                </div>
+
+                <!-- PASSO 3 -->
+                <div class="step-item fade-in">
+                    <div class="step-content" style="text-align: right;">
+                        <div class="step-icon" style="text-align: left;"><i class="fas fa-cut"></i></div>
+                        <h3>Cadastre seus Servi&ccedil;os</h3>
+                        <p>Inclua todos os servi&ccedil;os que voc&ecirc; oferece: corte, barba, colora&ccedil;&atilde;o e o que mais fizer parte do seu card&aacute;pio. Defina pre&ccedil;os e tempo de dura&ccedil;&atilde;o.</p>
+                    </div>
+                    <div class="step-center">
+                        <div class="step-number">3</div>
+                    </div>
+                    <div class="step-empty"></div>
+                </div>
+
+                <!-- PASSO 4 -->
+                <div class="step-item fade-in">
+                    <div class="step-empty"></div>
+                    <div class="step-center">
+                        <div class="step-number">4</div>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-icon"><i class="fas fa-calendar-alt"></i></div>
+                        <h3>Configure seus Hor&aacute;rios</h3>
+                        <p>Defina os dias e hor&aacute;rios de funcionamento. Configure intervalos, folgas e disponibilidade para seus atendimentos.</p>
+                    </div>
+                </div>
+
+                <!-- PASSO 5 -->
+                <div class="step-item fade-in">
+                    <div class="step-content" style="text-align: right;">
+                        <div class="step-icon" style="text-align: left;"><i class="fas fa-rocket"></i></div>
+                        <h3>Pronto! Come&ccedil;e a Usar</h3>
+                        <p>Seu sistema est&aacute; configurado. Comece a receber agendamentos, acompanhar o financeiro e ter controle total do seu neg&oacute;cio em tempo real. Nos planos <strong>Equipe e Barbearia+</strong>, voc&ecirc; ainda pode cadastrar seu estabelecimento, adicionar funcion&aacute;rios e gerenciar sua equipe.</p>
+                    </div>
+                    <div class="step-center">
+                        <div class="step-number">5</div>
+                    </div>
+                    <div class="step-empty"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================
+     PLANOS
+============================ -->
+<section class="plans" id="planos">
+    <div class="container">
+        <div class="plans-header">
+            <div class="section-badge">
+                <i class="fas fa-tag"></i>
+                Planos e Pre&ccedil;os
+            </div>
+            <h2 class="section-title">Escolha o plano <span class="highlight">ideal para voc&ecirc;</span></h2>
+            <p class="section-sub" style="margin: 0 auto;">
+                Sem taxa de ades&atilde;o. Sem surpresas. Comece com <strong>7 dias gr&aacute;tis</strong> e pague 100% digital &mdash; via <strong>Pix, cart&atilde;o de cr&eacute;dito/d&eacute;bito ou boleto</strong>.
+            </p>
+        </div>
+        <div class="plans-grid">
+
+            <!-- PLANO STARTER � Solo B�sico -->
+            <div class="plan-card fade-in">
+                <div class="plan-tier-label tier-starter">Starter</div>
+                <div class="plan-title">Solo B&aacute;sico</div>
+                <div class="plan-limit-badge limit-default"><i class="fas fa-user"></i> 1 barbeiro</div>
+                <div class="plan-trial-info">
+                    <i class="fas fa-gift"></i> 7 dias gr&aacute;tis
+                </div>
+                <div class="plan-price">
+                    <span class="currency">R$</span>
+                    <span class="amount">52</span>
+                    <span class="period">,90/m&ecirc;s</span>
+                </div>
+                <p class="plan-desc">Aut&ocirc;nomo iniciante que quer organizar agendamentos e gerenciar clientes de forma simples.</p>
+                <div class="plan-divider"></div>
+                <div class="plan-features-title">Incluso</div>
+                <ul class="plan-features-list">
+                    <li class="included"><i class="fas fa-check-circle"></i> Agendamentos online</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> Gest&atilde;o de clientes</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> Cat&aacute;logo de servi&ccedil;os</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> App m&oacute;vel (PWA)</li>
+                    <li class="excluded"><i class="fas fa-times-circle"></i> Financeiro completo</li>
+                    <li class="excluded"><i class="fas fa-times-circle"></i> Estoque</li>
+                    <li class="excluded"><i class="fas fa-times-circle"></i> WhatsApp autom&aacute;tico</li>
+                    <li class="excluded"><i class="fas fa-times-circle"></i> Funcion&aacute;rios</li>
+                </ul>
+                <a href="paginas/usuarios/cadastro-barbeiro.html?plano=starter" class="plan-btn plan-btn-trial">
+                    <i class="fas fa-rocket" style="margin-right:8px"></i>Come&ccedil;ar gr&aacute;tis
+                </a>
+                <div class="plan-trust">
+                    <span class="plan-trust-item"><i class="fas fa-check"></i> Sem compromisso</span>
+                    <span class="plan-trust-item"><i class="fas fa-check"></i> Cancele quando quiser</span>
+                </div>
+            </div>
+
+            <!-- PLANO ESSENCIAL � Solo Pro -->
+            <div class="plan-card fade-in">
+                <div class="plan-tier-label tier-essencial">Essencial</div>
+                <div class="plan-title">Solo Pro</div>
+                <div class="plan-limit-badge limit-default"><i class="fas fa-user"></i> 1 barbeiro</div>
+                <div class="plan-trial-info">
+                    <i class="fas fa-gift"></i> 7 dias gr&aacute;tis
+                </div>
+                <div class="plan-price">
+                    <span class="currency">R$</span>
+                    <span class="amount">64</span>
+                    <span class="period">,90/m&ecirc;s</span>
+                </div>
+                <p class="plan-desc">Aut&ocirc;nomo completo com financeiro, estoque e WhatsApp autom&aacute;tico para rodar o neg&oacute;cio sozinho.</p>
+                <div class="plan-divider"></div>
+                <div class="plan-features-title">Tudo do Solo B&aacute;sico, mais:</div>
+                <ul class="plan-features-list">
+                    <li class="included"><i class="fas fa-check-circle"></i> Tudo do Solo B&aacute;sico</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> Controle financeiro</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> Controle de estoque</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> WhatsApp autom&aacute;tico</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> Dashboard do dia</li>
+                    <li class="excluded"><i class="fas fa-times-circle"></i> Funcion&aacute;rios</li>
+                    <li class="excluded"><i class="fas fa-times-circle"></i> Relat&oacute;rio por barbeiro</li>
+                </ul>
+                <a href="paginas/usuarios/cadastro-barbeiro.html?plano=solo-pro" class="plan-btn plan-btn-trial">
+                    <i class="fas fa-rocket" style="margin-right:8px"></i>Come&ccedil;ar gr&aacute;tis
+                </a>
+                <div class="plan-trust">
+                    <span class="plan-trust-item"><i class="fas fa-check"></i> Sem compromisso</span>
+                    <span class="plan-trust-item"><i class="fas fa-check"></i> Cancele quando quiser</span>
+                </div>
+            </div>
+
+            <!-- PLANO EQUIPE � Mais popular -->
+            <div class="plan-card featured-blue fade-in">
+                <div class="plan-badge badge-blue">Mais popular</div>
+                <div class="plan-tier-label tier-blue">Equipe</div>
+                <div class="plan-title">Equipe</div>
+                <div class="plan-limit-badge limit-blue"><i class="fas fa-users"></i> at&eacute; 3 barbeiros</div>
+                <div class="plan-trial-info">
+                    <i class="fas fa-gift"></i> 7 dias gr&aacute;tis
+                </div>
+                <div class="plan-price">
+                    <span class="currency">R$</span>
+                    <span class="amount">159</span>
+                    <span class="period">,90/m&ecirc;s</span>
+                </div>
+                <p class="plan-desc">Para pequenas equipes com agenda individual, relat&oacute;rios e controle de permiss&otilde;es por perfil.</p>
+                <div class="plan-divider"></div>
+                <div class="plan-features-title">Tudo do Solo Pro, mais:</div>
+                <ul class="plan-features-list">
+                    <li class="included"><i class="fas fa-check-circle"></i> Tudo do Solo Pro</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> At&eacute; 3 profissionais</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> Agenda individual</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> Relat&oacute;rio por barbeiro</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> Permiss&otilde;es por perfil</li>
+                </ul>
+                <a href="paginas/usuarios/cadastro-barbeiro.html?plano=equipe" class="plan-btn plan-btn-trial">
+                    <i class="fas fa-rocket" style="margin-right:8px"></i>Come&ccedil;ar gr&aacute;tis
+                </a>
+                <div class="plan-trust">
+                    <span class="plan-trust-item"><i class="fas fa-check"></i> Sem compromisso</span>
+                    <span class="plan-trust-item"><i class="fas fa-check"></i> Cancele quando quiser</span>
+                </div>
+            </div>
+
+            <!-- PLANO BARBEARIA PRO -->
+            <div class="plan-card featured-master fade-in">
+                <div class="plan-tier-label tier-master">Barbearia Pro</div>
+                <div class="plan-title">Barbearia+</div>
+                <div class="plan-limit-badge limit-master"><i class="fas fa-users"></i> + de 3 barbeiros</div>
+                <div class="plan-trial-info">
+                    <i class="fas fa-gift"></i> 7 dias gr&aacute;tis
+                </div>
+                <div class="plan-price" style="display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;min-height:72px;">
+                    <span style="font-size:1.1rem;font-weight:700;color:#f87171;letter-spacing:0.5px;">Plano Personalizado</span>
+                    <span style="font-size:0.82rem;color:#9ca3af;">Fale conosco para montar seu plano</span>
+                </div>
+                <p class="plan-desc">Para barbearias maiores que precisam de solu&ccedil;&atilde;o completa, m&uacute;ltiplos profissionais, relat&oacute;rios avan&ccedil;ados e suporte VIP exclusivo.</p>
+                <div class="plan-divider"></div>
+                <div class="plan-features-title">Tudo do Equipe, mais:</div>
+                <ul class="plan-features-list">
+                    <li class="included"><i class="fas fa-check-circle"></i> Tudo do Equipe</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> Profissionais ilimitados</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> Relat&oacute;rios avan&ccedil;ados</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> Suporte priorit&aacute;rio</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> Onboarding guiado</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> M&uacute;ltiplas unidades</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> Gerente por unidade</li>
+                    <li class="included"><i class="fas fa-check-circle"></i> Suporte VIP exclusivo</li>
+                </ul>
+                <a href="https://wa.me/5562994057005?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20plano%20Barbearia%2B%20e%20gostaria%20de%20saber%20mais!" target="_blank" rel="noopener noreferrer" class="plan-btn plan-btn-trial" style="background:linear-gradient(135deg,#f87171,#ef4444);">
+                    <i class="fab fa-whatsapp" style="margin-right:8px"></i>Entrar em Contato
+                </a>
+                <div class="plan-trust">
+                    <span class="plan-trust-item"><i class="fas fa-check"></i> Sem compromisso</span>
+                    <span class="plan-trust-item"><i class="fas fa-check"></i> Cancele quando quiser</span>
+                </div>
+            </div>
+
+        </div>
+        <p class="plans-note">
+            <i class="fas fa-lock"></i>
+            Pagamento 100% digital (Pix, cart&atilde;o de cr&eacute;dito/d&eacute;bito ou boleto) &bull; Cancele quando quiser &bull; Sem fidelidade obrigat&oacute;ria
+        </p>
+
+        <!-- REGRAS DE ALTERA&#65533;&#65533;O DE PLANO -->
+        <div class="plans-upgrade-rules">
+            <div class="upgrade-rules-icon"><i class="fas fa-exchange-alt"></i></div>
+            <h3>Altera&ccedil;&atilde;o de plano</h3>
+            <ul>
+                <li><i class="fas fa-check-circle"></i> <span>Ao final dos 7 dias gr&aacute;tis, ser&aacute; cobrado o valor do plano escolhido.</span></li>
+                <li><i class="fas fa-check-circle"></i> <span>Se alterar para um plano superior <strong>dentro de 3 dias</strong> ap&oacute;s a data de pagamento, ser&aacute; cobrada apenas uma <strong>taxa sobre a diferen&ccedil;a</strong>.</span></li>
+                <li><i class="fas fa-info-circle"></i> <span>Ap&oacute;s 3 dias da data de pagamento, a altera&ccedil;&atilde;o gerar&aacute; uma <strong>nova cobran&ccedil;a integral</strong> do novo plano.</span></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ============================
+     INDIQUE E GANHE
+============================ -->
+<section class="referral-section" id="indique">
+    <div class="container">
+        <div class="referral-header">
+            <div class="section-badge">
+                <i class="fas fa-users"></i>
+                Indique e Ganhe
+            </div>
+            <h2 class="section-title">Indique 5 amigos e <span class="highlight">use o sistema gr&aacute;tis!</span></h2>
+            <p class="section-sub" style="margin: 0 auto;">
+                Convide outros profissionais para o MustaBarber. Basta o indicado informar seu <strong>telefone ou e-mail</strong> no cadastro. Quando 5 indicados estiverem ativos e com pagamento em dia, voc&ecirc; ganha o sistema <strong>gratuitamente</strong>.
+            </p>
+        </div>
+
+        <div class="referral-steps">
+            <div class="referral-step fade-in">
+                <div class="referral-step-number">1</div>
+                <div class="referral-step-icon"><i class="fas fa-bullhorn"></i></div>
+                <h3>Indique o sistema</h3>
+                <p>Fale sobre o MustaBarber para colegas de profiss&atilde;o e incentive-os a se cadastrar.</p>
+            </div>
+            <div class="referral-step fade-in">
+                <div class="referral-step-number">2</div>
+                <div class="referral-step-icon"><i class="fas fa-user-plus"></i></div>
+                <h3>Eles se cadastram</h3>
+                <p>No cadastro, o indicado informa o <strong>telefone ou e-mail</strong> de quem indicou o sistema.</p>
+            </div>
+            <div class="referral-step fade-in">
+                <div class="referral-step-number">3</div>
+                <div class="referral-step-icon"><i class="fas fa-credit-card"></i></div>
+                <h3>Pagam a mensalidade</h3>
+                <p>Cada indicado precisa ter pago <strong>ao menos 1 mensalidade</strong> e estar ativo no sistema.</p>
+            </div>
+            <div class="referral-step fade-in">
+                <div class="referral-step-number">4</div>
+                <div class="referral-step-icon"><i class="fas fa-gift"></i></div>
+                <h3>Voc&ecirc; ganha!</h3>
+                <p>Com <strong>5 indicados ativos e pagantes</strong>, seu plano se torna <strong>gratuito</strong>.</p>
+            </div>
+        </div>
+
+        <div class="referral-rules">
+            <h3><i class="fas fa-clipboard-list"></i> Regras da campanha</h3>
+            <ul>
+                <li><i class="fas fa-check"></i> <span>Voc&ecirc; precisa indicar <strong>5 usu&aacute;rios</strong> para ganhar o sistema gratuitamente.</span></li>
+                <li><i class="fas fa-check"></i> <span>Os 5 indicados devem estar com status <strong>ativo</strong> no sistema.</span></li>
+                <li><i class="fas fa-check"></i> <span>Cada indicado deve ter pago <strong>ao menos uma mensalidade</strong> do aplicativo.</span></li>
+                <li><i class="fas fa-check"></i> <span>Se algum indicado ficar inativo ou inadimplente, o benef&iacute;cio ser&aacute; suspenso at&eacute; a regulariza&ccedil;&atilde;o.</span></li>
+                <li><i class="fas fa-check"></i> <span>O benef&iacute;cio &eacute; v&aacute;lido enquanto os 5 indicados permanecerem ativos e adimplentes.</span></li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 36px;">
+            <a href="paginas/usuarios/cadastro-barbeiro.html" class="btn-primary">
+                <i class="fas fa-rocket"></i>
+                Criar conta e come&ccedil;ar a indicar
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ============================
+     DEPOIMENTOS
+============================ -->
+<section class="testimonials">
+    <div class="container">
+        <div class="testimonials-header">
+            <div class="section-badge">
+                <i class="fas fa-heart"></i>
+                Quem j&aacute; usa
+            </div>
+            <h2 class="section-title">Profissionais que <span class="highlight">confiam no MustaBarber</span></h2>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card fade-in">
+                <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-text">
+                    &ldquo;Antes eu perdia muito tempo no WhatsApp confirmando hor&aacute;rios. Hoje tudo &eacute; autom&aacute;tico e meu faturamento aumentou porque consigo atender mais clientes.&rdquo;
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">R</div>
+                    <div class="author-info">
+                        <div class="author-name">Rafael Mendes</div>
+                        <div class="author-role">Barbeiro aut&ocirc;nomo</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card fade-in">
+                <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-text">
+                    &ldquo;O controle financeiro mudou minha vis&atilde;o do neg&oacute;cio. Agora sei exatamente quanto cada servi&ccedil;o rende e onde posso economizar. Sistema impec&aacute;vel.&rdquo;
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">C</div>
+                    <div class="author-info">
+                        <div class="author-name">Carlos Eduardo</div>
+                        <div class="author-role">Propriet&aacute;rio de barbearia</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card fade-in">
+                <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="testimonial-text">
+                    &ldquo;Tenho 4 funcion&aacute;rios e o plano Premium vale cada centavo. Consigo ver o desempenho de cada um e tomar decis&otilde;es muito mais inteligentes para o sal&atilde;o.&rdquo;
+                </p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">P</div>
+                    <div class="author-info">
+                        <div class="author-name">Priscila Alves</div>
+                        <div class="author-role">Propriet&aacute;ria de sal&atilde;o</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================
+     CTA FINAL
+============================ -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-inner">
+            <h2>Pronto para transformar <span class="highlight">seu neg&oacute;cio?</span></h2>
+            <p>Junte-se aos profissionais que j&aacute; usam o MustaBarber e leve seu neg&oacute;cio de beleza a outro n&iacute;vel.</p>
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                <a href="paginas/usuarios/cadastro-barbeiro.html" class="btn-primary">
+                    <i class="fas fa-rocket"></i>
+                    Criar minha conta agora
+                </a>
+                <a href="login.html" class="btn-outline">
+                    <i class="fas fa-sign-in-alt"></i>
+                    J&aacute; tenho conta
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================
+     CONTATO E SUPORTE
+============================ -->
+<section class="contact" id="contato">
+    <div class="container">
+        <div class="contact-header">
+            <div class="section-badge">
+                <i class="fas fa-headset"></i>
+                Suporte &amp; Contato
+            </div>
+            <h2 class="section-title">Estamos aqui para <span class="highlight">te ajudar</span></h2>
+            <p class="section-sub" style="margin: 0 auto;">
+                D&uacute;vidas, sugest&otilde;es ou precisa de suporte? Entre em contato com a equipe MusTech.
+            </p>
+        </div>
+        <div class="contact-grid">
+            <div class="contact-card fade-in">
+                <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                <h3>E-mail</h3>
+                <p>Envie sua d&uacute;vida ou solicita&ccedil;&atilde;o para nossa equipe</p>
+                <a href="mailto:contato.mustech@gmail.com">contato.mustech@gmail.com</a>
+            </div>
+            <div class="contact-card fade-in">
+                <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
+                <h3>WhatsApp</h3>
+                <p>Fale diretamente com o suporte do MustaBarber</p>
+                <a href="https://wa.me/5562994057005" target="_blank" rel="noopener noreferrer">(62) 99405-7005</a>
+            </div>
+            <div class="contact-card fade-in">
+                <div class="contact-icon"><i class="fab fa-instagram"></i></div>
+                <h3>Instagram</h3>
+                <p>Acompanhe novidades e atualiza&ccedil;&otilde;es da MusTech</p>
+                <a href="https://www.instagram.com/mustechdevs" target="_blank" rel="noopener noreferrer">@mustechdevs</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================
+     FOOTER
+============================ -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-logo">
+            <img src="uploads/logo/logo.png" alt="MustaBarber">
+        </div>
+        <div class="footer-links">
+            <a href="#funcionalidades">Funcionalidades</a>
+            <a href="#como-funciona">Como Funciona</a>
+            <a href="#planos">Planos</a>
+            <a href="#indique">Indique e Ganhe</a>
+            <a href="#contato">Contato</a>
+            <a href="login.html">Entrar</a>
+            <a href="paginas/usuarios/cadastro-barbeiro.html">Cadastrar</a>
+            <a href="instalacao-app.html?origem=index">Instalar App</a>
+            <a href="termos-de-uso.html">Termos de Uso</a>
+            <a href="politica-de-privacidade.html">Privacidade</a>
+            <a href="politica-de-cookies.html">Cookies</a>
+            <a href="lgpd-direitos.html">Canal LGPD</a>
+        </div>
+        <div class="footer-contact-row">
+            <div class="footer-contact-item">
+                <i class="fas fa-envelope"></i>
+                <a href="mailto:contato.mustech@gmail.com">contato.mustech@gmail.com</a>
+            </div>
+            <div class="footer-contact-item">
+                <i class="fab fa-whatsapp"></i>
+                <a href="https://wa.me/5562994057005" target="_blank" rel="noopener noreferrer">(62) 99405-7005</a>
+            </div>
+            <div class="footer-contact-item">
+                <i class="fab fa-instagram"></i>
+                <a href="https://www.instagram.com/mustechdevs" target="_blank" rel="noopener noreferrer">@mustechdevs</a>
+            </div>
+        </div>
+        <p class="footer-copy">
+            &copy; 2026 MustaBarber &mdash; Desenvolvido por <strong style="color: var(--gold);">MusTech</strong> &mdash; Todos os direitos reservados.
+        </p>
+    </div>
+</footer>
+
+<script>
+    window.MB_LEGAL_BASE_PATH = './';
+</script>
+<script src="assets/lgpd.js"></script>
+
+<script>
+    // Hamburger menu
+    const hamburger = document.getElementById('hamburger');
+    const navLinks  = document.getElementById('navLinks');
+    const overlay   = document.getElementById('navOverlay');
+
+    function openMenu() {
+        navLinks.classList.add('open');
+        hamburger.classList.add('active');
+        overlay.style.display = 'block';
+        requestAnimationFrame(() => overlay.classList.add('visible'));
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+        navLinks.classList.remove('open');
+        hamburger.classList.remove('active');
+        overlay.classList.remove('visible');
+        overlay.addEventListener('transitionend', () => { overlay.style.display = 'none'; }, { once: true });
+        document.body.style.overflow = '';
+    }
+
+    hamburger.addEventListener('click', () => {
+        navLinks.classList.contains('open') ? closeMenu() : openMenu();
+    });
+
+    overlay.addEventListener('click', closeMenu);
+
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => closeMenu());
+    });
+
+    // Fechar com ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMenu();
+    });
+
+    // Scroll suave para &acirc;ncoras
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+
+    // Fade-in ao scrollar
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Scroll: navbar + barra de progresso
+    const scrollProgress = document.getElementById('scrollProgress');
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (scrollProgress && docHeight > 0) {
+            scrollProgress.style.width = ((scrollTop / docHeight) * 100) + '%';
+        }
+        const navbar = document.getElementById('navbar');
+        if (scrollTop > 40) {
+            navbar.style.background = 'rgba(13,13,13,0.97)';
+        } else {
+            navbar.style.background = 'rgba(13,13,13,0.85)';
+        }
+    }, { passive: true });
+
+    // Partículas flutuantes no hero
+    (function () {
+        const hero = document.querySelector('.hero');
+        if (!hero) return;
+        for (let i = 0; i < 14; i++) {
+            const p = document.createElement('span');
+            p.className = 'hero-particle';
+            const size = (Math.random() * 3 + 3).toFixed(1);
+            p.style.cssText = [
+                'left:'   + (Math.random() * 100).toFixed(1) + '%',
+                'bottom:' + (Math.random() * 45).toFixed(1) + '%',
+                'width:'  + size + 'px',
+                'height:' + size + 'px',
+                'opacity:' + (Math.random() * 0.3 + 0.15).toFixed(2),
+                'animation-duration:' + (Math.random() * 8 + 9).toFixed(1) + 's',
+                'animation-delay:'    + (Math.random() * 10).toFixed(1) + 's'
+            ].join(';');
+            hero.appendChild(p);
+        }
+    })();
+
+    // Contador animado para as estatísticas
+    function animateCount(el, end, prefix, suffix, duration) {
+        const startTime = performance.now();
+        function step(now) {
+            const progress = Math.min((now - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            if (progress < 1) {
+                el.textContent = prefix + Math.floor(eased * end);
+                requestAnimationFrame(step);
+            } else {
+                el.textContent = prefix + end + suffix;
+            }
+        }
+        requestAnimationFrame(step);
+    }
+
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const el = entry.target;
+            const count = parseInt(el.dataset.count);
+            if (!isNaN(count)) {
+                animateCount(el, count, el.dataset.prefix || '', el.dataset.suffix || '', 1400);
+            }
+            counterObserver.unobserve(el);
+        });
+    }, { threshold: 0.6 });
+
+    document.querySelectorAll('.stat-number[data-count]').forEach(el => counterObserver.observe(el));
+
+    // Entrada escalonada para cards em grids
+    ['.features-grid', '.plans-grid', '.testimonials-grid', '.referral-steps', '.contact-grid'].forEach(sel => {
+        document.querySelectorAll(sel + ' .fade-in').forEach((el, i) => {
+            el.style.transitionDelay = (i * 0.08) + 's';
+        });
+    });
+</script>
+</body>
+</html>

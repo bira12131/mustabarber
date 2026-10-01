@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Agendamentos - MustaBarber</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1f1f1f 0%, #141414 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4a4a4a, #1f1f1f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #e8e8e8;
+            font-size: 1.1rem;
+        }
+
+        .busca-section {
+            background: rgba(25, 25, 28, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .busca-form {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #e8e8e8;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(45, 37, 32, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #e8e8e8;
+            font-size: 1rem;
+        }
+
+        .btn-buscar {
+            padding: 0.75rem 2rem;
+            background: linear-gradient(135deg, #4a4a4a, #1f1f1f);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            align-self: flex-end;
+            transition: all 0.3s;
+        }
+
+        .btn-buscar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(150, 150, 170, 0.4);
+        }
+
+        .agendamentos-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .agendamento-card {
+            background: rgba(25, 25, 28, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s;
+        }
+
+        .agendamento-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+        }
+
+        .agendamento-info {
+            flex: 1;
+        }
+
+        .agendamento-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-badge.pendente {
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .status-badge.confirmado {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-badge.agendado {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-badge.em_atendimento {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .status-badge.concluido {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .status-badge.cancelado {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .status-badge.falta {
+            background: rgba(107, 114, 128, 0.1);
+            color: #6b7280;
+            border: 1px solid rgba(107, 114, 128, 0.3);
+        }
+
+        .agendamento-data {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #e8e8e8;
+        }
+
+        .agendamento-detalhes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .detalhe-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #e8e8e8;
+            font-size: 0.875rem;
+        }
+
+        .detalhe-item i {
+            color: #e8e8e8;
+        }
+
+        .agendamento-acoes {
+
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .btn-cancelar {
+            padding: 0.75rem 1.5rem;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-cancelar:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .aviso-prazo-cancelamento {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Modais */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(26, 26, 26, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .modal-conteudo {
+            background: rgba(25, 25, 28, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-icone {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-icone.warning {
+            color: #f59e0b;
+        }
+
+        .modal-icone.danger {
+            color: #ef4444;
+        }
+
+        .modal-icone.sucesso {
+            color: #10b981;
+        }
+
+        .modal-icone.erro {
+            color: #ef4444;
+        }
+
+        .modal-titulo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e8e8e8;
+            margin-bottom: 1rem;
+        }
+
+        .modal-texto {
+            color: #a09a91;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .modal-botoes {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn-modal {
+            padding: 0.875rem 1.75rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            flex: 1;
+        }
+
+        .btn-modal-cancelar {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e8e8e8;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-modal-cancelar:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-modal-confirmar {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+        }
+
+        .btn-modal-confirmar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-modal-ok {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            min-width: 150px;
+        }
+
+        .btn-modal-ok:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #e8e8e8;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            color: #e8e8e8;
+            padding: 2rem;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .busca-form {
+                flex-direction: column;
+            }
+
+            .agendamento-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .agendamento-acoes {
+                width: 100%;
+            }
+
+            .modal-conteudo {
+                padding: 2rem;
+                max-width: 95%;
+            }
+
+            .modal-botoes {
+                flex-direction: column;
+            }
+
+            .btn-modal {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-calendar-alt"></i>
+                Meus Agendamentos
+            </h1>
+            <p>Consulte e gerencie seus hor&aacute;rios agendados</p>
+            <button onclick="window.history.back()" style="margin-top: 1rem; padding: 0.75rem 1.5rem; background: rgba(255, 255, 255, 0.15); color: #e8e8e8; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                <i class="fas fa-arrow-left"></i>
+                Voltar
+            </button>
+        </div>
+
+        <div class="busca-section">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                <div style="flex: 1;">
+                    <label style="display: block; color: #e8e8e8; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem;">Per&iacute;odo</label>
+                    <select id="periodo" onchange="atualizarPeriodo()" style="width: 100%; padding: 0.75rem; background: rgba(45, 37, 32, 0.5); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: #e8e8e8; font-size: 1rem;">
+                        <option value="proximo">Pr&oacute;ximos agendamentos</option>
+                        <option value="30">&Uacute;ltimos 30 dias</option>
+                        <option value="60">&Uacute;ltimos 60 dias</option>
+                        <option value="90">&Uacute;ltimos 90 dias</option>
+                        <option value="todos">Todos</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="agendamentos-lista" id="agendamentosLista">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Carregando seus agendamentos...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirma&ccedil;&atilde;o -->
+    <div class="modal-overlay" id="modalConfirmacao">
+        <div class="modal-conteudo">
+            <div class="modal-icone" id="modalConfirmacaoIcone">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="modal-titulo" id="modalConfirmacaoTitulo">Confirmar A&ccedil;&atilde;o</div>
+            <div class="modal-texto" id="modalConfirmacaoTexto"></div>
+            <div class="modal-botoes">
+                <button class="btn-modal btn-modal-cancelar" onclick="fecharModalConfirmacao()">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </button>
+                <button class="btn-modal btn-modal-confirmar" onclick="confirmarAcao()">
+                    <i class="fas fa-check"></i>
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Notifica&ccedil;&atilde;o (Sucesso/Erro) -->
+    <div class="modal-overlay" id="modalNotificacao">
+        <div class="modal-conteudo">
+            <div class="modal-icone" id="modalNotificacaoIcone">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="modal-titulo" id="modalNotificacaoTitulo">Sucesso!</div>
+            <div class="modal-texto" id="modalNotificacaoTexto"></div>
+            <div class="modal-botoes">
+                <button class="btn-modal btn-modal-ok" onclick="fecharModalNotificacao()">
+                    <i class="fas fa-check"></i>
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let telefoneCliente = '';
+        let codigoAgendamentoAtual = null;
+        let tipoAcaoAtual = '';
+        
+        // Carregar telefone da URL e buscar automaticamente
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar telefone
+            const urlParams = new URLSearchParams(window.location.search);
+            const telefone = urlParams.get('telefone');
+            
+            if (!telefone) {
+                document.getElementById('agendamentosLista').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Telefone n&atilde;o informado. Por favor, volte e tente novamente.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            telefoneCliente = telefone;
+            buscarAgendamentos();
+        });
+        
+        // Atualizar per&#65533;odo
+        function atualizarPeriodo() {
+            buscarAgendamentos();
+        }
+
+        async function buscarAgendamentos() {
+            if (!telefoneCliente) return;
+            
+            const periodo = document.getElementById('periodo').value;
+            const lista = document.getElementById('agendamentosLista');
+            lista.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Buscando agendamentos...</p></div>';
+            
+            try {
+                const response = await fetch(`../../bancodedados/agendamentos/buscar_agendamentos_cliente.php?telefone=${telefoneCliente}&periodo=${periodo}`);
+                const result = await response.json();
+                
+                if (result.sucesso && result.agendamentos.length > 0) {
+                    renderizarAgendamentos(result.agendamentos);
+                } else {
+                    lista.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-calendar-times"></i>
+                            <p>${result.mensagem || 'Nenhum agendamento encontrado'}</p>
+                        </div>
+                    `;
+                }
+            } catch (erro) {
+                console.error('Erro:', erro);
+                lista.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Erro ao buscar agendamentos. Tente novamente.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderizarAgendamentos(agendamentos) {
+            const lista = document.getElementById('agendamentosLista');
+            lista.innerHTML = '';
+            
+            agendamentos.forEach(agendamento => {
+                const card = criarCardAgendamento(agendamento);
+                lista.appendChild(card);
+            });
+        }
+
+        function criarCardAgendamento(agendamento) {
+            const card = document.createElement('div');
+            card.className = 'agendamento-card';
+            
+            // Normalizar status para min&#65533;sculo e remover acentos para a classe CSS
+            const statusNormalizado = agendamento.status.toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const statusClass = statusNormalizado;
+            
+            // Regra: s&oacute; &eacute; poss&iacute;vel cancelar agendamentos ativos (agendado/confirmado)
+            // com no m&iacute;nimo 3 horas de antecedencia em rela&ccedil;&atilde;o ao hor&aacute;rio marcado
+            const HORAS_MINIMAS_CANCELAMENTO = 3;
+            const statusCancelavel = statusNormalizado === 'agendado' || statusNormalizado === 'confirmado';
+            const dataHoraAgendamento = new Date(agendamento.data_agendamento + ' ' + agendamento.horario);
+            const horasAteAgendamento = (dataHoraAgendamento - new Date()) / (1000 * 60 * 60);
+            const podeCancelar = statusCancelavel && horasAteAgendamento >= HORAS_MINIMAS_CANCELAMENTO;
+            const prazoCancelamentoExpirado = statusCancelavel && horasAteAgendamento > 0 && horasAteAgendamento < HORAS_MINIMAS_CANCELAMENTO;
+            
+            card.innerHTML = `
+                <div class="agendamento-info">
+                    <div class="agendamento-header">
+                        <div class="agendamento-data">
+                            ${formatarData(agendamento.data_agendamento)} &agrave;s ${agendamento.horario}
+                        </div>
+                        <span class="status-badge ${statusClass}">${agendamento.status}</span>
+                    </div>
+                    <div class="agendamento-detalhes">
+                        <div class="detalhe-item">
+                            <i class="fas fa-user-tie"></i>
+                            <span>${agendamento.barbeiro_nome}</span>
+                        </div>
+                        <div class="detalhe-item">
+                            <i class="fas fa-scissors"></i>
+                            <span>${agendamento.servico_nome}</span>
+                        </div>
+                        <div class="detalhe-item">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>R$ ${parseFloat(agendamento.valor).toFixed(2).replace('.', ',')}</span>
+                        </div>
+                        <div class="detalhe-item">
+                            <i class="fas fa-clock"></i>
+                            <span>${agendamento.duracao_minutos} min</span>
+                        </div>
+                    </div>
+                </div>
+                ${(podeCancelar || prazoCancelamentoExpirado) ? `
+                <div class="agendamento-acoes">
+                    ${podeCancelar ? `
+                    <button class="btn-cancelar" onclick="cancelarAgendamento(${agendamento.codigo}, '${agendamento.data_agendamento}', '${agendamento.horario}')">
+                        <i class="fas fa-times"></i>
+                        Cancelar
+                    </button>
+                    ` : ''}
+                    ${prazoCancelamentoExpirado ? `
+                    <div class="aviso-prazo-cancelamento">
+                        <i class="fas fa-clock"></i>
+                        Cancelamento dispon&iacute;vel at&eacute; 3h antes do hor&aacute;rio
+                    </div>
+                    ` : ''}
+                </div>
+                ` : ''}
+            `;
+            
+            return card;
+        }
+
+        function formatarData(dataStr) {
+            const [ano, mes, dia] = dataStr.split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        // Fun��es de controle dos modais
+        function abrirModalConfirmacao(titulo, texto, iconeClass, codigo, tipo) {
+            const modal = document.getElementById('modalConfirmacao');
+            const icone = document.getElementById('modalConfirmacaoIcone');
+            
+            document.getElementById('modalConfirmacaoTitulo').textContent = titulo;
+            document.getElementById('modalConfirmacaoTexto').innerHTML = texto;
+            
+            icone.className = 'modal-icone ' + iconeClass;
+            
+            codigoAgendamentoAtual = codigo;
+            tipoAcaoAtual = tipo;
+            
+            modal.classList.add('show');
+        }
+
+        function fecharModalConfirmacao() {
+            document.getElementById('modalConfirmacao').classList.remove('show');
+            codigoAgendamentoAtual = null;
+            tipoAcaoAtual = '';
+        }
+
+        function confirmarAcao() {
+            if (tipoAcaoAtual === 'cancelar') {
+                executarCancelamento(codigoAgendamentoAtual);
+            }
+            fecharModalConfirmacao();
+        }
+
+        function abrirModalNotificacao(titulo, texto, tipo) {
+            const modal = document.getElementById('modalNotificacao');
+            const icone = document.getElementById('modalNotificacaoIcone');
+            
+            document.getElementById('modalNotificacaoTitulo').textContent = titulo;
+            document.getElementById('modalNotificacaoTexto').innerHTML = texto;
+            
+            // Configurar �cone baseado no tipo
+            if (tipo === 'sucesso') {
+                icone.className = 'modal-icone sucesso';
+                icone.innerHTML = '<i class="fas fa-check-circle"></i>';
+            } else if (tipo === 'erro') {
+                icone.className = 'modal-icone erro';
+                icone.innerHTML = '<i class="fas fa-times-circle"></i>';
+            }
+            
+            modal.classList.add('show');
+        }
+
+        function fecharModalNotificacao() {
+            document.getElementById('modalNotificacao').classList.remove('show');
+            buscarAgendamentos();
+        }
+
+        async function cancelarAgendamento(codigo, data, horario) {
+            const dataFormatada = formatarData(data);
+            
+            abrirModalConfirmacao(
+                'Cancelar Agendamento',
+                `Deseja realmente cancelar o agendamento do dia <strong>${dataFormatada}</strong> &agrave;s <strong>${horario}</strong>?<br><br>Ele ser&aacute; removido da sua agenda, o hor&aacute;rio ser&aacute; reaberto para novos agendamentos e o barbeiro ser&aacute; notificado.`,
+                'warning',
+                codigo,
+                'cancelar'
+            );
+        }
+
+        async function executarCancelamento(codigo) {
+            try {
+                const formData = new FormData();
+                formData.append('codigo', codigo);
+                
+                const response = await fetch('../../bancodedados/agendamentos/cancelar_agendamento_cliente.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.sucesso) {
+                    let mensagemCompleta = 'Seu agendamento foi cancelado e removido da sua agenda.';
+                    
+                    if (result.horario_desbloqueado) {
+                        mensagemCompleta += '<br>O hor&aacute;rio foi reaberto para novos agendamentos.';
+                    }
+                    
+                    if (result.whatsapp_enviado) {
+                        mensagemCompleta += '<br>O barbeiro foi notificado sobre o cancelamento.';
+                    }
+                    
+                    abrirModalNotificacao(
+                        'Agendamento Cancelado!',
+                        mensagemCompleta,
+                        'sucesso'
+                    );
+                } else {
+                    abrirModalNotificacao(
+                        'Erro ao Cancelar',
+                        result.mensagem || 'Ocorreu um erro ao cancelar o agendamento. Tente novamente.',
+                        'erro'
+                    );
+                }
+            } catch (erro) {
+                console.error('Erro:', erro);
+                abrirModalNotificacao(
+                    'Erro de Conex&atilde;o',
+                    'N&atilde;o foi poss&iacute;vel processar o cancelamento. Verifique sua conex&atilde;o e tente novamente.',
+                    'erro'
+                );
+            }
+        }
+    </script>
+</body>
+</html>
+
+

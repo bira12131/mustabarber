@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Permiss&otilde;es - Administrador</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="../tema-claro.css" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1f1f1f 0%, #141414 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            background: rgba(25, 25, 28, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #e8e8e8;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-left p {
+            color: #b0b0b0;
+            font-size: 1rem;
+        }
+
+        .btn-back {
+            background: rgba(212, 165, 116, 0.1);
+            border: 1px solid rgba(212, 165, 116, 0.3);
+            color: #d4a574;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-back:hover {
+            background: rgba(212, 165, 116, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .tabs-container {
+            background: rgba(25, 25, 28, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            background: transparent;
+            border: none;
+            color: #b0b0b0;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+            bottom: -2px;
+        }
+
+        .tab.active {
+            color: #d4a574;
+            border-bottom-color: #d4a574;
+        }
+
+        .tab:hover {
+            color: #e8e8e8;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .permissions-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .module-card {
+            background: rgba(30, 30, 35, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .module-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #d4a574;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .permissions-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .permission-item {
+            background: rgba(40, 40, 45, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .permission-item:hover {
+            background: rgba(50, 50, 55, 0.6);
+            border-color: rgba(212, 165, 116, 0.2);
+        }
+
+        .permission-info {
+            flex: 1;
+        }
+
+        .permission-name {
+            font-weight: 500;
+            color: #e8e8e8;
+            margin-bottom: 0.25rem;
+        }
+
+        .permission-desc {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            margin-left: 1rem;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background: linear-gradient(135deg, #d4a574, #b8843d);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #d4a574, #b8843d);
+            color: #1a1a1a;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(212, 165, 116, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e8e8e8;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #888;
+        }
+
+        .loading i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #d4a574;
+        }
+
+        /* Gerenciar Perfis */
+        .perfis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .perfil-card {
+            background: rgba(30, 30, 35, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .perfil-card:hover {
+            border-color: rgba(212, 165, 116, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .perfil-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .perfil-nome {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #d4a574;
+        }
+
+        .perfil-desc {
+            color: #b0b0b0;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .perfil-stats {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .perfil-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(25, 25, 28, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #e8e8e8;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .btn-close:hover {
+            color: #e8e8e8;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #b0b0b0;
+            font-weight: 500;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(40, 40, 45, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #e8e8e8;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #d4a574;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(25, 25, 28, 0.95);
+            border: 1px solid rgba(212, 165, 116, 0.5);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            color: #e8e8e8;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 2000;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+
+        .toast.error {
+            border-color: rgba(244, 67, 54, 0.5);
+        }
+
+        .toast i {
+            font-size: 1.5rem;
+        }
+
+        .toast.success i {
+            color: #4caf50;
+        }
+
+        .toast.error i {
+            color: #f44336;
+        }
+
+        .permission-item.saving {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .page-header { flex-direction: column; gap: 1rem; padding: 1.5rem; }
+            .header-left h1 { font-size: 1.5rem; }
+            .btn-back { width: 100%; justify-content: center; }
+            .tabs { flex-direction: column; gap: 0.5rem; border-bottom: none; }
+            .tab { width: 100%; padding: 0.75rem 1rem; border-left: 3px solid transparent; border-radius: 8px; }
+            .tab.active { background: rgba(212, 165, 116, 0.1); border-left-color: #d4a574; }
+            .permissions-list { grid-template-columns: 1fr; }
+            .permission-item { flex-direction: column; gap: 1rem; }
+            .toggle-switch { align-self: flex-end; width: 60px; height: 32px; }
+            .toggle-slider:before { height: 24px; width: 24px; left: 4px; bottom: 4px; }
+            input:checked + .toggle-slider:before { transform: translateX(28px); }
+            .perfis-grid { grid-template-columns: 1fr; }
+            .modal-content { width: 95%; padding: 1.5rem; }
+            .action-buttons, .perfil-actions { flex-direction: column; }
+            .btn, .btn-small { width: 100%; }
+            .toast { left: 1rem; right: 1rem; font-size: 0.9rem; }
+            .form-input, .form-textarea { font-size: 16px; }
+        }
+        @media (max-width: 480px) {
+            .header-left h1 { font-size: 1.25rem; }
+            .page-header, .module-card { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <div class="header-left">
+                <h1>
+                    <i class="fas fa-user-shield"></i>
+                    <span id="pageTitle">Gerenciar Permiss&otilde;es</span>
+                </h1>
+                <p id="pageSubtitle">Carregando...</p>
+            </div>
+            <a href="gestao-usuarios.html" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+                Voltar
+            </a>
+        </div>
+
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('usuario')">
+                    <i class="fas fa-user"></i> Permiss&otilde;es do Usu&aacute;rio
+                </button>
+                <button class="tab" onclick="switchTab('perfil')">
+                    <i class="fas fa-users-cog"></i> Gerenciar Perfis
+                </button>
+                <button class="tab" onclick="switchTab('nova-permissao')">
+                    <i class="fas fa-plus-circle"></i> Nova Permiss&atilde;o
+                </button>
+            </div>
+
+            <!-- Tab: Permissões do Usuário -->
+            <div id="tab-usuario" class="tab-content active">
+                <div id="permissoesUsuario" class="permissions-grid">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Carregando permiss&otilde;es...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Gerenciar Perfis -->
+            <div id="tab-perfil" class="tab-content">
+                <div id="perfisList" class="perfis-grid">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Carregando perfis...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Nova Permissão -->
+            <div id="tab-nova-permissao" class="tab-content">
+                <div class="module-card">
+                    <div class="module-header">
+                        <h3 class="module-title">
+                            <i class="fas fa-plus-circle"></i>
+                            Cadastrar Nova Permiss&atilde;o
+                        </h3>
+                    </div>
+                    <form id="formNovaPermissao">
+                        <div class="form-group">
+                            <label class="form-label">Perfil</label>
+                            <select id="novaPermissaoPerfil" class="form-input" required>
+                                <option value="">Selecione o perfil</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Nome da Permiss&atilde;o</label>
+                            <input type="text" id="novaPermissaoNome" class="form-input" placeholder="Ex: Ver Relatórios" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">M&oacute;dulo</label>
+                            <input type="text" id="novaPermissaoModulo" class="form-input" placeholder="Ex: relatorios" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">A&ccedil;&atilde;o</label>
+                            <input type="text" id="novaPermissaoAcao" class="form-input" placeholder="Ex: visualizar" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Descri&ccedil;&atilde;o</label>
+                            <textarea id="novaPermissaoDescricao" class="form-textarea" placeholder="Descrição detalhada da permissão"></textarea>
+                        </div>
+                        <div class="action-buttons">
+                            <button type="button" class="btn btn-secondary" onclick="limparFormPermissao()">
+                                <i class="fas fa-times"></i>
+                                Limpar
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                Cadastrar Permiss&atilde;o
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Novo Perfil -->
+    <div id="modalNovoPerfil" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Criar Novo Perfil</h3>
+                <button class="btn-close" onclick="fecharModal('modalNovoPerfil')">&times;</button>
+            </div>
+            <form id="formNovoPerfil">
+                <div class="form-group">
+                    <label class="form-label">Nome do Perfil</label>
+                    <input type="text" id="novoPerfilNome" class="form-input" placeholder="Ex: Barbeiro Plano Premium" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descri&ccedil;&atilde;o</label>
+                    <textarea id="novoPerfilDescricao" class="form-textarea" placeholder="Descrição do perfil e suas características"></textarea>
+                </div>
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="fecharModal('modalNovoPerfil')">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Criar Perfil
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let usuarioAtual = {};
+        let permissoesData = [];
+        let perfisData = [];
+        let permissoesUsuarioAtual = [];
+
+        // Carregar dados ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            usuarioAtual = {
+                codigo: urlParams.get('codigo'),
+                nome: urlParams.get('nome'),
+                perfil: urlParams.get('perfil')
+            };
+
+            document.getElementById('pageSubtitle').textContent = `Usuário: ${usuarioAtual.nome}`;
+
+            carregarDados();
+        });
+
+        async function carregarDados() {
+            try {
+                // Carregar todas as permissões do perfil do usuário
+                const response = await fetch(`../../bancodedados/administrador/listar_permissoes.php?perfil=${usuarioAtual.perfil}`);
+                const result = await response.json();
+
+                if (result.sucesso) {
+                    permissoesData = result.permissoes || [];
+                    renderizarPermissoes();
+                }
+
+                // Carregar todos os perfis
+                await carregarPerfis();
+
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                document.getElementById('permissoesUsuario').innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Erro ao carregar permiss&otilde;es</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function carregarPerfis() {
+            try {
+                const response = await fetch('../../bancodedados/administrador/listar_perfis.php');
+                const result = await response.json();
+
+                if (result.sucesso) {
+                    perfisData = result.perfis || [];
+                    renderizarPerfis();
+                    preencherSelectPerfil();
+                }
+            } catch (error) {
+                console.error('Erro ao carregar perfis:', error);
+            }
+        }
+
+        function renderizarPermissoes() {
+            const container = document.getElementById('permissoesUsuario');
+            
+            if (permissoesData.length === 0) {
+                container.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-shield-alt"></i>
+                        <p>Nenhuma permiss&atilde;o encontrada</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Agrupar permissões por módulo
+            const modulos = {};
+            permissoesData.forEach(perm => {
+                if (!modulos[perm.modulo]) {
+                    modulos[perm.modulo] = [];
+                }
+                modulos[perm.modulo].push(perm);
+            });
+
+            let html = '';
+
+            Object.keys(modulos).sort().forEach(modulo => {
+                const icone = getIconeModulo(modulo);
+                html += `
+                    <div class="module-card">
+                        <div class="module-header">
+                            <h3 class="module-title">
+                                <i class="${icone}"></i>
+                                ${formatarNomeModulo(modulo)}
+                            </h3>
+                        </div>
+                        <div class="permissions-list">
+                `;
+
+                modulos[modulo].forEach(perm => {
+                    html += `
+                        <div class="permission-item">
+                            <div class="permission-info">
+                                <div class="permission-name">
+                                    <i class="fas fa-check-circle" style="color: #4caf50; margin-right: 0.5rem;"></i>
+                                    ${perm.nome}
+                                </div>
+                                <div class="permission-desc">${perm.descricao || 'Sem descrição'}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderizarPerfis() {
+            const container = document.getElementById('perfisList');
+            
+            if (perfisData.length === 0) {
+                container.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-users-cog"></i>
+                        <p>Nenhum perfil encontrado</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+
+            perfisData.forEach(perfil => {
+                const totalPermissoes = permissoesData.filter(p => p.codigo_perfil == perfil.codigo).length;
+                
+                html += `
+                    <div class="perfil-card">
+                        <div class="perfil-header">
+                            <div>
+                                <div class="perfil-nome">${perfil.nome}</div>
+                                <div class="perfil-desc">${perfil.descricao || 'Sem descrição'}</div>
+                            </div>
+                        </div>
+                        <div class="perfil-stats">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>${totalPermissoes} permiss&otilde;es</span>
+                        </div>
+                        <div class="perfil-actions">
+                            <button class="btn btn-secondary btn-small" onclick="editarPermissoesPerfil(${perfil.codigo})">
+                                <i class="fas fa-edit"></i>
+                                Editar Permiss&otilde;es
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Adicionar card para criar novo perfil
+            html += `
+                <div class="perfil-card" style="border: 2px dashed rgba(212, 165, 116, 0.3); cursor: pointer;" onclick="abrirModal('modalNovoPerfil')">
+                    <div style="text-align: center; padding: 2rem; color: #d4a574;">
+                        <i class="fas fa-plus-circle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <div style="font-size: 1.1rem; font-weight: 600;">Criar Novo Perfil</div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function preencherSelectPerfil() {
+            const select = document.getElementById('novaPermissaoPerfil');
+            let options = '<option value="">Selecione o perfil</option>';
+            
+            perfisData.forEach(perfil => {
+                options += `<option value="${perfil.codigo}">${perfil.nome}</option>`;
+            });
+            
+            select.innerHTML = options;
+        }
+
+        function switchTab(tab) {
+            // Remover classe active de todas as tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+
+            // Ativar tab selecionada
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        function showToast(message, type = 'success') {
+            // Remover toast anterior se existir
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+
+            // Criar novo toast
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                <span>${message}</span>
+            `;
+
+            document.body.appendChild(toast);
+
+            // Mostrar toast
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+
+            // Remover toast após 3 segundos
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        function editarPermissoesPerfil(codigoPerfil) {
+            const perfil = perfisData.find(p => p.codigo == codigoPerfil);
+            if (!perfil) return;
+            
+            // Redirecionar para página de edição de permissões do perfil
+            window.location.href = `editar-permissoes-perfil.html?codigo=${codigoPerfil}&nome=${encodeURIComponent(perfil.nome)}`;
+        }
+
+        // Form Nova Permissão
+        document.getElementById('formNovaPermissao').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const dados = {
+                codigo_perfil: document.getElementById('novaPermissaoPerfil').value,
+                nome: document.getElementById('novaPermissaoNome').value,
+                modulo: document.getElementById('novaPermissaoModulo').value,
+                acao: document.getElementById('novaPermissaoAcao').value,
+                descricao: document.getElementById('novaPermissaoDescricao').value
+            };
+
+            try {
+                const response = await fetch('../../bancodedados/administrador/cadastrar_permissao.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+
+                const result = await response.json();
+
+                if (result.sucesso) {
+                    alert('Permiss&atilde;o cadastrada com sucesso!');
+                    limparFormPermissao();
+                    carregarDados();
+                } else {
+                    alert('Erro: ' + result.mensagem);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao cadastrar permiss&atilde;o');
+            }
+        });
+
+        // Form Novo Perfil
+        document.getElementById('formNovoPerfil').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const dados = {
+                nome: document.getElementById('novoPerfilNome').value,
+                descricao: document.getElementById('novoPerfilDescricao').value
+            };
+
+            try {
+                const response = await fetch('../../bancodedados/administrador/cadastrar_perfil.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+
+                const result = await response.json();
+
+                if (result.sucesso) {
+                    alert('Perfil criado com sucesso!');
+                    fecharModal('modalNovoPerfil');
+                    carregarPerfis();
+                } else {
+                    alert('Erro: ' + result.mensagem);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao criar perfil');
+            }
+        });
+
+        function limparFormPermissao() {
+            document.getElementById('formNovaPermissao').reset();
+        }
+
+        function abrirModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function fecharModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function getIconeModulo(modulo) {
+            const icones = {
+                'dashboard': 'fas fa-chart-line',
+                'agendamentos': 'fas fa-calendar-alt',
+                'clientes': 'fas fa-users',
+                'servicos': 'fas fa-cut',
+                'produtos': 'fas fa-box',
+                'financeiro': 'fas fa-dollar-sign',
+                'horarios': 'fas fa-clock',
+                'administrador': 'fas fa-user-shield'
+            };
+            return icones[modulo] || 'fas fa-cog';
+        }
+
+        function formatarNomeModulo(modulo) {
+            const nomes = {
+                'dashboard': 'Dashboard',
+                'agendamentos': 'Agendamentos',
+                'clientes': 'Clientes',
+                'servicos': 'Serviços',
+                'produtos': 'Produtos',
+                'financeiro': 'Financeiro',
+                'horarios': 'Horários',
+                'administrador': 'Administrador'
+            };
+            return nomes[modulo] || modulo.charAt(0).toUpperCase() + modulo.slice(1);
+        }
+    </script>
+</body>
+</html>

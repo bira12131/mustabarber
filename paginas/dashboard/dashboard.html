@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MustaBarber</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="../tema-claro.css" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* =====================================================
+           BASE — mobile first (≤ 768px)
+           ===================================================== */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #1a1a1a;
+            color: #e8e8e8;
+            min-height: 100vh;
+        }
+
+        /* Wrapper do conteúdo */
+        .dash-wrapper { padding: 10px; }
+
+        /* =====================================================
+           BANNER DE AVISO DE VENCIMENTO
+           ===================================================== */
+        .aviso-vencimento {
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-size: 0.84rem;
+            font-weight: 500;
+            line-height: 1.4;
+            cursor: pointer;
+        }
+        .aviso-vencimento.show { display: flex; }
+        .aviso-vencimento.urgente {
+            background: rgba(239,68,68,0.12);
+            border: 1px solid rgba(239,68,68,0.35);
+            color: #fca5a5;
+        }
+        .aviso-vencimento.atencao {
+            background: rgba(245,158,11,0.12);
+            border: 1px solid rgba(245,158,11,0.35);
+            color: #fcd34d;
+        }
+        .aviso-vencimento .aviso-icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .aviso-vencimento .aviso-texto { flex: 1; }
+        .aviso-vencimento .aviso-btn {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.3rem 0.7rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .aviso-vencimento.urgente .aviso-btn {
+            background: rgba(239,68,68,0.25);
+            color: #fca5a5;
+        }
+        .aviso-vencimento.atencao .aviso-btn {
+            background: rgba(245,158,11,0.25);
+            color: #fcd34d;
+        }
+        body.tema-claro .aviso-vencimento.urgente {
+            background: rgba(239,68,68,0.08);
+            border-color: rgba(239,68,68,0.3);
+            color: #dc2626;
+        }
+        body.tema-claro .aviso-vencimento.atencao {
+            background: rgba(245,158,11,0.08);
+            border-color: rgba(245,158,11,0.3);
+            color: #d97706;
+        }
+
+        /* Header mobile: data + barbearia */
+        .dash-mobile-header { text-align: center; margin-bottom: 1rem; }
+        .dash-date { font-size: 1rem; font-weight: 600; color: #e8e8e8; line-height: 1.2; }
+        .dash-shop { font-size: 0.75rem; color: rgba(232, 232, 232, 0.48); margin-top: 0.2rem; }
+
+        /* Grade de cards */
+        .mb-cards-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 1rem;
+            align-items: stretch;
+        }
+
+        .mb-card {
+            background: rgba(25, 25, 28, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .mb-card-wide {
+            grid-column: 1 / -1;
+        }
+
+        .mb-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.12);
+        }
+
+        .mb-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            gap: 0.75rem;
+        }
+
+        .mb-card-header > div:first-child {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .mb-card-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .mb-card-green .mb-card-icon  { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .mb-card-yellow .mb-card-icon { background: linear-gradient(135deg, #10b981, #059669); }
+        .mb-card-blue .mb-card-icon   { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .mb-card-label {
+            color: #e8e8e8;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-card-value-lg,
+        .mb-card-value-sm {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #e8e8e8;
+            line-height: 1;
+        }
+
+        .mb-card-sub-inline {
+            font-size: 0.72rem;
+            color: rgba(232, 232, 232, 0.45);
+            margin-top: 0.35rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .mb-card-sub {
+            font-size: 0.78rem;
+            margin-top: 0.5rem;
+            color: rgba(232, 232, 232, 0.5);
+        }
+
+        @media (max-width: 480px) {
+            .dash-wrapper { padding: 8px; }
+
+            .mb-cards-grid {
+                gap: 0.5rem;
+            }
+
+            .mb-card {
+                padding: 0.75rem;
+                border-radius: 14px;
+            }
+
+            .mb-card-header {
+                margin-bottom: 0.75rem;
+                gap: 0.5rem;
+            }
+
+            .mb-card-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 10px;
+                font-size: 1rem;
+            }
+
+            .mb-card-label {
+                font-size: 0.75rem;
+                margin-bottom: 0.35rem;
+            }
+
+            .mb-card-value-lg,
+            .mb-card-value-sm {
+                font-size: 1.25rem;
+            }
+
+            .mb-card-sub-inline,
+            .mb-card-sub {
+                font-size: 0.7rem;
+                line-height: 1.3;
+            }
+
+            .mb-next {
+                padding: 0.75rem;
+            }
+
+            .mb-appt-item {
+                gap: 0.65rem;
+            }
+
+            .mb-appt-badge {
+                font-size: 12px;
+                padding: 4px 7px;
+            }
+
+            .mb-appt-cliente {
+                font-size: 13px;
+            }
+
+            .mb-appt-servico {
+                font-size: 12px;
+            }
+
+            .mb-appt-valor {
+                font-size: 14px;
+            }
+        }
+
+        /* Próximos agendamentos */
+        .mb-next {
+            background: rgba(25, 25, 28, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 0.875rem;
+        }
+
+        .mb-next-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .mb-next-title { font-size: 0.95rem; font-weight: 700; color: #e8e8e8; }
+
+        .mb-ver-todos { display: none; }
+
+        .mb-appt-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 0;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        .mb-appt-item:last-child { border-bottom: none; }
+
+        .mb-appt-badge {
+            font-size: 11px; font-weight: 700; color: #fff;
+            background: #444; border-radius: 4px;
+            padding: 3px 6px; white-space: nowrap; flex-shrink: 0; text-align: center;
+        }
+        .mb-appt-badge.proximo { background: #ff6b35; }
+
+        .mb-appt-info { flex: 1; min-width: 0; }
+        .mb-appt-cliente { font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mb-appt-servico { font-size: 11px; color: #a2a2a2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mb-appt-valor   { font-size: 14px; font-weight: 800; color: #6abf6a; flex-shrink: 0; }
+
+        .mb-empty { font-size: 0.8rem; color: rgba(232, 232, 232, 0.38); text-align: center; padding: 1rem 0; }
+
+        /* =====================================================
+           TABLET — 769px a 1024px
+           ===================================================== */
+        @media (min-width: 769px) {
+            .dash-wrapper { padding: 16px 20px; }
+
+            .mb-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+
+            .mb-card { padding: 1.5rem; }
+
+            .mb-next { padding: 1rem; }
+            .mb-next-title { font-size: 16px; font-weight: 500; }
+            .mb-next-header { margin-bottom: 16px; }
+
+            .mb-ver-todos {
+                display: inline;
+                font-size: 12px;
+                color: #6abf6a;
+                text-decoration: none;
+                transition: opacity 0.2s;
+            }
+            .mb-ver-todos:hover { opacity: 0.75; }
+
+            .mb-appt-item { padding: 12px 16px; border-radius: 8px; gap: 16px; }
+            .mb-appt-badge { min-width: 52px; font-size: 12px; }
+            .mb-appt-cliente { font-size: 14px; }
+            .mb-appt-servico { font-size: 12px; }
+            .mb-appt-valor   { font-size: 13px; margin-left: auto; }
+        }
+
+        /* =====================================================
+           DESKTOP — acima de 1024px
+           ===================================================== */
+        @media (min-width: 1025px) {
+            /* Ocultar header mobile no desktop */
+            .dash-mobile-header { display: none; }
+
+            .dash-wrapper { padding: 24px 32px; }
+
+            /* 4 cards em linha */
+            .mb-cards-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+                margin-bottom: 24px;
+            }
+
+            .mb-card { padding: 1.5rem; }
+            .mb-card-wide { grid-column: auto; }
+
+            .mb-card-label    { font-size: 0.875rem; }
+            .mb-card-value-lg { font-size: 2rem; }
+            .mb-card-value-sm { font-size: 2rem; }
+            .mb-card-sub      { font-size: 0.8rem; }
+
+            .mb-next { padding: 20px; }
+            .mb-next-title { font-size: 16px; font-weight: 500; }
+            .mb-appt-item  { padding: 12px 16px; border-radius: 8px; gap: 16px; }
+            .mb-appt-badge { min-width: 52px; font-size: 12px; }
+            .mb-appt-cliente { font-size: 14px; }
+            .mb-appt-servico { font-size: 12px; }
+            .mb-appt-valor   { font-size: 13px; margin-left: auto; }
+        }
+
+        /* =====================================================
+           TEMA CLARO
+           ===================================================== */
+        body.tema-claro { background: linear-gradient(135deg, #fdfcfb 0%, #f5f3f0 100%); color: #2d2520; }
+
+        body.tema-claro .dash-date         { color: #2d2520; }
+        body.tema-claro .dash-shop         { color: #8b7968; }
+
+        body.tema-claro .mb-card-green  { background: #f0f7f0; border-color: #c8e6c8; }
+        body.tema-claro .mb-card-yellow { background: #fdf8ec; border-color: #f0d98a; }
+        body.tema-claro .mb-card-blue   { background: #f0f4f9; border-color: #b8d0e8; }
+        body.tema-claro .mb-card-value-lg,
+        body.tema-claro .mb-card-value-sm { color: #1a1a1a; }
+
+        body.tema-claro .mb-next { background: rgba(255,255,255,0.9); border: 1px solid rgba(212,165,116,0.2); }
+        body.tema-claro .mb-next-title { color: #2d2520; }
+        body.tema-claro .mb-appt-item  { border-bottom-color: rgba(212,165,116,0.15); }
+        body.tema-claro .mb-appt-cliente { color: #2d2520; }
+        body.tema-claro .mb-appt-servico { color: #8b7968; }
+    </style>
+</head>
+<body>
+    <div class="dash-wrapper">
+
+        <!-- Banner de aviso de vencimento de plano -->
+        <div class="aviso-vencimento" id="avisoVencimentoPlano" onclick="irParaConfiguracoes()">
+            <span class="aviso-icon"><i class="fas fa-exclamation-triangle"></i></span>
+            <span class="aviso-texto" id="avisoVencimentoTexto"></span>
+            <button class="aviso-btn">Renovar</button>
+        </div>
+
+        <!-- Header mobile: data + nome da barbearia (oculto no desktop) -->
+        <div class="dash-mobile-header">
+            <div class="dash-date" id="mbDataAtual">Carregando...</div>
+            <div class="dash-shop" id="mbNomeBarbearia">MustaBarber</div>
+        </div>
+
+        <!-- Grade 2×2 (mobile/tablet) → 4×1 (desktop) -->
+        <div class="mb-cards-grid">
+            <!-- Card Amarelo: Faturamento hoje -->
+            <div class="mb-card mb-card-yellow mb-card-wide">
+                <div class="mb-card-header">
+                    <div>
+                        <div class="mb-card-label">Faturamento hoje</div>
+                        <div class="mb-card-value-sm" id="mbFatHoje">R$0</div>
+                    </div>
+                    <div class="mb-card-icon"><i class="fas fa-dollar-sign"></i></div>
+                </div>
+                <div class="mb-card-sub" id="mbFatMes">Mês: R$0,00</div>
+            </div>
+
+            <!-- Card Verde: Agendamentos hoje -->
+            <div class="mb-card mb-card-green">
+                <div class="mb-card-header">
+                    <div>
+                        <div class="mb-card-label">Agendamentos</div>
+                        <div class="mb-card-value-lg" id="mbAgendHoje">-</div>
+                        <div class="mb-card-sub-inline" id="mbProximoHorario">Nenhum pendente</div>
+                    </div>
+                    <div class="mb-card-icon"><i class="fas fa-calendar-check"></i></div>
+                </div>
+            </div>
+
+            <!-- Card Azul: Clientes -->
+            <div class="mb-card mb-card-blue">
+                <div class="mb-card-header">
+                    <div>
+                        <div class="mb-card-label">Clientes</div>
+                        <div class="mb-card-value-lg" id="mbTotalClientes">-</div>
+                        <div class="mb-card-sub-inline">Total cadastrado</div>
+                    </div>
+                    <div class="mb-card-icon"><i class="fas fa-users"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Próximos agendamentos -->
+        <div class="mb-next">
+            <div class="mb-next-header">
+                <span class="mb-next-title">Próximos agendamentos</span>
+                <a class="mb-ver-todos" href="#" onclick="event.preventDefault(); if(window.parent && window.parent.navegar) window.parent.navegar('agendamentos');">Ver todos</a>
+            </div>
+            <div id="mbProximosAgendamentos">
+                <div class="mb-empty">Carregando...</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // -------------------------------------------------------
+        // Utilitários
+        // -------------------------------------------------------
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+        }
+
+        function formatarMoedaCompacta(valor) {
+            if (valor >= 1000) {
+                return 'R$' + (valor / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + 'k';
+            }
+            return 'R$' + valor.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+        }
+
+        function formatarNomeTitulo(texto) {
+            return String(texto || '')
+                .toLowerCase()
+                .split(/\s+/)
+                .filter(Boolean)
+                .map(parte => parte.charAt(0).toUpperCase() + parte.slice(1))
+                .join(' ');
+        }
+
+        function formatarListaServicos(texto) {
+            const itens = String(texto || '')
+                .split(',')
+                .map(item => formatarNomeTitulo(item.trim()))
+                .filter(Boolean);
+
+            if (itens.length === 0) return '';
+            if (itens.length === 1) return itens[0];
+            if (itens.length === 2) return `${itens[0]} e ${itens[1]}`;
+
+            return `${itens.slice(0, -1).join(', ')} e ${itens[itens.length - 1]}`;
+        }
+
+        function tempoRelativo(dataStr) {
+            const agora = new Date();
+            const data = new Date(dataStr);
+            const diffMs = agora - data;
+            const diffMinutos = Math.floor(diffMs / 60000);
+            const diffHoras = Math.floor(diffMs / 3600000);
+            const diffDias = Math.floor(diffMs / 86400000);
+
+            if (diffMinutos < 1) return 'Agora mesmo';
+            if (diffMinutos < 60) return `Há ${diffMinutos} ${diffMinutos === 1 ? 'minuto' : 'minutos'}`;
+            if (diffHoras < 24) return `Há ${diffHoras} ${diffHoras === 1 ? 'hora' : 'horas'}`;
+            if (diffDias < 7) return `Há ${diffDias} ${diffDias === 1 ? 'dia' : 'dias'}`;
+            return data.toLocaleDateString('pt-BR');
+        }
+
+        // -------------------------------------------------------
+        // Renderização de data (mobile + desktop topbar)
+        // -------------------------------------------------------
+        function renderizarData() {
+            const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+            const meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+            const agora = new Date();
+            const textoLongo = `${diasSemana[agora.getDay()]}, ${agora.getDate()} de ${meses[agora.getMonth()]}`;
+            const textoDesktop = `${diasSemana[agora.getDay()]}, ${agora.getDate()} de ${meses[agora.getMonth()]}`;
+
+            const elMobile = document.getElementById('mbDataAtual');
+            if (elMobile) elMobile.textContent = textoLongo;
+
+            const elDesktop = document.getElementById('desktopDate');
+            if (elDesktop) elDesktop.textContent = textoDesktop;
+        }
+
+        // -------------------------------------------------------
+        // Carregamento de dados (unificado)
+        // -------------------------------------------------------
+        async function carregarDashboard() {
+            try {
+                renderizarData();
+
+                const response = await fetch('../../bancodedados/dashboard/obter_dados_dashboard.php');
+                const dados = await response.json();
+
+                if (!dados.sucesso) {
+                    const elAgend = document.getElementById('mbAgendHoje');
+                    if (elAgend) elAgend.textContent = '0';
+
+                    const elClientes = document.getElementById('mbTotalClientes');
+                    if (elClientes) elClientes.textContent = '0';
+
+                    const elFatHoje = document.getElementById('mbFatHoje');
+                    if (elFatHoje) elFatHoje.textContent = formatarMoeda(0);
+
+                    const elFatMes = document.getElementById('mbFatMes');
+                    if (elFatMes) elFatMes.textContent = 'Mês: ' + formatarMoeda(0);
+
+                    const containerErro = document.getElementById('mbProximosAgendamentos');
+                    if (containerErro) {
+                        const msgErro = dados.mensagem ? String(dados.mensagem) : 'Nao foi possivel carregar os agendamentos.';
+                        containerErro.innerHTML = `<div class="mb-empty">${msgErro}</div>`;
+                    }
+                    return;
+                }
+
+                const elShop = document.getElementById('mbNomeBarbearia');
+                if (elShop) elShop.textContent = dados.nome_barbearia;
+
+                const elAgend = document.getElementById('mbAgendHoje');
+                if (elAgend) elAgend.textContent = dados.agendamentos_hoje;
+
+                const elProximo = document.getElementById('mbProximoHorario');
+                if (elProximo) {
+                    elProximo.textContent = dados.proximo_horario ? `Próx: ${dados.proximo_horario}` : 'Nenhum Pendente';
+                }
+
+                const elFatHoje = document.getElementById('mbFatHoje');
+                if (elFatHoje) elFatHoje.textContent = formatarMoedaCompacta(dados.faturamento_hoje);
+
+                const elFatMes = document.getElementById('mbFatMes');
+                if (elFatMes) elFatMes.textContent = `Mês: ${formatarMoeda(dados.faturamento_mes)}`;
+
+                const elClientes = document.getElementById('mbTotalClientes');
+                if (elClientes) elClientes.textContent = dados.total_clientes;
+
+                const container = document.getElementById('mbProximosAgendamentos');
+                if (!container) return;
+
+                const lista = dados.proximos_agendamentos ? dados.proximos_agendamentos.slice(0, 5) : [];
+
+                if (lista.length === 0) {
+                    container.innerHTML = '<div class="mb-empty">Nenhum próximo agendamento</div>';
+                    return;
+                }
+
+                container.innerHTML = lista.map((ag, i) => {
+                    const badgeClass = i === 0 ? 'mb-appt-badge proximo' : 'mb-appt-badge';
+                    const valor = ag.valor > 0 ? `R$${ag.valor.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}` : '';
+                    const clienteNome = formatarNomeTitulo(ag.cliente_nome);
+                    const servicosNome = formatarListaServicos(ag.servico_nome);
+                    return `
+                        <div class="mb-appt-item">
+                            <span class="${badgeClass}">${ag.horario}</span>
+                            <div class="mb-appt-info">
+                                <div class="mb-appt-cliente">Cliente: ${clienteNome}</div>
+                                <div class="mb-appt-servico">Servi&ccedil;os: ${servicosNome}</div>
+                            </div>
+                            ${valor ? `<span class="mb-appt-valor">${valor}</span>` : ''}
+                        </div>`;
+                }).join('');
+
+                // --- Aviso de vencimento de plano ---
+                const banner = document.getElementById('avisoVencimentoPlano');
+                const textoEl = document.getElementById('avisoVencimentoTexto');
+                if (banner && textoEl && dados.aviso_vencimento) {
+                    const d = dados.dias_para_vencer;
+                    const dataVenc = dados.vencimento_data || '';
+                    let texto = '';
+                    let cls   = 'atencao';
+
+                    if (d <= 0) {
+                        // Vencido
+                        cls   = 'urgente';
+                        const diasVenc = Math.abs(d);
+                        texto = diasVenc === 0
+                            ? `Seu plano venceu hoje (${dataVenc}). Renove agora para não perder o acesso.`
+                            : `Seu plano venceu há ${diasVenc} dia(s) (${dataVenc}). Renove agora para não perder o acesso.`;
+                    } else if (d === 1) {
+                        cls   = 'urgente';
+                        texto = `Seu plano vence <strong>amanhã</strong> (${dataVenc}). Renove com antecedência.`;
+                    } else {
+                        texto = `Seu plano vence em <strong>${d} dias</strong> (${dataVenc}). Você já pode renovar antecipadamente.`;
+                    }
+
+                    textoEl.innerHTML  = texto;
+                    banner.className   = `aviso-vencimento show ${cls}`;
+                } else if (banner) {
+                    banner.className = 'aviso-vencimento';
+                }
+
+            } catch (error) {
+                console.error('Erro ao carregar dashboard:', error);
+                const container = document.getElementById('mbProximosAgendamentos');
+                if (container) {
+                    container.innerHTML = '<div class="mb-empty">Erro de conexao ao carregar dados.</div>';
+                }
+            }
+        }
+
+        function irParaConfiguracoes() {
+            try {
+                if (window.parent && window.parent.navegar) {
+                    window.parent.navegar('configuracoes');
+                }
+            } catch(e) {}
+        }
+
+        carregarDashboard();
+        setInterval(carregarDashboard, 30000);
+    </script>
+
+    <script>
+        // Aplicar tema salvo ao carregar página
+        (function() {
+            const temaSalvo = localStorage.getItem('tema');
+            if (temaSalvo === 'claro') {
+                document.body.classList.add('tema-claro');
+            }
+        })();
+    </script>
+</body>
+</html>

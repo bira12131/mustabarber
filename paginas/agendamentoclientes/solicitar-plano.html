@@ -1,0 +1,1340 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Solicitar Plano - MustaBarber</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link href="../tema-claro.css" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #1f1f1f 0%, #141414 100%);
+      color: #e8e8e8;
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .container { max-width: 720px; margin: 0 auto; }
+
+    /* TOAST */
+    #toast-container {
+      position: fixed; top: 1.25rem; right: 1.25rem; z-index: 9999;
+      display: flex; flex-direction: column; gap: .5rem;
+    }
+    .toast {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .875rem 1.25rem; border-radius: 10px; font-size: .875rem;
+      font-weight: 500; min-width: 260px; max-width: 360px;
+      backdrop-filter: blur(10px); border-left: 4px solid;
+      animation: slideIn .3s ease-out;
+    }
+    .toast.success { background: rgba(16,185,129,.15); border-color: #10b981; color: #34d399; }
+    .toast.error   { background: rgba(239,68,68,.15);  border-color: #ef4444; color: #f87171; }
+    .toast.info    { background: rgba(59,130,246,.15); border-color: #3b82f6; color: #60a5fa; }
+    @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* HEADER */
+    .page-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .barbeiro-info-topo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .barbeiro-foto {
+      width: 70px; height: 70px;
+      border-radius: 50%; object-fit: cover;
+      border: 3px solid #10b981;
+      box-shadow: 0 4px 12px rgba(16,185,129,.3);
+    }
+    .barbeiro-foto-placeholder {
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4a4a4a, #1f1f1f);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.75rem; font-weight: 700; color: #fff;
+      border: 3px solid #10b981;
+    }
+    .page-header h1 {
+      font-size: 1.8rem; font-weight: 700; color: #e8e8e8;
+      margin-bottom: .4rem;
+    }
+    .page-header p { color: #9ca3af; font-size: .95rem; }
+
+    /* NAO ACEITA */
+    .nao-aceita-box {
+      background: rgba(239,68,68,.1);
+      border: 1px solid rgba(239,68,68,.25);
+      border-radius: 16px;
+      padding: 2.5rem;
+      text-align: center;
+    }
+    .nao-aceita-box i { font-size: 2.5rem; color: #f87171; margin-bottom: 1rem; display: block; }
+    .nao-aceita-box h2 { font-size: 1.2rem; color: #f87171; margin-bottom: .6rem; }
+    .nao-aceita-box p  { color: #9ca3af; font-size: .9rem; line-height: 1.6; }
+
+    /* CARD */
+    .card {
+      background: rgba(30,30,35,.85);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 16px;
+      padding: 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .card-title {
+      font-size: 1rem; font-weight: 600; color: #f0f0f0;
+      display: flex; align-items: center; gap: .6rem;
+      margin-bottom: 1.25rem; padding-bottom: .75rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .card-title i { color: #a78bfa; }
+
+    /* FORM */
+    .form-group { margin-bottom: 1.1rem; }
+    .form-group label {
+      display: block; font-size: .78rem; font-weight: 600;
+      color: #9ca3af; text-transform: uppercase; letter-spacing: .05em;
+      margin-bottom: .45rem;
+    }
+    .form-control {
+      width: 100%; max-width: 100%; min-width: 0;
+      padding: .75rem 1rem;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px; color: #e8e8e8; font-size: .9rem;
+      transition: border-color .2s, background .2s; font-family: inherit;
+      box-sizing: border-box;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: rgba(99,102,241,.6);
+      background: rgba(255,255,255,.09);
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    select.form-control, input[type="time"].form-control {
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239ca3af' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right .85rem center;
+      padding-right: 2.2rem;
+    }
+    input[type="time"].form-control::-webkit-calendar-picker-indicator { opacity: 0; }
+
+    /* SERVIÇOS */
+    .servicos-grid {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .75rem;
+    }
+    .servico-card {
+      position: relative;
+      background: rgba(45,45,50,.72);
+      border: 2px solid rgba(255,255,255,.14);
+      border-radius: 12px; padding: .95rem;
+      cursor: pointer; transition: all .25s;
+      user-select: none;
+      min-height: 158px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: .3rem;
+    }
+    .servico-card:hover { border-color: rgba(212,165,116,.45); background: rgba(255,255,255,.12); transform: translateY(-2px); }
+    .servico-card.selecionado {
+      border-color: #10b981; background: rgba(16,185,129,.12);
+    }
+    .servico-card .nome {
+      font-size: .92rem;
+      font-weight: 600;
+      color: #f0f0f0;
+      margin-bottom: .2rem;
+      line-height: 1.25;
+      padding-right: 1.8rem;
+    }
+    .servico-card .valor {
+      font-size: .95rem; color: #10b981; font-weight: 700;
+      margin-bottom: .4rem;
+      margin-top: auto;
+    }
+    .servico-card .duracao { font-size: .76rem; color: #9ca3af; line-height: 1.3; }
+    .servico-card .check-icon {
+      position: absolute;
+      top: .65rem;
+      right: .65rem;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.16);
+      color: #10b981;
+      font-size: .78rem;
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .servico-card.selecionado .check-icon { opacity: 1; }
+
+    /* Qtd por serviço */
+    .servico-qtd-row {
+      display: flex; align-items: center; gap: .5rem; margin-top: .6rem;
+    }
+    .btn-qtd {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+      color: #e8e8e8; font-size: .85rem; display: flex; align-items: center;
+      justify-content: center; cursor: pointer; transition: background .2s;
+      flex-shrink: 0;
+    }
+    .btn-qtd:hover { background: rgba(99,102,241,.3); }
+    .qtd-valor { font-size: .85rem; font-weight: 600; min-width: 24px; text-align: center; color: #f0f0f0; }
+
+    /* Semanas */
+    .semanas-grid { display: flex; gap: .65rem; flex-wrap: wrap; margin-top: .25rem; }
+    .semana-btn {
+      flex: 1; min-width: 60px; max-width: 90px;
+      padding: .9rem .5rem; border-radius: 12px;
+      border: 2px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04); color: #9ca3af;
+      font-size: 1.3rem; font-weight: 800; line-height: 1;
+      cursor: pointer; transition: all .2s; font-family: inherit;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 3px;
+    }
+    .semana-btn .label-sem { font-size: .63rem; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+    .semana-btn:disabled { opacity: .22; cursor: not-allowed; pointer-events: none; }
+    .semana-btn.ativo { border-color: #6366f1; background: rgba(99,102,241,.2); color: #a78bfa; }
+
+    /* RESUMO */
+    .resumo-box {
+      background: rgba(99,102,241,.08);
+      border: 1px solid rgba(99,102,241,.25);
+      border-radius: 12px; padding: 1.25rem;
+      margin-top: 1.25rem;
+    }
+    .resumo-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: .875rem; padding: .35rem 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      color: #9ca3af;
+      gap: .65rem;
+    }
+    .resumo-row:last-child { border-bottom: none; }
+    .resumo-row span:first-child { flex: 1; min-width: 0; }
+    .resumo-row .val { color: #f0f0f0; font-weight: 600; white-space: nowrap; margin-left: auto; }
+    .resumo-total {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: .6rem 0 0; margin-top: .25rem; gap: .5rem;
+    }
+    .resumo-total .label { font-size: .9rem; font-weight: 700; color: #e8e8e8; flex: 1; min-width: 0; }
+    .resumo-total .valor { font-size: 1.3rem; font-weight: 800; color: #a78bfa; white-space: nowrap; margin-left: auto; }
+
+    @media (max-width: 520px) {
+      .resumo-total { align-items: flex-end; }
+      .resumo-total .label { font-size: .86rem; line-height: 1.2; }
+      .resumo-total .valor { font-size: 1.15rem; }
+    }
+
+    /* BTN */
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .85rem 1.75rem; border: none; border-radius: 12px;
+      font-size: .9rem; font-weight: 600; cursor: pointer;
+      transition: all .25s; font-family: inherit;
+    }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5, #6366f1); color: #fff; width: 100%;
+      justify-content: center; font-size: 1rem; padding: 1rem;
+    }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(99,102,241,.4); }
+    .btn-secondary {
+      background: rgba(255,255,255,.08); color: #e8e8e8;
+      border: 1px solid rgba(255,255,255,.15);
+    }
+    .btn-secondary:hover:not(:disabled) { background: rgba(255,255,255,.14); }
+
+    /* SKELETON */
+    .skeleton {
+      background: linear-gradient(90deg, rgba(255,255,255,.06) 25%, rgba(255,255,255,.1) 50%, rgba(255,255,255,.06) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 8px; height: 20px; margin-bottom: .5rem;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* SUCESSO */
+    .sucesso-box {
+      text-align: center;
+    }
+    .sucesso-icon-wrap {
+      width: 64px; height: 64px; margin: 0 auto 1.5rem;
+      border-radius: 50%;
+      background: rgba(16,185,129,.12);
+      border: 1.5px solid rgba(16,185,129,.35);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .sucesso-icon-wrap i { font-size: 1.6rem; color: #10b981; }
+    .sucesso-box h2 { font-size: 1.15rem; font-weight: 700; color: #f0f0f0; margin-bottom: .35rem; }
+    .sucesso-box .sub { color: #6b7280; font-size: .82rem; margin-bottom: 2rem; }
+    .sucesso-resumo {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+    .resumo-linha {
+      display: flex; align-items: center; gap: .85rem;
+      padding: .85rem 1.1rem;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: .83rem;
+    }
+    .resumo-linha:last-child { border-bottom: none; }
+    .resumo-linha .rl-icon {
+      width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem;
+    }
+    .resumo-linha .rl-label { color: #6b7280; font-size: .75rem; margin-bottom: .1rem; }
+    .resumo-linha .rl-val   { color: #e8e8e8; font-weight: 600; }
+    .resumo-linha.total-linha {
+      background: rgba(99,102,241,.06);
+      border-top: 1px solid rgba(99,102,241,.15);
+    }
+    .resumo-linha.total-linha .rl-val { color: #a78bfa; font-size: 1rem; font-weight: 700; }
+    .sucesso-acoes { display: flex; flex-direction: column; gap: .65rem; }
+    .btn-acao-sucesso {
+      display: flex; align-items: center; gap: .75rem;
+      width: 100%; padding: .8rem 1.1rem;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px; color: #e8e8e8;
+      font-size: .85rem; font-weight: 500;
+      cursor: pointer; transition: background .2s; font-family: inherit;
+      text-align: left;
+    }
+    .btn-acao-sucesso:hover { background: rgba(255,255,255,.1); }
+    .btn-acao-sucesso .bai {
+      width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: .85rem;
+    }
+    .btn-acao-sucesso .bai.verde  { background: rgba(16,185,129,.15);  color: #10b981; }
+    .btn-acao-sucesso .bai.roxo   { background: rgba(99,102,241,.15);  color: #a78bfa; }
+    .btn-acao-sucesso .bai.cinza  { background: rgba(255,255,255,.08); color: #9ca3af; }
+    .btn-acao-sucesso .bai-texto { flex: 1; }
+    .btn-acao-sucesso .bai-titulo { font-weight: 600; font-size: .85rem; color: #e8e8e8; }
+    .btn-acao-sucesso .bai-sub   { font-size: .74rem; color: #6b7280; margin-top: .1rem; }
+
+    /* MINHAS SOLICITAÇÕES */
+    .minha-sol-item {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px; padding: 1rem; margin-bottom: .75rem;
+    }
+    .sol-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: .75rem; margin-bottom: .5rem;
+    }
+    .sol-servicos { font-size: .875rem; font-weight: 600; color: #f0f0f0; }
+    .sol-data { font-size: .8rem; color: #9ca3af; margin-top: .2rem; }
+    .sol-badge {
+      padding: .3rem .8rem; border-radius: 20px; font-size: .72rem;
+      font-weight: 700; text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
+    }
+    .badge-pendente  { background: rgba(245,158,11,.2);  color: #fbbf24; border: 1px solid rgba(245,158,11,.3); }
+    .badge-aceito    { background: rgba(16,185,129,.2);  color: #34d399; border: 1px solid rgba(16,185,129,.3); }
+    .badge-recusado  { background: rgba(239,68,68,.2);   color: #f87171; border: 1px solid rgba(239,68,68,.3); }
+    .badge-cancelado { background: rgba(107,114,128,.2); color: #9ca3af; border: 1px solid rgba(107,114,128,.3); }
+    .badge-aguardando { background: rgba(251,191,36,.18); color: #fbbf24; border: 1px solid rgba(251,191,36,.3); }
+
+    .confirmacao-termos {
+      background: rgba(99,102,241,.1);
+      border: 1.5px solid rgba(99,102,241,.35);
+      border-radius: 10px; padding: .75rem .9rem; margin-top: .65rem;
+    }
+    .confirmacao-termos .titulo { color: #a78bfa; font-weight: 700; font-size: .82rem; margin-bottom: .45rem; display: flex; align-items: center; gap: .35rem; }
+    .confirmacao-termos .info   { color: #d1d5db; font-size: .82rem; line-height: 1.5; margin-bottom: .65rem; }
+    .confirmacao-acoes { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .btn-aceitar-termos {
+      background: rgba(16,185,129,.15); color: #34d399;
+      border: 1px solid rgba(16,185,129,.3);
+      border-radius: 8px; padding: .45rem .9rem; font-size: .8rem;
+      font-weight: 700; cursor: pointer; font-family: inherit; transition: background .2s;
+    }
+    .btn-aceitar-termos:hover:not(:disabled)  { background: rgba(16,185,129,.28); }
+    .btn-recusar-termos {
+      background: rgba(239,68,68,.1);  color: #f87171;
+      border: 1px solid rgba(239,68,68,.25);
+      border-radius: 8px; padding: .45rem .9rem; font-size: .8rem;
+      font-weight: 700; cursor: pointer; font-family: inherit; transition: background .2s;
+    }
+    .btn-recusar-termos:hover:not(:disabled)  { background: rgba(239,68,68,.18); }
+    .btn-aceitar-termos:disabled, .btn-recusar-termos:disabled { opacity: .5; cursor: not-allowed; }
+
+    .renovacao-box {
+      background: rgba(16,185,129,.08);
+      border: 1px solid rgba(16,185,129,.25);
+      border-radius: 10px; padding: .75rem .9rem; margin-top: .65rem;
+      display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+    }
+    .renovacao-box .txt { flex: 1; }
+    .renovacao-box .txt .titulo { color: #34d399; font-weight: 700; font-size: .82rem; }
+    .renovacao-box .txt .sub    { color: #6b7280; font-size: .77rem; margin-top: .15rem; }
+    .btn-renovar {
+      background: rgba(16,185,129,.2); color: #34d399;
+      border: 1px solid rgba(16,185,129,.35);
+      border-radius: 8px; padding: .45rem .9rem;
+      font-size: .8rem; font-weight: 700; cursor: pointer;
+      font-family: inherit; white-space: nowrap; transition: background .2s;
+    }
+    .btn-renovar:hover { background: rgba(16,185,129,.32); }
+
+    .sol-desconto {
+      background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.2);
+      border-radius: 8px; padding: .6rem .9rem; margin-top: .6rem; font-size: .82rem;
+    }
+    .sol-desconto .titulo { color: #34d399; font-weight: 700; margin-bottom: .25rem; }
+    .sol-desconto .info   { color: #9ca3af; }
+    .sol-obs-barb {
+      font-size: .82rem; color: #9ca3af;
+      background: rgba(255,255,255,.03); border-radius: 8px; padding: .5rem .8rem;
+      margin-top: .5rem; border-left: 3px solid rgba(99,102,241,.4);
+    }
+    .btn-cancelar-sol {
+      background: none; border: 1px solid rgba(239,68,68,.3);
+      color: #f87171; border-radius: 8px; padding: .4rem .8rem;
+      font-size: .78rem; cursor: pointer; transition: background .2s;
+      margin-top: .5rem; font-family: inherit;
+    }
+    .btn-cancelar-sol:hover { background: rgba(239,68,68,.1); }
+
+    /* TABS */
+    .tabs { display: flex; gap: .5rem; margin-bottom: 1.5rem; }
+    .tab-btn {
+      flex: 1; padding: .7rem; border-radius: 10px; border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04); color: #9ca3af; font-size: .85rem; font-weight: 600;
+      cursor: pointer; transition: all .25s; font-family: inherit; text-align: center;
+    }
+    .tab-btn.ativo {
+      background: rgba(99,102,241,.15); border-color: rgba(99,102,241,.4); color: #a78bfa;
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 1rem .75rem 4rem; }
+      .form-row { grid-template-columns: 1fr; }
+      .servicos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
+      .page-header h1 { font-size: 1.45rem; }
+      .card { padding: 1.25rem; }
+    }
+
+    @media (max-width: 380px) {
+      .servicos-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<div class="container" id="app">
+  <div class="page-header">
+    <div class="barbeiro-info-topo" id="barbeiro-topo">
+      <div class="skeleton" style="width:70px;height:70px;border-radius:50%"></div>
+    </div>
+    <h1 id="titulo-pagina">Solicitação de Plano</h1>
+    <p id="subtitulo-pagina">Monte seu plano personalizado</p>
+  </div>
+
+  <div id="loading-inicial">
+    <div class="card">
+      <div class="skeleton"></div>
+      <div class="skeleton" style="height:60px;margin-top:.5rem"></div>
+    </div>
+  </div>
+
+  <div id="conteudo-principal" style="display:none">
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn ativo" onclick="mostrarAba('solicitar')" id="tab-solicitar">
+        <i class="fas fa-plus-circle"></i> Nova Solicitação
+      </button>
+      <button class="tab-btn" onclick="mostrarAba('minhas')" id="tab-minhas">
+        <i class="fas fa-list"></i> Minhas Solicitações
+      </button>
+    </div>
+
+    <!-- ABA: NOVA SOLICITAÇÃO -->
+    <div id="aba-solicitar">
+
+      <!-- DADOS DO CLIENTE -->
+      <div class="card">
+        <div class="card-title"><i class="fas fa-user"></i> Seus Dados</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Seu Nome *</label>
+            <input type="text" id="campo-nome" class="form-control" placeholder="Nome completo" required />
+          </div>
+          <div class="form-group">
+            <label>Seu Telefone *</label>
+            <input type="tel" id="campo-telefone" class="form-control" placeholder="(00) 00000-0000" required />
+          </div>
+        </div>
+      </div>
+
+      <!-- SERVIÇOS -->
+      <div class="card">
+        <div class="card-title"><i class="fas fa-cut"></i> Serviços do Plano</div>
+        <p style="font-size:.82rem;color:#9ca3af;margin-bottom:1rem">
+          Selecione os serviços que deseja incluir no plano. Ajuste a quantidade se necessário.
+        </p>
+        <div class="servicos-grid" id="servicos-grid">
+          <div class="skeleton" style="height:90px"></div>
+          <div class="skeleton" style="height:90px"></div>
+          <div class="skeleton" style="height:90px"></div>
+        </div>
+        <div id="resumo-servicos" style="display:none">
+          <div class="resumo-box" id="resumo-box"></div>
+        </div>
+      </div>
+
+      <!-- SEMANAS -->
+      <div class="card" id="card-semanas" style="display:none">
+        <div class="card-title"><i class="fas fa-calendar-week"></i> Sessões no Mês</div>
+        <p style="font-size:.82rem;color:#9ca3af;margin-bottom:1rem">Em quantas semanas do mês deseja realizar os serviços selecionados? O número não pode ser maior que a quantidade de serviços escolhidos.</p>
+        <div class="semanas-grid" id="semanas-grid"></div>
+      </div>
+
+      <!-- DATA, HORÁRIO, PERIODICIDADE -->
+      <div class="card">
+        <div class="card-title"><i class="fas fa-calendar-alt"></i> Preferência de Agendamento</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Dia da Semana *</label>
+            <select id="campo-dia-semana" class="form-control" onchange="carregarHorariosDia1()">
+              <option value="segunda">Segunda-feira</option>
+              <option value="terca">Terça-feira</option>
+              <option value="quarta">Quarta-feira</option>
+              <option value="quinta">Quinta-feira</option>
+              <option value="sexta">Sexta-feira</option>
+              <option value="sabado">Sábado</option>
+              <option value="domingo">Domingo</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Horário Preferido *</label>
+            <select id="campo-horario" class="form-control" required>
+              <option value="">Carregando...</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 2º Dia (aparece quando total sessões > semanas) -->
+        <div id="card-dia2" style="display:none;margin-top:.75rem;padding:.75rem;background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.2);border-radius:10px">
+          <div style="font-size:.82rem;color:#a78bfa;font-weight:600;margin-bottom:.5rem"><i class="fas fa-calendar-plus" style="margin-right:.4rem"></i>Segundo Dia na Semana</div>
+          <p style="font-size:.78rem;color:#9ca3af;margin-bottom:.75rem">Você escolheu mais sessões do que semanas. Informe um segundo dia da semana para acomodar os agendamentos extras.</p>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Segundo Dia *</label>
+              <select id="campo-dia2" class="form-control" onchange="validarDia2(); carregarHorariosDia2()">
+                <option value="">Selecione...</option>
+                <option value="segunda">Segunda-feira</option>
+                <option value="terca">Terça-feira</option>
+                <option value="quarta">Quarta-feira</option>
+                <option value="quinta">Quinta-feira</option>
+                <option value="sexta">Sexta-feira</option>
+                <option value="sabado">Sábado</option>
+                <option value="domingo">Domingo</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Horário do 2º Dia *</label>
+              <select id="campo-horario2" class="form-control">
+                <option value="">Selecione o dia primeiro...</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top:.75rem">
+          <label>Observações (opcional)</label>
+          <textarea id="campo-obs" class="form-control" rows="3" placeholder="Alguma preferência ou informação adicional para o barbeiro..."></textarea>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-enviar" onclick="enviarSolicitacao()">
+        <i class="fas fa-paper-plane"></i> Enviar Solicitação ao Barbeiro
+      </button>
+
+    </div><!-- /aba-solicitar -->
+
+    <!-- ABA: MINHAS SOLICITAÇÕES -->
+    <div id="aba-minhas" style="display:none">
+      <div class="card">
+        <div class="card-title"><i class="fas fa-history"></i> Suas Solicitações</div>
+
+        <div class="form-group">
+          <label>Informe seu telefone para consultar</label>
+          <div style="display:flex;gap:.5rem">
+            <input type="tel" id="campo-tel-consulta" class="form-control" placeholder="(00) 00000-0000" />
+            <button class="btn btn-secondary" onclick="carregarMinhasSolicitacoes()" style="white-space:nowrap">
+              <i class="fas fa-search"></i> Buscar
+            </button>
+          </div>
+        </div>
+
+        <div id="lista-minhas-sols">
+          <p style="color:#6b7280;font-size:.85rem;text-align:center;padding:1.5rem 0">
+            Informe seu telefone acima para ver suas solicitações.
+          </p>
+        </div>
+      </div>
+    </div><!-- /aba-minhas -->
+
+  </div><!-- /conteudo-principal -->
+
+  <!-- NÃO ACEITA -->
+  <div id="box-nao-aceita" style="display:none">
+    <div class="nao-aceita-box">
+      <i class="fas fa-ban"></i>
+      <h2>Solicitações não disponíveis</h2>
+      <p>Este barbeiro não está aceitando solicitações de plano no momento.<br>Entre em contato diretamente para mais informações.</p>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+  // ============================================================
+  // ESTADO
+  // ============================================================
+  const params           = new URLSearchParams(location.search);
+  const BARBEIRO_ID      = parseInt(params.get('barbeiro') || '0');
+  let   servicosCatalogo = [];
+  let   servicosSelecionados = {}; // { codigo: 1 }
+  let   semanasSelecionadas  = 1;
+  let   renovacaoContext     = null;
+
+  // ============================================================
+  // TOAST
+  // ============================================================
+  function toast(msg, tipo = 'info', dur = 4000) {
+    const el = document.createElement('div');
+    el.className = 'toast ' + tipo;
+    const icones = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
+    el.innerHTML = `<i class="fas ${icones[tipo] || 'fa-info-circle'}"></i><span>${msg}</span>`;
+    document.getElementById('toast-container').appendChild(el);
+    setTimeout(() => { el.style.animation = 'slideIn .3s reverse'; setTimeout(() => el.remove(), 300); }, dur);
+  }
+
+  // ============================================================
+  // TABS
+  // ============================================================
+  function mostrarAba(aba) {
+    document.getElementById('aba-solicitar').style.display = aba === 'solicitar' ? '' : 'none';
+    document.getElementById('aba-minhas').style.display    = aba === 'minhas'    ? '' : 'none';
+    document.getElementById('tab-solicitar').classList.toggle('ativo', aba === 'solicitar');
+    document.getElementById('tab-minhas').classList.toggle('ativo', aba === 'minhas');
+    if (aba === 'minhas') {
+      // Pré-preencher telefone se o cliente já digitou
+      const tel = document.getElementById('campo-telefone').value;
+      if (tel) document.getElementById('campo-tel-consulta').value = tel;
+    }
+  }
+
+  // ============================================================
+  // INIT — verificar barbeiro
+  // ============================================================
+  async function init() {
+    if (!BARBEIRO_ID) {
+      document.getElementById('loading-inicial').innerHTML =
+        '<div class="nao-aceita-box"><i class="fas fa-exclamation-triangle"></i>' +
+        '<h2>Link inválido</h2><p>Nenhum barbeiro foi identificado neste link.</p></div>';
+      return;
+    }
+
+    try {
+      const res  = await fetch(`../../bancodedados/solicitacoes_plano/verificar_aceita_plano.php?barbeiro=${BARBEIRO_ID}`);
+      const data = await res.json();
+
+      document.getElementById('loading-inicial').style.display = 'none';
+
+      if (!data.sucesso) {
+        document.getElementById('box-nao-aceita').style.display = 'block';
+        return;
+      }
+
+      // Cabeçalho do barbeiro
+      const b      = data.barbeiro;
+      const topoEl = document.getElementById('barbeiro-topo');
+      if (b.foto_caminho) {
+        topoEl.innerHTML =
+          `<img src="../../uploads/fotos/${b.foto_caminho}" class="barbeiro-foto" onerror="this.style.display='none'" />`;
+      } else {
+        const letra = (b.nome || '?')[0].toUpperCase();
+        topoEl.innerHTML = `<div class="barbeiro-foto-placeholder">${letra}</div>`;
+      }
+      document.getElementById('subtitulo-pagina').textContent = `Envie uma proposta para ${b.nome}`;
+
+      if (!data.aceita_solicitacao_plano) {
+        document.getElementById('box-nao-aceita').style.display = 'block';
+        return;
+      }
+
+      document.getElementById('conteudo-principal').style.display = 'block';
+
+      await carregarServicos();
+      carregarHorariosDia1(); // Pré-carregar horários do dia padrão (segunda)
+
+      // Se veio com ?sol= e ?tel= no link (WhatsApp), abrir aba e auto-buscar
+      const solParam = params.get('sol');
+      const telParam = params.get('tel');
+      if (solParam) {
+        mostrarAba('minhas');
+        if (telParam) {
+          // Preenche o campo e dispara a busca automaticamente
+          document.getElementById('campo-tel-consulta').value = decodeURIComponent(telParam);
+          await carregarMinhasSolicitacoes();
+          // Rolar até a solicitação específica após carregar
+          setTimeout(() => {
+            const el = document.getElementById('sol-' + solParam);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 400);
+        } else {
+          toast('Informe seu telefone para visualizar e confirmar a proposta.', 'info', 6000);
+          document.getElementById('campo-tel-consulta').focus();
+        }
+      }
+
+    } catch(e) {
+      document.getElementById('loading-inicial').innerHTML =
+        '<div class="nao-aceita-box"><i class="fas fa-wifi"></i>' +
+        '<h2>Erro de conexão</h2><p>Não foi possível carregar os dados. Tente novamente.</p></div>';
+    }
+  }
+
+  // ============================================================
+  // CARREGAR SERVIÇOS DO BARBEIRO
+  // ============================================================
+  async function carregarServicos() {
+    try {
+      const res  = await fetch(`../../bancodedados/agendamentos/listar_servicos.php?barbeiro=${BARBEIRO_ID}`);
+      const data = await res.json();
+      servicosCatalogo = data.servicos || [];
+      renderizarServicos();
+    } catch(e) {
+      document.getElementById('servicos-grid').innerHTML =
+        '<p style="color:#f87171;font-size:.85rem">Erro ao carregar serviços.</p>';
+    }
+  }
+
+  function renderizarServicos() {
+    const grid = document.getElementById('servicos-grid');
+    if (!servicosCatalogo.length) {
+      grid.innerHTML = '<p style="color:#9ca3af;font-size:.85rem">Nenhum serviço disponível.</p>';
+      return;
+    }
+    grid.innerHTML = servicosCatalogo.map(s => {
+      const preco = parseFloat(s.valor || s.preco || 0);
+      const dur   = s.duracao ? `${s.duracao} min` : '';
+      return `
+        <div class="servico-card" id="sc-${s.codigo}" onclick="toggleServico(${s.codigo})">
+          <i class="fas fa-check check-icon"></i>
+          <div class="nome">${s.nome}</div>
+          <div class="valor">R$ ${preco.toFixed(2).replace('.',',')}</div>
+          ${dur ? `<div class="duracao"><i class="fas fa-clock" style="margin-right:.3rem"></i>${dur}</div>` : ''}
+          <div class="servico-qtd-row" id="qtd-row-${s.codigo}" style="display:none" onclick="event.stopPropagation()">
+            <button class="btn-qtd" onclick="alterarQtd(${s.codigo},-1)"><i class="fas fa-minus"></i></button>
+            <span class="qtd-valor" id="qtd-${s.codigo}">1</span>
+            <button class="btn-qtd" onclick="alterarQtd(${s.codigo},1)"><i class="fas fa-plus"></i></button>
+            <span style="font-size:.75rem;color:#6b7280">x/mês</span>
+          </div>
+        </div>`;
+    }).join('');
+    atualizarResumo();
+  }
+
+  function toggleServico(codigo) {
+    const card   = document.getElementById(`sc-${codigo}`);
+    const qtdRow = document.getElementById(`qtd-row-${codigo}`);
+    if (servicosSelecionados[codigo]) {
+      delete servicosSelecionados[codigo];
+      card.classList.remove('selecionado');
+      if (qtdRow) { qtdRow.style.display = 'none'; }
+      const qtdEl = document.getElementById(`qtd-${codigo}`);
+      if (qtdEl) qtdEl.textContent = '1';
+    } else {
+      servicosSelecionados[codigo] = 1;
+      card.classList.add('selecionado');
+      if (qtdRow) qtdRow.style.display = 'flex';
+    }
+    atualizarSemanas();
+    atualizarResumo();
+  }
+
+  function alterarQtd(codigo, delta) {
+    if (!servicosSelecionados[codigo]) return;
+    const novaQtd = Math.min(4, Math.max(1, (servicosSelecionados[codigo] || 1) + delta));
+    servicosSelecionados[codigo] = novaQtd;
+    const qtdEl = document.getElementById(`qtd-${codigo}`);
+    if (qtdEl) qtdEl.textContent = novaQtd;
+    // Desabilitar botão + quando atingir o máximo
+    const card = document.getElementById(`sc-${codigo}`);
+    if (card) {
+      const btnMais = card.querySelector('.btn-qtd:last-of-type');
+      if (btnMais) btnMais.disabled = novaQtd >= 4;
+    }
+    atualizarSemanas();
+    atualizarResumo();
+  }
+
+  function atualizarSemanas() {
+    const totalQtd = Object.values(servicosSelecionados).reduce((a, b) => a + b, 0);
+    const card     = document.getElementById('card-semanas');
+    if (!totalQtd) { card.style.display = 'none'; semanasSelecionadas = 1; ocultarDia2(); return; }
+    card.style.display = '';
+    if (semanasSelecionadas > totalQtd) semanasSelecionadas = Math.min(totalQtd, 4);
+    document.getElementById('semanas-grid').innerHTML = [1,2,3,4].map(n => {
+      const dis  = n > totalQtd ? ' disabled' : '';
+      const ativ = n === semanasSelecionadas ? ' ativo' : '';
+      return `<button class="semana-btn${ativ}"${dis} onclick="selecionarSemanas(${n})">${n}<span class="label-sem">${n === 1 ? 'semana' : 'semanas'}</span></button>`;
+    }).join('');
+    // Mostrar 2º dia se precisar de mais de 1 sessão por semana
+    if (totalQtd > semanasSelecionadas) {
+      document.getElementById('card-dia2').style.display = '';
+    } else {
+      ocultarDia2();
+    }
+  }
+
+  function ocultarDia2() {
+    const c = document.getElementById('card-dia2');
+    if (c) { c.style.display = 'none'; }
+    const el = document.getElementById('campo-dia2');
+    if (el) el.value = '';
+    const elH = document.getElementById('campo-horario2');
+    if (elH) elH.value = '';
+  }
+
+  // ── MAPA DIA -> número do dia da semana JS (0=dom,1=seg...)
+  const DIA_NUM = { domingo:0, segunda:1, terca:2, quarta:3, quinta:4, sexta:5, sabado:6 };
+
+  // Retorna a próxima data (YYYY-MM-DD) para o dia da semana informado
+  function proximaDataParaDia(diaNome) {
+    const alvo = DIA_NUM[diaNome];
+    if (alvo === undefined) return null;
+    const hoje  = new Date();
+    hoje.setHours(0,0,0,0);
+    const diff  = (alvo - hoje.getDay() + 7) % 7 || 7; // min 1 dia à frente
+    const d     = new Date(hoje);
+    d.setDate(d.getDate() + diff);
+    return d.toISOString().split('T')[0];
+  }
+
+  async function carregarHorariosPorDia(diaNome, selectId) {
+    const sel = document.getElementById(selectId);
+    if (!sel || !diaNome) return;
+    const data = proximaDataParaDia(diaNome);
+    if (!data) return;
+    sel.disabled = true;
+    sel.innerHTML = '<option value="">Carregando...</option>';
+    try {
+      const res  = await fetch(`../../bancodedados/agendamentos/buscar_horarios_dia.php?data=${data}&barbeiro=${BARBEIRO_ID}`);
+      const json = await res.json();
+      if (json.sucesso && json.horarios && json.horarios.length > 0) {
+        const disponiveis = json.horarios.filter(h => h.status === 'disponivel');
+        if (disponiveis.length > 0) {
+          sel.innerHTML = '<option value="">Selecione um hor\u00e1rio...</option>' +
+            disponiveis.map(h => `<option value="${h.horario}">${h.horario}</option>`).join('');
+        } else {
+          sel.innerHTML = '<option value="">Sem hor\u00e1rios neste dia</option>';
+        }
+      } else {
+        sel.innerHTML = '<option value="">Sem hor\u00e1rios neste dia</option>';
+      }
+    } catch(e) {
+      sel.innerHTML = '<option value="">Erro ao carregar hor\u00e1rios</option>';
+    }
+    sel.disabled = false;
+  }
+
+  function carregarHorariosDia1() {
+    const dia = document.getElementById('campo-dia-semana').value;
+    carregarHorariosPorDia(dia, 'campo-horario');
+  }
+
+  function carregarHorariosDia2() {
+    const dia = document.getElementById('campo-dia2').value;
+    if (dia) carregarHorariosPorDia(dia, 'campo-horario2');
+  }
+
+  function validarDia2() {
+    const dia1 = document.getElementById('campo-dia-semana').value;
+    const dia2 = document.getElementById('campo-dia2').value;
+    if (dia2 && dia2 === dia1) {
+      toast('O segundo dia não pode ser igual ao primeiro dia.', 'error');
+      document.getElementById('campo-dia2').value = '';
+    }
+  }
+
+  function selecionarSemanas(n) {
+    semanasSelecionadas = n;
+    atualizarSemanas();
+    atualizarResumo();
+  }
+
+  function atualizarResumo() {
+    const selecionados = Object.keys(servicosSelecionados);
+    if (!selecionados.length) {
+      document.getElementById('resumo-servicos').style.display = 'none';
+      return;
+    }
+
+    const sessoes = parseInt(document.getElementById('campo-sessoes') ? document.getElementById('campo-sessoes').value : '1') || 1;
+    let   totalMes = 0;
+
+    const linhas = selecionados.map(cod => {
+      const s     = servicosCatalogo.find(x => x.codigo == cod);
+      if (!s) return '';
+      const preco = parseFloat(s.valor || s.preco || 0);
+      const qtd   = servicosSelecionados[cod];
+      const sub   = preco * qtd;
+      totalMes += sub;
+      return `<div class="resumo-row">
+        <span>${s.nome} × ${qtd}x/mês</span>
+        <span class="val">R$ ${sub.toFixed(2).replace('.',',')}</span>
+      </div>`;
+    }).join('');
+
+    const totalSessoes = Object.values(servicosSelecionados).reduce((a, b) => a + b, 0);
+    const lblSessoes = totalSessoes === 1 ? '1 sessão' : totalSessoes + ' sessões';
+    const ehRenovacao = !!(renovacaoContext && renovacaoContext.ativa);
+    const valorPlanoAtual = ehRenovacao ? (parseFloat(renovacaoContext.valorPlanoAtual || 0) || totalMes) : totalMes;
+    const totalExibido = ehRenovacao ? valorPlanoAtual : totalMes;
+    const labelTotal = ehRenovacao ? `Valor atual do plano (${lblSessoes})` : `Valor Mensal (${lblSessoes})`;
+    const avisoRenovacao = ehRenovacao
+      ? `<div style="margin-top:.45rem;font-size:.76rem;color:#9ca3af">Renovação: este é o valor atual do seu plano. O barbeiro pode manter ou enviar nova oferta para você aprovar.</div>`
+      : '';
+
+    document.getElementById('resumo-box').innerHTML = `
+      ${linhas}
+      <div class="resumo-total">
+        <span class="label">${labelTotal}</span>
+        <span class="valor">R$ ${totalExibido.toFixed(2).replace('.',',')}</span>
+      </div>
+      ${avisoRenovacao}`;
+
+    document.getElementById('resumo-servicos').style.display = 'block';
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('campo-telefone').addEventListener('input', mascaraTelefone);
+    document.getElementById('campo-tel-consulta').addEventListener('input', mascaraTelefoneEl.bind(null, 'campo-tel-consulta'));
+  });
+
+  function mascaraTelefone() { mascaraTelefoneEl('campo-telefone'); }
+  function mascaraTelefoneEl(id) {
+    const el = document.getElementById(id);
+    let v = el.value.replace(/\D/g, '');
+    if (v.length > 11) v = v.slice(0,11);
+    if (v.length > 6)      v = '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7);
+    else if (v.length > 2) v = '(' + v.slice(0,2) + ') ' + v.slice(2);
+    else if (v.length > 0) v = '(' + v;
+    el.value = v;
+  }
+
+  // ============================================================
+  // ENVIAR SOLICITAÇÃO
+  // ============================================================
+  async function enviarSolicitacao() {
+    const nome      = document.getElementById('campo-nome').value.trim();
+    const telefone  = document.getElementById('campo-telefone').value.trim();
+    const diaSemana = document.getElementById('campo-dia-semana').value;
+    const horario   = document.getElementById('campo-horario').value;
+    const obs       = document.getElementById('campo-obs').value.trim() || null;
+    const dia2El    = document.getElementById('campo-dia2');
+    const hor2El    = document.getElementById('campo-horario2');
+    const precisaDia2 = document.getElementById('card-dia2')?.style.display !== 'none';
+    const dia2      = dia2El?.value || null;
+    const horario2  = hor2El?.value  || null;
+
+    if (!nome)      { toast('Informe seu nome', 'error'); return; }
+    if (!telefone)  { toast('Informe seu telefone', 'error'); return; }
+    if (!diaSemana) { toast('Selecione o dia da semana', 'error'); return; }
+    if (!horario)   { toast('Selecione um horário', 'error'); return; }
+    if (precisaDia2 && !dia2)    { toast('Selecione o segundo dia da semana', 'error'); document.getElementById('card-dia2').scrollIntoView({behavior:'smooth',block:'center'}); return; }
+    if (precisaDia2 && !horario2){ toast('Informe o horário do segundo dia', 'error'); document.getElementById('card-dia2').scrollIntoView({behavior:'smooth',block:'center'}); return; }
+    if (precisaDia2 && dia2 === diaSemana){ toast('O segundo dia não pode ser igual ao primeiro', 'error'); return; }
+
+    const selecionados = Object.keys(servicosSelecionados);
+    if (!selecionados.length) { toast('Selecione ao menos um serviço', 'error'); return; }
+    if (!semanasSelecionadas)   { toast('Selecione o número de semanas', 'error'); return; }
+    const totalQtdEnvio = Object.values(servicosSelecionados).reduce((a, b) => a + b, 0);
+    if (semanasSelecionadas > totalQtdEnvio) {
+      toast('O número de semanas não pode ser maior que a quantidade total de serviços.', 'error');
+      document.getElementById('card-semanas').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    let totalMes = 0;
+    const servicosPayload = selecionados.map(cod => {
+      const s     = servicosCatalogo.find(x => x.codigo == cod);
+      const qtd   = servicosSelecionados[cod];
+      const preco = parseFloat(s.valor || s.preco || 0);
+      totalMes += preco * qtd;
+      return { codigo: parseInt(cod), nome: s.nome, valor: preco, quantidade: qtd };
+    });
+
+    const valorBasePlano = (renovacaoContext && renovacaoContext.ativa)
+      ? (parseFloat(renovacaoContext.valorPlanoAtual || 0) || totalMes)
+      : totalMes;
+
+    const btn = document.getElementById('btn-enviar');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+
+    try {
+      const res  = await fetch('../../bancodedados/solicitacoes_plano/criar_solicitacao.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          codigo_barbeiro:      BARBEIRO_ID,
+          cliente_nome:         nome,
+          cliente_telefone:     telefone,
+          servicos:             servicosPayload,
+          dia_semana:           diaSemana,
+          horario_preferido:    horario,
+          ...(precisaDia2 && dia2 && horario2 ? { dia_semana_2: dia2, horario_preferido_2: horario2 } : {}),
+          periodicidade:        'semanal',
+          quantidade_sessoes:   totalQtdEnvio,
+          valor_total_original: valorBasePlano,
+          observacoes_cliente:  obs,
+          tipo_solicitacao:     (renovacaoContext && renovacaoContext.ativa) ? 'renovacao' : 'nova',
+          codigo_solicitacao_origem: (renovacaoContext && renovacaoContext.ativa) ? renovacaoContext.codigoOrigem : null,
+          valor_plano_atual:    (renovacaoContext && renovacaoContext.ativa) ? valorBasePlano : null
+        })
+      });
+      const resposta = await res.json();
+
+      if (resposta.sucesso) {
+        var DIAS_L = { segunda:'Segunda-feira', terca:'Terça-feira', quarta:'Quarta-feira', quinta:'Quinta-feira', sexta:'Sexta-feira', sabado:'Sábado', domingo:'Domingo' };
+        var nomeDia   = DIAS_L[diaSemana] || diaSemana;
+        var horFmt    = horario ? horario.slice(0,5) : '';
+        var srvLinhas = servicosPayload.map(function(s) {
+          return '<div class="resumo-linha">'
+            + '<div class="rl-icon" style="background:rgba(99,102,241,.12);color:#a78bfa"><i class="fas fa-cut"></i></div>'
+            + '<div><div class="rl-label">' + s.nome + '</div>'
+            + '<div class="rl-val">' + s.quantidade + '× por mês &nbsp;&middot;&nbsp; R$ ' + (s.valor * s.quantidade).toFixed(2).replace('.',',') + '</div></div>'
+            + '</div>';
+        }).join('');
+        document.getElementById('aba-solicitar').innerHTML =
+          '<div class="sucesso-box">'
+          + '<div class="sucesso-icon-wrap"><i class="fas fa-check"></i></div>'
+          + '<h2>Proposta enviada</h2>'
+          + '<p class="sub">O barbeiro irá analisar e responder em breve</p>'
+          + '<div class="sucesso-resumo">'
+            + srvLinhas
+            + '<div class="resumo-linha">'
+              + '<div class="rl-icon" style="background:rgba(16,185,129,.12);color:#10b981"><i class="fas fa-calendar-week"></i></div>'
+              + '<div><div class="rl-label">Dia &amp; Horário preferido</div><div class="rl-val">' + nomeDia + ' às ' + horFmt + '</div></div>'
+            + '</div>'
+            + '<div class="resumo-linha">'
+              + '<div class="rl-icon" style="background:rgba(99,102,241,.12);color:#a78bfa"><i class="fas fa-rotate"></i></div>'
+              + '<div><div class="rl-label">Frequência</div><div class="rl-val">' + semanasSelecionadas + (semanasSelecionadas === 1 ? ' sessão no mês' : ' sessões no mês') + '</div></div>'
+            + '</div>'
+            + '<div class="resumo-linha total-linha">'
+              + '<div class="rl-icon" style="background:rgba(99,102,241,.12);color:#a78bfa"><i class="fas fa-tag"></i></div>'
+              + '<div><div class="rl-label">Valor do plano</div><div class="rl-val">R$ ' + valorBasePlano.toFixed(2).replace('.',',') + '</div></div>'
+            + '</div>'
+          + '</div>'
+          + '<div class="sucesso-acoes">'
+            + '<button class="btn-acao-sucesso" onclick="verMinhasSolicitacoes(\''+telefone+'\')">' 
+              + '<span class="bai roxo"><i class="fas fa-list-check"></i></span>'
+              + '<span class="bai-texto"><div class="bai-titulo">Minhas solicitações</div><div class="bai-sub">Acompanhe o status da sua proposta</div></span>'
+              + '<i class="fas fa-chevron-right" style="color:#4b5563;font-size:.75rem"></i>'
+            + '</button>'
+            + '<button class="btn-acao-sucesso" onclick="location.reload()">'
+              + '<span class="bai cinza"><i class="fas fa-plus"></i></span>'
+              + '<span class="bai-texto"><div class="bai-titulo">Nova solicitação</div><div class="bai-sub">Enviar outra proposta</div></span>'
+              + '<i class="fas fa-chevron-right" style="color:#4b5563;font-size:.75rem"></i>'
+            + '</button>'
+          + '</div>'
+          + '</div>';
+        renovacaoContext = null;
+      } else {
+        toast(resposta.mensagem || 'Erro ao enviar solicitação', 'error');
+      }
+    } catch(e) {
+      toast('Erro de conexão. Tente novamente.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Solicitação ao Barbeiro';
+    }
+  }
+
+  function verMinhasSolicitacoes(telefone) {
+    document.getElementById('campo-tel-consulta').value = telefone;
+    mostrarAba('minhas');
+    carregarMinhasSolicitacoes();
+  }
+
+  // ============================================================
+  // MINHAS SOLICITAÇÕES
+  // ============================================================
+  async function carregarMinhasSolicitacoes() {
+    const tel = document.getElementById('campo-tel-consulta').value.trim();
+    if (!tel) { toast('Informe o telefone', 'error'); return; }
+
+    const lista = document.getElementById('lista-minhas-sols');
+    lista.innerHTML = '<div class="skeleton" style="height:80px;margin-bottom:.75rem"></div>'.repeat(2);
+
+    try {
+      const url = `../../bancodedados/solicitacoes_plano/buscar_solicitacoes_cliente.php?telefone=${encodeURIComponent(tel)}&barbeiro=${BARBEIRO_ID}`;
+      const res  = await fetch(url);
+      const data = await res.json();
+
+      if (!data.sucesso) { lista.innerHTML = `<p style="color:#f87171;font-size:.85rem">${data.mensagem}</p>`; return; }
+      if (!data.solicitacoes.length) {
+        lista.innerHTML = '<p style="color:#6b7280;font-size:.85rem;text-align:center;padding:1.5rem 0">Nenhuma solicitação encontrada para este telefone.</p>';
+        return;
+      }
+      lista.innerHTML = data.solicitacoes.map(s => renderSolicitacaoCliente(s, tel)).join('');
+    } catch(e) {
+      lista.innerHTML = '<p style="color:#f87171;font-size:.85rem">Erro ao carregar. Tente novamente.</p>';
+    }
+  }
+
+  var DIAS_LABEL = { segunda:'Segunda-feira', terca:'Terça-feira', quarta:'Quarta-feira', quinta:'Quinta-feira', sexta:'Sexta-feira', sabado:'Sábado', domingo:'Domingo' };
+
+  function renderSolicitacaoCliente(s, tel) {
+    const nomeServicos = (s.servicos || []).map(x => x.nome).join(', ') || '—';
+    const diaFmt  = DIAS_LABEL[s.dia_semana] || s.dia_semana || '—';
+    const horFmt  = s.horario_preferido ? s.horario_preferido.slice(0,5) : '';
+    const badges  = {
+      pendente:'badge-pendente', aceito:'badge-aceito', recusado:'badge-recusado',
+      cancelado_cliente:'badge-cancelado', recusado_pelo_cliente:'badge-cancelado',
+      aguardando_confirmacao_cliente:'badge-aguardando'
+    };
+    const labels  = {
+      pendente:'Pendente', aceito:'Aceito', recusado:'Recusado',
+      cancelado_cliente:'Cancelado', recusado_pelo_cliente:'Cancelado',
+      aguardando_confirmacao_cliente:'Aguard. confirmação'
+    };
+    const badge   = badges[s.status] || 'badge-pendente';
+    const label   = labels[s.status] || s.status;
+
+    const dataAjust = s.data_ajustada ? formatarData(s.data_ajustada) : '';
+    const horAjust  = s.horario_ajustado ? s.horario_ajustado.slice(0,5) : '';
+    const horExib   = horAjust || horFmt;
+
+    let descontoHtml = '';
+    if ((s.status === 'aceito' || s.status === 'aguardando_confirmacao_cliente') && s.tipo_desconto) {
+      const descLabel = s.tipo_desconto === 'percentual'
+        ? `${s.valor_desconto}% de desconto`
+        : `R$ ${parseFloat(s.valor_desconto).toFixed(2).replace('.',',')} de desconto`;
+      descontoHtml = `<div class="sol-desconto">
+        <div class="titulo"><i class="fas fa-tag"></i> Desconto Aplicado</div>
+        <div class="info">${descLabel} — Valor final: <strong style="color:#34d399">R$ ${parseFloat(s.valor_final).toFixed(2).replace('.',',')}</strong></div>
+      </div>`;
+    }
+
+    let ajusteHtml = '';
+    if (dataAjust || (horAjust && horAjust !== horFmt)) {
+      const labelAjuste = dataAjust ? `${dataAjust} às ${horExib}` : `${diaFmt} às ${horExib}`;
+      ajusteHtml = `<div class="sol-obs-barb"><i class="fas fa-calendar-check" style="color:#60a5fa;margin-right:.4rem"></i>
+        Horário ajustado: <strong>${labelAjuste}</strong></div>`;
+    }
+
+    let obsBarbHtml = s.observacoes_barbeiro
+      ? `<div class="sol-obs-barb"><i class="fas fa-comment" style="color:#a78bfa;margin-right:.4rem"></i>${s.observacoes_barbeiro}</div>`
+      : '';
+
+    // ---- Bloco de confirmação de novos termos ----
+    let confirmacaoHtml = '';
+    if (s.status === 'aguardando_confirmacao_cliente') {
+      const vFinal = s.valor_final != null ? parseFloat(s.valor_final).toFixed(2).replace('.',',') : parseFloat(s.valor_total_original).toFixed(2).replace('.',',');
+      const horarioFmt = horExib || horFmt;
+      const diaTexto   = dataAjust ? `${dataAjust} às ${horarioFmt}` : `${diaFmt} às ${horarioFmt}`;
+      confirmacaoHtml = `
+        <div class="confirmacao-termos">
+          <div class="titulo"><i class="fas fa-file-signature"></i> Novos termos propostos pelo barbeiro</div>
+          <div class="info">
+            ${diaTexto ? `<b>Horário:</b> ${diaTexto}<br>` : ''}
+            <b>Valor do plano:</b> R$ ${vFinal} / mês<br>
+            <span style="font-size:.78rem;color:#9ca3af">Aceite para confirmar os agendamentos ou recuse para cancelar a proposta.</span>
+          </div>
+          <div class="confirmacao-acoes">
+            <button class="btn-aceitar-termos" id="btn-aceitar-${s.codigo}" onclick="confirmarTermos(${s.codigo},'${tel}','aceitar')">
+              <i class="fas fa-check"></i> Aceitar termos
+            </button>
+            <button class="btn-recusar-termos" id="btn-recusar-${s.codigo}" onclick="confirmarTermos(${s.codigo},'${tel}','recusar')">
+              <i class="fas fa-times"></i> Recusar
+            </button>
+          </div>
+        </div>`;
+    }
+
+    // ---- Botão cancelar (pendente ou aguardando) ----
+    let btnCancelar = '';
+    if (s.status === 'pendente' || s.status === 'aguardando_confirmacao_cliente') {
+      btnCancelar = `<button class="btn-cancelar-sol" onclick="cancelarSolicitacao(${s.codigo},'${tel}')">
+        <i class="fas fa-times"></i> Cancelar Solicitação</button>`;
+    }
+
+    // ---- Renovação: após 2 atendimentos concluídos ----
+    let renovacaoHtml = '';
+    if (s.status === 'aceito' && (s.agendamentos_concluidos || 0) >= 2) {
+      renovacaoHtml = `
+        <div class="renovacao-box">
+          <div class="txt">
+            <div class="titulo"><i class="fas fa-rotate"></i> Renovar plano</div>
+            <div class="sub">${s.agendamentos_concluidos} atendimentos concluídos — hora de renovar!</div>
+          </div>
+          <button class="btn-renovar" onclick="renovarPlano(${JSON.stringify(s).replace(/"/g,'&quot;')})">
+            <i class="fas fa-plus-circle"></i> Renovar
+          </button>
+        </div>`;
+    }
+
+    return `<div class="minha-sol-item" id="sol-${s.codigo}">
+      <div class="sol-header">
+        <div>
+          <div class="sol-servicos">${nomeServicos}</div>
+          <div class="sol-data">
+            <i class="fas fa-calendar" style="margin-right:.3rem;color:#60a5fa"></i>${diaFmt} às ${horExib}
+            &nbsp;·&nbsp; ${s.quantidade_sessoes === 1 ? '1 sessão' : s.quantidade_sessoes + ' sessões'} no mês
+          </div>
+          <div class="sol-data" style="margin-top:.15rem">
+            Enviado em ${s.criado_em}
+          </div>
+        </div>
+        <span class="sol-badge ${badge}">${label}</span>
+      </div>
+      ${descontoHtml}${ajusteHtml}${obsBarbHtml}${confirmacaoHtml}${renovacaoHtml}${btnCancelar}
+    </div>`;
+  }
+
+  // ============================================================
+  // CONFIRMAR / RECUSAR TERMOS
+  // ============================================================
+  async function confirmarTermos(codigo, tel, acao) {
+    const btnA = document.getElementById('btn-aceitar-' + codigo);
+    const btnR = document.getElementById('btn-recusar-' + codigo);
+    if (btnA) btnA.disabled = true;
+    if (btnR) btnR.disabled = true;
+    try {
+      const res  = await fetch('../../bancodedados/solicitacoes_plano/confirmar_termos_cliente.php', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ codigo, cliente_telefone: tel, acao })
+      });
+      const data = await res.json();
+      if (data.sucesso) {
+        toast(data.mensagem, 'success');
+        carregarMinhasSolicitacoes();
+      } else {
+        toast(data.mensagem || 'Erro ao confirmar', 'error');
+        if (btnA) btnA.disabled = false;
+        if (btnR) btnR.disabled = false;
+      }
+    } catch(e) {
+      toast('Erro de conexão', 'error');
+      if (btnA) btnA.disabled = false;
+      if (btnR) btnR.disabled = false;
+    }
+  }
+
+  // ============================================================
+  // RENOVAR PLANO
+  // ============================================================
+  function renovarPlano(s) {
+    mostrarAba('solicitar');
+    var valorAtualPlano = (s && s.valor_final != null)
+      ? parseFloat(s.valor_final)
+      : parseFloat(s && s.valor_total_original || 0);
+    renovacaoContext = {
+      ativa: true,
+      codigoOrigem: parseInt(s.codigo || 0),
+      valorPlanoAtual: isNaN(valorAtualPlano) ? 0 : valorAtualPlano
+    };
+
+    const tel = document.getElementById('campo-telefone').value ||
+                document.getElementById('campo-tel-consulta').value;
+    if (tel) document.getElementById('campo-telefone').value = tel;
+    if (s.dia_semana)        document.getElementById('campo-dia-semana').value = s.dia_semana;
+    if (s.horario_preferido) document.getElementById('campo-horario').value = s.horario_preferido.slice(0,5);
+    if (s.dia_semana_2 && s.horario_preferido_2) {
+      const el2 = document.getElementById('campo-dia2');
+      const h2  = document.getElementById('campo-horario2');
+      if (el2) el2.value = s.dia_semana_2;
+      if (h2)  h2.value  = s.horario_preferido_2.slice(0,5);
+    }
+    if (Array.isArray(s.servicos) && servicosCatalogo.length > 0) {
+      servicosSelecionados = {};
+      s.servicos.forEach(sv => {
+        if (sv.codigo) {
+          servicosSelecionados[sv.codigo] = sv.quantidade || 1;
+          const card = document.getElementById('sc-' + sv.codigo);
+          if (card) {
+            card.classList.add('selecionado');
+            const qtdRow = document.getElementById('qtd-row-' + sv.codigo);
+            if (qtdRow) qtdRow.style.display = 'flex';
+            const qtdEl  = document.getElementById('qtd-'     + sv.codigo);
+            if (qtdEl)  qtdEl.textContent = sv.quantidade || 1;
+          }
+        }
+      });
+      if (s.quantidade_sessoes) {
+        semanasSelecionadas = Math.min(4, Math.max(1, parseInt(s.quantidade_sessoes) || 1));
+      }
+      atualizarSemanas();
+      atualizarResumo();
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    toast('Renovação iniciada. O barbeiro poderá manter o valor atual ou enviar nova oferta para você aprovar.', 'info', 5200);
+  }
+
+  async function cancelarSolicitacao(codigo, tel) {
+    if (!confirm('Cancelar esta solicitação?')) return;
+    try {
+      const res  = await fetch('../../bancodedados/solicitacoes_plano/cancelar_solicitacao_cliente.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ codigo, cliente_telefone: tel })
+      });
+      const data = await res.json();
+      if (data.sucesso) {
+        toast('Solicitação cancelada', 'success');
+        carregarMinhasSolicitacoes();
+      } else {
+        toast(data.mensagem || 'Erro ao cancelar', 'error');
+      }
+    } catch(e) {
+      toast('Erro de conexão', 'error');
+    }
+  }
+
+  // ============================================================
+  // HELPERS
+  // ============================================================
+  function formatarData(dateStr) {
+    if (!dateStr) return '';
+    const [y, m, d] = dateStr.split('-');
+    return `${d}/${m}/${y}`;
+  }
+
+  // ============================================================
+  // START
+  // ============================================================
+  init();
+</script>
+</body>
+</html>
